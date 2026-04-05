@@ -735,10 +735,11 @@ async function build() {
     }
 
     // Get 3 related projects (same category first, then featured as fallback)
+    // Exclude projects without heroImage to avoid broken cards
     const sameCategory = projects
-      .filter((p) => p._id !== project._id && p.category === project.category)
+      .filter((p) => p._id !== project._id && p.category === project.category && p.heroImage)
     const others = projects
-      .filter((p) => p._id !== project._id && p.category !== project.category && p.featured)
+      .filter((p) => p._id !== project._id && p.category !== project.category && p.featured && p.heroImage)
     const related = [...sameCategory, ...others].slice(0, 3)
 
     const html = projectPageHtml(project, related)
