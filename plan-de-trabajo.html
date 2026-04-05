@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plan de Trabajo — ZenHome Website</title>
+<style>
+  :root {
+    --blue: #0038FF;
+    --blue-light: #e7edf9;
+    --blue-dark: #000321;
+    --green: #22c55e;
+    --green-light: #dcfce7;
+    --yellow: #eab308;
+    --yellow-light: #fef9c3;
+    --red: #ef4444;
+    --red-light: #fee2e2;
+    --gray: #6b7280;
+    --gray-light: #f3f4f6;
+    --gray-border: #e5e7eb;
+    --white: #ffffff;
+    --shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+    --shadow-md: 0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.06);
+    --radius: 12px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background: var(--gray-light);
+    color: var(--blue-dark);
+    line-height: 1.6;
+    padding: 24px;
+  }
+
+  .container { max-width: 1100px; margin: 0 auto; }
+
+  /* Header */
+  .header {
+    background: linear-gradient(135deg, var(--blue-dark) 0%, #001a80 100%);
+    color: white;
+    padding: 40px 36px;
+    border-radius: var(--radius);
+    margin-bottom: 24px;
+    box-shadow: var(--shadow-md);
+  }
+  .header h1 { font-size: 28px; font-weight: 700; margin-bottom: 6px; }
+  .header .subtitle { opacity: 0.8; font-size: 15px; }
+  .header .url {
+    display: inline-block; margin-top: 12px; background: rgba(255,255,255,0.15);
+    padding: 6px 16px; border-radius: 20px; font-size: 13px; font-family: monospace;
+  }
+  .header .url a { color: #93c5fd; text-decoration: none; }
+
+  /* Stats bar */
+  .stats-bar {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px; margin-bottom: 24px;
+  }
+  .stat-card {
+    background: white; border-radius: var(--radius); padding: 20px 24px;
+    box-shadow: var(--shadow); text-align: center;
+  }
+  .stat-card .number { font-size: 32px; font-weight: 800; color: var(--blue); }
+  .stat-card .label { font-size: 13px; color: var(--gray); margin-top: 2px; }
+  .stat-card.urgent .number { color: var(--red); }
+  .stat-card.done .number { color: var(--green); }
+
+  /* Progress bar */
+  .progress-section {
+    background: white; border-radius: var(--radius); padding: 24px;
+    box-shadow: var(--shadow); margin-bottom: 24px;
+  }
+  .progress-section h2 { font-size: 16px; margin-bottom: 12px; }
+  .progress-bar-bg {
+    height: 12px; background: var(--gray-light); border-radius: 6px; overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%; border-radius: 6px;
+    background: linear-gradient(90deg, var(--green) 0%, #16a34a 100%);
+    transition: width 1s ease;
+  }
+  .progress-label { font-size: 13px; color: var(--gray); margin-top: 6px; text-align: right; }
+
+  /* Sections */
+  .section {
+    background: white; border-radius: var(--radius); padding: 28px;
+    box-shadow: var(--shadow); margin-bottom: 24px;
+  }
+  .section h2 {
+    font-size: 18px; font-weight: 700; margin-bottom: 16px;
+    padding-bottom: 10px; border-bottom: 2px solid var(--gray-light);
+  }
+  .section h3 { font-size: 15px; font-weight: 600; margin: 18px 0 10px; color: #374151; }
+
+  /* Phase cards */
+  .phase {
+    border: 1px solid var(--gray-border); border-radius: 10px;
+    padding: 18px 20px; margin-bottom: 12px;
+    display: flex; align-items: flex-start; gap: 14px;
+    transition: all 0.2s;
+  }
+  .phase:hover { box-shadow: var(--shadow); }
+  .phase.completed { border-left: 4px solid var(--green); background: var(--green-light); }
+  .phase.in-progress { border-left: 4px solid var(--yellow); background: var(--yellow-light); }
+  .phase.pending { border-left: 4px solid var(--gray); background: var(--gray-light); }
+  .phase.blocked { border-left: 4px solid var(--red); background: var(--red-light); }
+
+  .phase-icon {
+    width: 32px; height: 32px; border-radius: 50%; display: flex;
+    align-items: center; justify-content: center; font-size: 16px;
+    flex-shrink: 0; margin-top: 2px;
+  }
+  .completed .phase-icon { background: var(--green); color: white; }
+  .in-progress .phase-icon { background: var(--yellow); color: white; }
+  .pending .phase-icon { background: var(--gray); color: white; }
+  .blocked .phase-icon { background: var(--red); color: white; }
+
+  .phase-content { flex: 1; }
+  .phase-title { font-weight: 600; font-size: 15px; }
+  .phase-desc { font-size: 13px; color: #4b5563; margin-top: 4px; }
+  .phase-tag {
+    display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 10px;
+    border-radius: 12px; margin-top: 6px; text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .completed .phase-tag { background: #bbf7d0; color: #166534; }
+  .in-progress .phase-tag { background: #fde68a; color: #92400e; }
+  .pending .phase-tag { background: #e5e7eb; color: #374151; }
+  .blocked .phase-tag { background: #fecaca; color: #991b1b; }
+
+  /* Task list */
+  .task-list { list-style: none; }
+  .task-list li {
+    padding: 10px 14px; border-radius: 8px; margin-bottom: 6px;
+    font-size: 14px; display: flex; align-items: center; gap: 10px;
+    background: var(--gray-light);
+  }
+  .task-list li .check { font-size: 16px; }
+  .task-list li.done { opacity: 0.6; text-decoration: line-through; }
+
+  /* Tech details */
+  .tech-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 16px;
+  }
+  .tech-card {
+    background: var(--gray-light); border-radius: 10px; padding: 18px;
+  }
+  .tech-card h4 { font-size: 14px; font-weight: 600; margin-bottom: 8px; color: var(--blue); }
+  .tech-card p { font-size: 13px; color: #4b5563; }
+  .tech-card code {
+    background: #1e293b; color: #a5f3fc; padding: 2px 6px; border-radius: 4px;
+    font-size: 12px;
+  }
+
+  /* Bug callout */
+  .callout {
+    background: #fef3c7; border: 1px solid #fbbf24; border-radius: 10px;
+    padding: 18px 20px; margin: 16px 0;
+  }
+  .callout.danger { background: #fee2e2; border-color: #f87171; }
+  .callout.success { background: #dcfce7; border-color: #4ade80; }
+  .callout .callout-title { font-weight: 700; font-size: 14px; margin-bottom: 4px; }
+  .callout p { font-size: 13px; color: #4b5563; }
+  .callout code {
+    background: rgba(0,0,0,0.08); padding: 1px 5px; border-radius: 3px; font-size: 12px;
+  }
+
+  /* File list */
+  .file-list { font-family: monospace; font-size: 13px; }
+  .file-list .file {
+    display: flex; justify-content: space-between; padding: 8px 12px;
+    border-bottom: 1px solid var(--gray-border); align-items: center;
+  }
+  .file-list .file:last-child { border-bottom: none; }
+  .file-list .file-name { color: var(--blue); font-weight: 500; }
+  .file-list .file-desc { font-family: -apple-system, sans-serif; color: var(--gray); font-size: 12px; }
+
+  /* Timeline */
+  .timeline { position: relative; padding-left: 28px; }
+  .timeline::before {
+    content: ''; position: absolute; left: 10px; top: 4px; bottom: 4px;
+    width: 2px; background: var(--gray-border);
+  }
+  .timeline-item { position: relative; margin-bottom: 20px; }
+  .timeline-item::before {
+    content: ''; position: absolute; left: -22px; top: 6px;
+    width: 10px; height: 10px; border-radius: 50%; background: var(--blue);
+  }
+  .timeline-item.done::before { background: var(--green); }
+  .timeline-item.next::before { background: var(--yellow); width: 12px; height: 12px; left: -23px; top: 5px; }
+  .timeline-item .tl-title { font-weight: 600; font-size: 14px; }
+  .timeline-item .tl-desc { font-size: 13px; color: var(--gray); }
+
+  /* Responsive */
+  @media (max-width: 640px) {
+    body { padding: 12px; }
+    .header { padding: 24px 20px; }
+    .header h1 { font-size: 22px; }
+    .stats-bar { grid-template-columns: 1fr 1fr; }
+    .tech-grid { grid-template-columns: 1fr; }
+  }
+
+  /* Print */
+  @media print {
+    body { background: white; padding: 0; }
+    .section, .stat-card, .progress-section { box-shadow: none; border: 1px solid #ddd; }
+    .header { color: black; background: white; border: 2px solid var(--blue-dark); }
+    .header .subtitle, .header .url a { color: #333; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="header">
+    <h1>Plan de Trabajo — ZenHome Website</h1>
+    <div class="subtitle">Migración GHL → Netlify | SEO | Conversión WhatsApp</div>
+    <div class="url"><a href="https://zenhome.com.mx" target="_blank">https://zenhome.com.mx</a></div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-bar">
+    <div class="stat-card done">
+      <div class="number">5/6</div>
+      <div class="label">Fases completadas</div>
+    </div>
+    <div class="stat-card done">
+      <div class="number">40</div>
+      <div class="label">Test cases QA</div>
+    </div>
+    <div class="stat-card">
+      <div class="number">17</div>
+      <div class="label">Defectos corregidos</div>
+    </div>
+    <div class="stat-card urgent">
+      <div class="number">1</div>
+      <div class="label">Verificación pendiente</div>
+    </div>
+  </div>
+
+  <!-- PROGRESS -->
+  <div class="progress-section">
+    <h2>Progreso General del Proyecto</h2>
+    <div class="progress-bar-bg">
+      <div class="progress-bar-fill" style="width: 88%"></div>
+    </div>
+    <div class="progress-label">88% completado — Fases 1–5 + QA listos, pendiente verificar fix de nav scroll + Fase 6</div>
+  </div>
+
+  <!-- ======================== -->
+  <!-- ACCIÓN INMEDIATA -->
+  <!-- ======================== -->
+  <div class="section">
+    <h2>Acción Inmediata</h2>
+
+    <div class="callout danger">
+      <div class="callout-title">Verificar scroll de navegación</div>
+      <p>Se deployó el fix final del script de navegación. Hay que confirmar que los botones Inicio, Diseño de Cocinas, Portafolio, Sobre Nosotros y Contacto ahora hacen scroll a sus secciones correctamente.</p>
+    </div>
+
+    <div class="callout">
+      <div class="callout-title">Bug crítico descubierto: scrollTo en GHL/Nuxt</div>
+      <p>
+        El HTML exportado de GHL bloquea <code>window.scrollTo(0, y)</code> (sintaxis posicional).
+        La solución fue cambiar a <code>window.scrollTo({top: y, behavior: 'smooth'})</code> (sintaxis con objeto de opciones), que sí funciona correctamente.
+      </p>
+    </div>
+
+    <ul class="task-list">
+      <li><span class="check">⬜</span> Abrir https://zenhome.com.mx en el navegador</li>
+      <li><span class="check">⬜</span> Hacer clic en cada botón del menú y verificar que scrollea a la sección correcta</li>
+      <li><span class="check">⬜</span> Probar en móvil (hamburger menu)</li>
+      <li><span class="check">⬜</span> Probar botón "Conoce Más" del hero</li>
+      <li><span class="check">⬜</span> Verificar que el botón flotante de WhatsApp abre chat correcto</li>
+    </ul>
+  </div>
+
+  <!-- ======================== -->
+  <!-- FASES DEL PROYECTO -->
+  <!-- ======================== -->
+  <div class="section">
+    <h2>Fases del Proyecto</h2>
+
+    <div class="phase completed">
+      <div class="phase-icon">✓</div>
+      <div class="phase-content">
+        <div class="phase-title">Fase 1 — Exportación y Deploy Inicial</div>
+        <div class="phase-desc">Exportar HTML completo desde GoHighLevel, limpiar assets, deploy estático en Netlify con carpeta manual.</div>
+        <span class="phase-tag">Completado</span>
+      </div>
+    </div>
+
+    <div class="phase completed">
+      <div class="phase-icon">✓</div>
+      <div class="phase-content">
+        <div class="phase-title">Fase 2 — DNS, HTTPS y Infraestructura</div>
+        <div class="phase-desc">Configurar GoDaddy DNS (A record + CNAME), HTTPS en Netlify, archivo <code>_redirects</code> (301 de URLs antiguas GHL), <code>_headers</code> (seguridad + cache), <code>robots.txt</code>, <code>sitemap.xml</code>.</div>
+        <span class="phase-tag">Completado</span>
+      </div>
+    </div>
+
+    <div class="phase completed">
+      <div class="phase-icon">✓</div>
+      <div class="phase-content">
+        <div class="phase-title">Fase 3 — Rendimiento / Core Web Vitals</div>
+        <div class="phase-desc">Preconnect a dominios externos, preload de imagen hero, lazy loading de imágenes below-the-fold, optimización de CSS crítico.</div>
+        <span class="phase-tag">Completado</span>
+      </div>
+    </div>
+
+    <div class="phase completed">
+      <div class="phase-icon">✓</div>
+      <div class="phase-content">
+        <div class="phase-title">Fase 4 — SEO On-Page Avanzado</div>
+        <div class="phase-desc">Jerarquía de headings (1×H1, 8×H2, H3s), Schema.org (InteriorDesigner + LocalBusiness + FAQPage + Review), Open Graph + Twitter Cards, meta description optimizada, canonical URL, hreflang.</div>
+        <span class="phase-tag">Completado</span>
+      </div>
+    </div>
+
+    <div class="phase completed">
+      <div class="phase-icon">✓</div>
+      <div class="phase-content">
+        <div class="phase-title">Fase 5 — Conversión y WhatsApp</div>
+        <div class="phase-desc">Botón flotante de WhatsApp nativo (reemplazó widget GHL), mensaje prellenado, microcopy "Respuesta rápida · Sin compromiso", Google Analytics 4 (G-JSYYXX8Z2K), tracking de clicks.</div>
+        <span class="phase-tag">Completado</span>
+      </div>
+    </div>
+
+    <div class="phase completed">
+      <div class="phase-icon">✓</div>
+      <div class="phase-content">
+        <div class="phase-title">QA Testing</div>
+        <div class="phase-desc">40 test cases ejecutados. 17 defectos encontrados y corregidos: links de nav convertidos a anchors, section IDs agregados, galería arreglada, TikTok URL fija, WhatsApp links actualizados, script de scroll con fix para GHL/Nuxt.</div>
+        <span class="phase-tag">Completado</span>
+      </div>
+    </div>
+
+    <div class="phase in-progress">
+      <div class="phase-icon">!</div>
+      <div class="phase-content">
+        <div class="phase-title">Verificación Post-Deploy</div>
+        <div class="phase-desc">Confirmar que el scroll de navegación funciona con la nueva sintaxis <code>scrollTo({top, behavior})</code>. Ejecutar PageSpeed Insights para medir Core Web Vitals finales.</div>
+        <span class="phase-tag">En progreso</span>
+      </div>
+    </div>
+
+    <div class="phase pending">
+      <div class="phase-icon">6</div>
+      <div class="phase-content">
+        <div class="phase-title">Fase 6 — Contenido y Crecimiento</div>
+        <div class="phase-desc">Subpáginas de servicios, más testimonios, blog con guías SEO, Google Business Profile, Google Search Console, monitoreo GA4.</div>
+        <span class="phase-tag">Pendiente</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================== -->
+  <!-- FASE 6 DESGLOSE -->
+  <!-- ======================== -->
+  <div class="section">
+    <h2>Fase 6 — Desglose de Tareas</h2>
+    <p style="font-size:14px; color:var(--gray); margin-bottom:16px;">Trabajo futuro para seguir creciendo el sitio en SEO y conversión.</p>
+
+    <h3>6.1 — Subpáginas de Servicios</h3>
+    <ul class="task-list">
+      <li><span class="check">⬜</span> Crear página individual: Cocinas Integrales</li>
+      <li><span class="check">⬜</span> Crear página individual: Clósets y Vestidores</li>
+      <li><span class="check">⬜</span> Crear página individual: Diseño de Interiores</li>
+      <li><span class="check">⬜</span> Crear página individual: Proyectos para Constructoras</li>
+      <li><span class="check">⬜</span> Agregar navegación entre subpáginas</li>
+      <li><span class="check">⬜</span> Actualizar sitemap.xml con nuevas URLs</li>
+    </ul>
+
+    <h3>6.2 — Portafolio Expandido</h3>
+    <ul class="task-list">
+      <li><span class="check">⬜</span> Recopilar fotos de alta calidad de proyectos terminados</li>
+      <li><span class="check">⬜</span> Crear galería filtrable por tipo (cocina, clóset, interior)</li>
+      <li><span class="check">⬜</span> Agregar antes/después de proyectos clave</li>
+      <li><span class="check">⬜</span> Optimizar imágenes (WebP, lazy loading, srcset)</li>
+    </ul>
+
+    <h3>6.3 — Testimonios y Social Proof</h3>
+    <ul class="task-list">
+      <li><span class="check">⬜</span> Recopilar 5+ testimonios reales con nombre y foto</li>
+      <li><span class="check">⬜</span> Agregar reviews de Google al Schema.org</li>
+      <li><span class="check">⬜</span> Crear sección de logos de constructoras aliadas</li>
+    </ul>
+
+    <h3>6.4 — Blog / Guías SEO</h3>
+    <ul class="task-list">
+      <li><span class="check">⬜</span> Guía: "Cómo elegir tu cocina integral en Monterrey"</li>
+      <li><span class="check">⬜</span> Guía: "Tendencias de diseño de cocinas 2026"</li>
+      <li><span class="check">⬜</span> Guía: "Cuánto cuesta una cocina integral a la medida"</li>
+      <li><span class="check">⬜</span> Setup de blog con template reutilizable</li>
+    </ul>
+
+    <h3>6.5 — Google Business + Search Console</h3>
+    <ul class="task-list">
+      <li><span class="check">⬜</span> Verificar propiedad en Google Search Console</li>
+      <li><span class="check">⬜</span> Enviar sitemap a Search Console</li>
+      <li><span class="check">⬜</span> Optimizar Google Business Profile (fotos, horarios, categorías)</li>
+      <li><span class="check">⬜</span> Solicitar reviews en Google a clientes existentes</li>
+      <li><span class="check">⬜</span> Configurar alertas de uptime y monitoreo GA4</li>
+    </ul>
+  </div>
+
+  <!-- ======================== -->
+  <!-- DETALLES TÉCNICOS -->
+  <!-- ======================== -->
+  <div class="section">
+    <h2>Referencia Técnica</h2>
+
+    <div class="tech-grid">
+      <div class="tech-card">
+        <h4>Hosting</h4>
+        <p>Netlify — deploy manual de carpeta <code>zenhome-site</code>. Sin build process, archivos estáticos directos.</p>
+      </div>
+      <div class="tech-card">
+        <h4>DNS</h4>
+        <p>GoDaddy — A record <code>75.2.60.5</code> + CNAME <code>apex-loadbalancer.netlify.com</code></p>
+      </div>
+      <div class="tech-card">
+        <h4>Analytics</h4>
+        <p>Google Analytics 4 — ID: <code>G-JSYYXX8Z2K</code>, stream "PixelZenhome", cuenta "FrankAnalytics"</p>
+      </div>
+      <div class="tech-card">
+        <h4>WhatsApp</h4>
+        <p>Número: <code>+52 811 526 9496</code>. Link con mensaje prellenado vía wa.me. Botón flotante verde con pulso animado.</p>
+      </div>
+      <div class="tech-card">
+        <h4>Framework Origen</h4>
+        <p>HTML exportado de GoHighLevel (Nuxt.js). Incluye <code>div#__nuxt</code>, <code>div.bgCover.bg-fixed</code> (position:fixed), y JS inline que interfiere con scroll.</p>
+      </div>
+      <div class="tech-card">
+        <h4>Bug GHL/Nuxt</h4>
+        <p><code>scrollTo(0, y)</code> NO funciona. Usar siempre <code>scrollTo({top: y, behavior: 'smooth'})</code>. Esto aplica a todo scroll programático.</p>
+      </div>
+    </div>
+
+    <h3>Archivos del Proyecto</h3>
+    <div class="file-list" style="background: var(--gray-light); border-radius: 10px; overflow: hidden; margin-top: 10px;">
+      <div class="file">
+        <span class="file-name">index.html</span>
+        <span class="file-desc">Página principal (~282KB) — todo el HTML/CSS/JS + optimizaciones</span>
+      </div>
+      <div class="file">
+        <span class="file-name">_redirects</span>
+        <span class="file-desc">Netlify redirects — www→apex, URLs GHL antiguas→anchors, catch-all</span>
+      </div>
+      <div class="file">
+        <span class="file-name">_headers</span>
+        <span class="file-desc">Headers de seguridad (X-Frame-Options, CSP) + cache estáticos</span>
+      </div>
+      <div class="file">
+        <span class="file-name">robots.txt</span>
+        <span class="file-desc">Allow all + link a sitemap</span>
+      </div>
+      <div class="file">
+        <span class="file-name">sitemap.xml</span>
+        <span class="file-desc">Una URL: https://zenhome.com.mx/</span>
+      </div>
+      <div class="file">
+        <span class="file-name">favicon.ico / icon-192.png</span>
+        <span class="file-desc">Favicon + ícono PWA</span>
+      </div>
+      <div class="file">
+        <span class="file-name">HANDOFF.md</span>
+        <span class="file-desc">Documento de handoff completo para continuar con Claude</span>
+      </div>
+      <div class="file">
+        <span class="file-name">plan-de-trabajo.html</span>
+        <span class="file-desc">Este archivo — plan visual del proyecto</span>
+      </div>
+    </div>
+
+    <h3>Mapeo de Navegación</h3>
+    <div style="overflow-x: auto; margin-top: 10px;">
+      <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+        <thead>
+          <tr style="background: var(--blue-dark); color: white;">
+            <th style="padding: 10px 14px; text-align: left; border-radius: 8px 0 0 0;">Botón Nav</th>
+            <th style="padding: 10px 14px; text-align: left;">href</th>
+            <th style="padding: 10px 14px; text-align: left; border-radius: 0 8px 0 0;">Section ID</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="background: white;"><td style="padding: 8px 14px;">Inicio</td><td style="padding: 8px 14px;"><code>#</code></td><td style="padding: 8px 14px;">(scroll to top)</td></tr>
+          <tr style="background: var(--gray-light);"><td style="padding: 8px 14px;">Diseño de Cocinas</td><td style="padding: 8px 14px;"><code>#servicios</code></td><td style="padding: 8px 14px;">id="servicios"</td></tr>
+          <tr style="background: white;"><td style="padding: 8px 14px;">Portafolio</td><td style="padding: 8px 14px;"><code>#proyectos</code></td><td style="padding: 8px 14px;">id="proyectos"</td></tr>
+          <tr style="background: var(--gray-light);"><td style="padding: 8px 14px;">Sobre Nosotros</td><td style="padding: 8px 14px;"><code>#equipo</code></td><td style="padding: 8px 14px;">id="equipo"</td></tr>
+          <tr style="background: white; border-radius: 0 0 8px 8px;"><td style="padding: 8px 14px;">Contacto</td><td style="padding: 8px 14px;"><code>#locaciones</code></td><td style="padding: 8px 14px;">id="locaciones"</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>SEO Schema.org Implementado</h3>
+    <div class="tech-grid" style="margin-top: 10px;">
+      <div class="tech-card">
+        <h4>InteriorDesigner + LocalBusiness</h4>
+        <p>Nombre, teléfono, 2 direcciones (Guadalupe + Monterrey), horarios L-V 9-18 / S 10-14, 7 ciudades de cobertura, 4 servicios, redes sociales, 1 review.</p>
+      </div>
+      <div class="tech-card">
+        <h4>FAQPage</h4>
+        <p>5 preguntas frecuentes: costo de cocina, tiempo de instalación, zonas de cobertura, servicios adicionales, cómo cotizar.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================== -->
+  <!-- TIMELINE -->
+  <!-- ======================== -->
+  <div class="section">
+    <h2>Historial del Proyecto</h2>
+    <div class="timeline">
+      <div class="timeline-item done">
+        <div class="tl-title">Exportación de GHL + Deploy Netlify</div>
+        <div class="tl-desc">HTML original exportado, assets organizados, primer deploy exitoso</div>
+      </div>
+      <div class="timeline-item done">
+        <div class="tl-title">DNS + HTTPS + Redirects</div>
+        <div class="tl-desc">GoDaddy configurado, SSL activo, redirects 301 para URLs antiguas</div>
+      </div>
+      <div class="timeline-item done">
+        <div class="tl-title">Optimización de Rendimiento</div>
+        <div class="tl-desc">Preconnect, preload hero image, lazy loading, CSS crítico</div>
+      </div>
+      <div class="timeline-item done">
+        <div class="tl-title">SEO Avanzado</div>
+        <div class="tl-desc">Heading hierarchy, Schema.org, Open Graph, Twitter Cards</div>
+      </div>
+      <div class="timeline-item done">
+        <div class="tl-title">Conversión WhatsApp + GA4</div>
+        <div class="tl-desc">Botón flotante, mensaje prellenado, analytics configurado</div>
+      </div>
+      <div class="timeline-item done">
+        <div class="tl-title">QA — 40 tests, 17 fixes</div>
+        <div class="tl-desc">Links corregidos, IDs agregados, galería arreglada, TikTok URL</div>
+      </div>
+      <div class="timeline-item done">
+        <div class="tl-title">Descubrimiento del bug scrollTo GHL/Nuxt</div>
+        <div class="tl-desc">Identificado que la sintaxis posicional falla, solo la sintaxis de objeto funciona</div>
+      </div>
+      <div class="timeline-item next">
+        <div class="tl-title">Verificar fix de scroll en producción</div>
+        <div class="tl-desc">Confirmar que el último deploy con scrollTo({top, behavior}) funciona</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div style="text-align: center; padding: 24px; color: var(--gray); font-size: 13px;">
+    Plan generado el 2 de abril de 2026 — ZenHome Website Migration Project
+  </div>
+
+</div>
+
+</body>
+</html>

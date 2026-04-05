@@ -1,0 +1,16 @@
+# Headers globales de seguridad y cache
+/*
+  X-Frame-Options: SAMEORIGIN
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+
+# Cache largo para assets estáticos
+/favicon.ico
+  Cache-Control: public, max-age=2592000
+
+# Cache para sitemap y robots
+/robots.txt
+  Cache-Control: public, max-age=86400
+/sitemap.xml
+  Cache-Control: public, max-age=86400
