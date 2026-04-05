@@ -42,8 +42,14 @@ function sanityFetch(query) {
       res.on('end', () => {
         try {
           const parsed = JSON.parse(data)
-          resolve(parsed.result)
+          if (parsed.error) {
+            console.error('Sanity API error:', parsed.error)
+            reject(new Error(parsed.error.description || parsed.error.type || 'Unknown Sanity error'))
+            return
+          }
+          resolve(parsed.result || [])
         } catch (e) {
+          console.error('Failed to parse Sanity response:', data.substring(0, 500))
           reject(e)
         }
       })
@@ -456,7 +462,7 @@ async function build() {
   }`
 
   console.log('📡 Fetching projects from Sanity...')
-  const projects = await sanityFetch(query)
+  const projects = (await sanityFetch(query)) || []
   console.log(`   Found ${projects.length} published projects\n`)
 
   if (projects.length === 0) {
