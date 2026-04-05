@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/xusr/bin/env node
 /**
  * ZenHome Portfolio Builder
  *
@@ -94,6 +94,7 @@ function blocksToHtml(blocks) {
 }
 
 function escapeHtml(str) {
+    if (!str || typeof str !== 'string') return ''
   return str
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
