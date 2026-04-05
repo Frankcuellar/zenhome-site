@@ -246,9 +246,25 @@ function projectPageHtml(p, relatedProjects) {
     .map((s) => `      <div class="spec-card"><span class="spec-label">${escapeHtml(s.label)}</span><span class="spec-value">${escapeHtml(s.value)}</span></div>`)
     .join('\n')
 
-  // Gallery with lightbox data
-  const hasGallery = (p.gallery || []).length > 0
-  const galleryImgs = (p.gallery || [])
+  // Gallery — sort into narrative order: resultado/final first, then antes/proceso, then experiencia
+  const GALLERY_ORDER = [
+    { phase: 'resultado', keywords: /resultado|final|terminad|listo|acabado|entrega/i, weight: 0 },
+    { phase: 'detalle', keywords: /detalle|close.?up|acercamiento|material|acabado|textura/i, weight: 1 },
+    { phase: 'antes', keywords: /antes|recibimos|recibi|previo|original|comenzar|inicio/i, weight: 2 },
+    { phase: 'proceso', keywords: /proceso|instalaci|construcci|avance|progreso|durante/i, weight: 3 },
+    { phase: 'experiencia', keywords: /familia|cliente|feliz|disfrutando|cocinar|vivir|experiencia/i, weight: 4 },
+  ]
+  function galleryWeight(caption) {
+    if (!caption) return 1.5 // no caption → after resultado, before antes
+    for (const rule of GALLERY_ORDER) {
+      if (rule.keywords.test(caption)) return rule.weight
+    }
+    return 1.5 // unknown → neutral position
+  }
+  const sortedGallery = [...(p.gallery || [])].sort((a, b) => galleryWeight(a.caption) - galleryWeight(b.caption))
+
+  const hasGallery = sortedGallery.length > 0
+  const galleryImgs = sortedGallery
     .map((img, i) => {
       const alt = escapeHtml(img.caption || `${catLabel} - ${p.title} - foto ${i + 1}`)
       const cls = i === 0 ? ' class="gallery-featured"' : ''
@@ -256,8 +272,8 @@ function projectPageHtml(p, relatedProjects) {
     })
     .join('\n')
 
-  // Gallery full-size URLs for lightbox
-  const galleryFull = (p.gallery || []).map((img) => imageUrl(img, 1400))
+  // Gallery full-size URLs for lightbox (same sorted order)
+  const galleryFull = sortedGallery.map((img) => imageUrl(img, 1400))
 
   // Video
   let videoSection = ''
