@@ -117,6 +117,50 @@ const CATEGORY_TAGS = {
   constructora: 'CONSTRUCTORAS',
 }
 
+// ─── Tag display names (slug → pretty label with accents) ───
+const SLUG_LABELS = {
+  // Materials
+  'granito-natural': 'Granito Natural',
+  'mdf-blanco-mate': 'MDF Blanco Mate',
+  'madera-encino': 'Madera de Encino',
+  'cuarzo': 'Cuarzo',
+  'cuarzo-blanco': 'Cuarzo Blanco',
+  'cuarzo-negro': 'Cuarzo Negro',
+  'marmol': 'Mármol',
+  'acero-inoxidable': 'Acero Inoxidable',
+  'melamina': 'Melamina',
+  'laminado': 'Laminado',
+  'madera-nogal': 'Madera de Nogal',
+  'madera-parota': 'Madera de Parota',
+  'vidrio-templado': 'Vidrio Templado',
+  // Styles
+  'moderno': 'Moderno',
+  'moderno-calido': 'Moderno Cálido',
+  'minimalista': 'Minimalista',
+  'clasico': 'Clásico',
+  'rustico': 'Rústico',
+  'industrial': 'Industrial',
+  'contemporaneo': 'Contemporáneo',
+  // Zones
+  'cumbres': 'Cumbres',
+  'carretera-nacional': 'Carretera Nacional',
+  'san-pedro': 'San Pedro',
+  'apodaca': 'Apodaca',
+  'santa-catarina': 'Santa Catarina',
+  'guadalupe': 'Guadalupe',
+  'escobedo': 'Escobedo',
+  'centro': 'Centro',
+  'valle': 'Valle',
+  'sur': 'Sur de Monterrey',
+}
+
+/** Convert a slug to a display label: uses dictionary first, falls back to title case */
+function prettyTag(slug) {
+  if (!slug) return ''
+  if (SLUG_LABELS[slug]) return SLUG_LABELS[slug]
+  return slug.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
+}
+
 // ─── SEO helpers ───
 const CATEGORY_SEO = {
   cocina: { keyword: 'cocina integral', cta: 'Cotiza tu cocina integral', midCta: '¿Te imaginas tu cocina así?', closeCta: '¿Te gustaría una cocina así en tu hogar?' },
@@ -137,16 +181,16 @@ function extractCity(location) {
 
 function generateSeoTitle(p) {
   const cat = CATEGORY_LABELS[p.category] || 'Proyecto'
-  const materials = (p.materials || []).slice(0, 2).map(m => m.replace(/-/g, ' ')).join(' con ')
+  const materials = (p.materials || []).slice(0, 2).map(m => prettyTag(m)).join(' con ')
   const matText = materials ? ` de ${materials}` : ''
-  const style = !materials && p.style ? ` ${p.style.charAt(0).toUpperCase() + p.style.slice(1).replace(/-/g, ' ')}` : ''
+  const style = !materials && p.style ? ` ${prettyTag(p.style)}` : ''
   const city = extractCity(p.location) || 'Monterrey'
   return `${cat}${style}${matText} en ${city} | ZenHome Monterrey`
 }
 
 function generateSeoDescription(p) {
   const cat = CATEGORY_LABELS[p.category] || 'Proyecto'
-  const materials = (p.materials || []).slice(0, 3).map(m => m.replace(/-/g, ' ')).join(', ')
+  const materials = (p.materials || []).slice(0, 3).map(m => prettyTag(m)).join(', ')
   const matText = materials ? ` Acabados en ${materials}.` : ''
   const city = extractCity(p.location) || 'Monterrey'
   return `${cat} a medida en ${city}, N.L.${matText} Diseño, fotos y resultado final. +300 proyectos entregados en Monterrey.`
@@ -258,19 +302,19 @@ function projectPageHtml(p, relatedProjects) {
   // Solution
   const solutionHtml = blocksToHtml(p.solution)
 
-  // Tags (materials, style, zone)
+  // Tags (materials, style, zone) — use prettyTag() for proper accents & casing
   const materialTags = (p.materials || []).map((m) =>
-    `<a href="/materiales/${m}/" class="seo-tag">${escapeHtml(m.replace(/-/g, ' '))}</a>`).join('')
+    `<a href="/materiales/${m}/" class="seo-tag">${escapeHtml(prettyTag(m))}</a>`).join('')
   const styleTags = p.style
-    ? `<a href="/estilos/${p.style}/" class="seo-tag">${escapeHtml(p.style.replace(/-/g, ' '))}</a>` : ''
+    ? `<a href="/estilos/${p.style}/" class="seo-tag">${escapeHtml(prettyTag(p.style))}</a>` : ''
   const zoneTags = p.zone
-    ? `<a href="/zonas/${p.zone}/" class="seo-tag">${escapeHtml(p.zone.replace(/-/g, ' '))}</a>` : ''
+    ? `<a href="/zonas/${p.zone}/" class="seo-tag">${escapeHtml(prettyTag(p.zone))}</a>` : ''
   const hasTags = materialTags || styleTags || zoneTags
 
   // Schema about entities
   const aboutEntities = [
     `{"@type": "Thing", "name": "${escapeHtml(catLabel)}"}`,
-    ...(p.materials || []).slice(0, 2).map((m) => `{"@type": "Thing", "name": "${escapeHtml(m.replace(/-/g, ' '))}"}`),
+    ...(p.materials || []).slice(0, 2).map((m) => `{"@type": "Thing", "name": "${escapeHtml(prettyTag(m))}"}`),
     p.location ? `{"@type": "Place", "name": "${escapeHtml(p.location)}, Nuevo León"}` : '',
   ].filter(Boolean)
 
