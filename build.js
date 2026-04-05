@@ -119,25 +119,37 @@ const CATEGORY_TAGS = {
 
 // ─── SEO helpers ───
 const CATEGORY_SEO = {
-  cocina: { keyword: 'cocina integral', cta: 'Cotiza tu cocina integral', midCta: '¿Te imaginas tu cocina así?' },
-  closet: { keyword: 'clóset a medida', cta: 'Cotiza tu clóset', midCta: '¿Te imaginas tu vestidor así?' },
-  interior: { keyword: 'diseño de interiores', cta: 'Cotiza tu proyecto', midCta: '¿Te imaginas tu espacio así?' },
-  constructora: { keyword: 'mobiliario para constructoras', cta: 'Cotiza tu proyecto', midCta: '¿Te imaginas un resultado así?' },
+  cocina: { keyword: 'cocina integral', cta: 'Cotiza tu cocina integral', midCta: '¿Te imaginas tu cocina así?', closeCta: '¿Te gustaría una cocina así en tu hogar?' },
+  closet: { keyword: 'clóset a medida', cta: 'Cotiza tu clóset', midCta: '¿Te imaginas tu vestidor así?', closeCta: '¿Te gustaría un vestidor así?' },
+  interior: { keyword: 'diseño de interiores', cta: 'Cotiza tu proyecto', midCta: '¿Te imaginas tu espacio así?', closeCta: '¿Imaginas tu espacio con este nivel de diseño?' },
+  constructora: { keyword: 'mobiliario para constructoras', cta: 'Cotiza tu proyecto', midCta: '¿Te imaginas un resultado así?', closeCta: '¿Listo para un resultado así en tu desarrollo?' },
+}
+
+// Extract city name from location string (e.g. "Samara Residencial, Apodaca, Nuevo León" → "Apodaca")
+function extractCity(location) {
+  if (!location) return ''
+  const parts = location.split(',').map(s => s.trim())
+  // If 3+ parts, second is likely city; if 2 parts, first is city; if 1 part, use it
+  if (parts.length >= 3) return parts[1]
+  if (parts.length === 2) return parts[0]
+  return parts[0]
 }
 
 function generateSeoTitle(p) {
   const cat = CATEGORY_LABELS[p.category] || 'Proyecto'
-  const style = p.style ? ` ${p.style.charAt(0).toUpperCase() + p.style.slice(1)}` : ''
-  const zone = p.location ? ` en ${p.location}` : ''
-  return `${cat}${style}${zone} | ZenHome Monterrey`
+  const materials = (p.materials || []).slice(0, 2).map(m => m.replace(/-/g, ' ')).join(' con ')
+  const matText = materials ? ` de ${materials}` : ''
+  const style = !materials && p.style ? ` ${p.style.charAt(0).toUpperCase() + p.style.slice(1).replace(/-/g, ' ')}` : ''
+  const city = extractCity(p.location) || 'Monterrey'
+  return `${cat}${style}${matText} en ${city} | ZenHome Monterrey`
 }
 
 function generateSeoDescription(p) {
   const cat = CATEGORY_LABELS[p.category] || 'Proyecto'
-  const materials = (p.materials || []).slice(0, 2).join(' y ')
+  const materials = (p.materials || []).slice(0, 3).map(m => m.replace(/-/g, ' ')).join(', ')
   const matText = materials ? ` Acabados en ${materials}.` : ''
-  const zone = p.location ? ` en ${p.location}` : ''
-  return `Proyecto real de ${cat.toLowerCase()}${zone}.${matText} Fotos, materiales y proceso completo. +300 proyectos entregados.`
+  const city = extractCity(p.location) || 'Monterrey'
+  return `${cat} a medida en ${city}, N.L.${matText} Diseño, fotos y resultado final. +300 proyectos entregados en Monterrey.`
 }
 
 // WhatsApp SVG icon (reusable)
@@ -208,11 +220,13 @@ function projectPageHtml(p, relatedProjects) {
   if (p.videoUrl) {
     const videoId = p.videoUrl.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/)?.[1]
     if (videoId) {
+      const videoIntro = `Recorre este proyecto en video y observa los detalles de acabados, materiales y funcionalidad.`
       videoSection = `
-  <section class="section-video">
+  <section class="section-video" id="video">
     <h2>Video del Proyecto</h2>
+    <p class="video-intro">${videoIntro}</p>
     <div class="video-wrapper">
-      <iframe src="https://www.youtube-nocookie.com/embed/${videoId}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+      <iframe src="https://www.youtube-nocookie.com/embed/${videoId}" title="Video de ${escapeHtml(catLabel)} en ${escapeHtml(p.location || 'Monterrey')} - ZenHome" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
     </div>
   </section>`
     }
@@ -426,7 +440,9 @@ function projectPageHtml(p, relatedProjects) {
   .lightbox-next { right: 16px; }
 
   /* ── Video ── */
-  .video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: var(--radius); margin: 24px 0 36px; box-shadow: var(--shadow-md); }
+  .section-video { margin: 36px 0; }
+  .video-intro { font-size: 15px; color: var(--text-muted); margin-bottom: 16px; line-height: 1.6; }
+  .video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: var(--radius); margin: 0 0 36px; box-shadow: var(--shadow-md); }
   .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
 
   /* ── Tags ── */
@@ -540,15 +556,28 @@ function projectPageHtml(p, relatedProjects) {
 
 <article class="article">
 
-  ${p.challenge ? `<!-- ── 4. El Reto ── -->
+  ${p.challenge ? `<!-- ── 3. El Reto ── -->
   <h2>El Reto</h2>
   <div class="challenge-block"><p>${escapeHtml(p.challenge)}</p></div>` : ''}
 
-  ${solutionHtml ? `<!-- ── 5. Nuestra Solución ── -->
+  ${solutionHtml ? `<!-- ── 4. Nuestra Solución ── -->
   <h2>Nuestra Solución</h2>
   ${solutionHtml}` : ''}
 
-  ${hasGallery ? `<!-- ── 6. Galería con Lightbox ── -->
+  ${specsCards ? `<!-- ── 5. Especificaciones Clave ── -->
+  <h2>Especificaciones del Proyecto</h2>
+  <div class="specs-grid">
+${specsCards}
+  </div>` : ''}
+
+  ${hasTags ? `<!-- ── 6. Materiales y Estilo ── -->
+  <div class="tags-section">
+    ${materialTags ? `<div class="tags-group"><div class="tags-group-label">Materiales</div>${materialTags}</div>` : ''}
+    ${styleTags ? `<div class="tags-group"><div class="tags-group-label">Estilo</div>${styleTags}</div>` : ''}
+    ${zoneTags ? `<div class="tags-group"><div class="tags-group-label">Zona</div>${zoneTags}</div>` : ''}
+  </div>` : ''}
+
+  ${hasGallery ? `<!-- ── 7. Galería Visual ── -->
   <h2>Galería del Proyecto</h2>
   <div class="gallery">
 ${galleryImgs}
@@ -556,7 +585,7 @@ ${galleryImgs}
 
   ${videoSection}
 
-  ${hasGallery || videoSection ? `<!-- ── CTA Mid-page ── -->
+  ${hasGallery || videoSection ? `<!-- ── 9. CTA Mid-page ── -->
   <div class="cta-mid">
     <h3>${escapeHtml(seo.midCta)}</h3>
     <a href="https://wa.me/528115269496?text=${waMid}" class="cta-wa-btn" target="_blank" rel="noopener"
@@ -565,20 +594,7 @@ ${galleryImgs}
     </a>
   </div>` : ''}
 
-  ${specsCards ? `<!-- ── 8. Ficha Técnica ── -->
-  <h2>Ficha Técnica</h2>
-  <div class="specs-grid">
-${specsCards}
-  </div>` : ''}
-
-  ${hasTags ? `<!-- ── 9. Tags SEO ── -->
-  <div class="tags-section">
-    ${materialTags ? `<div class="tags-group"><div class="tags-group-label">Materiales</div>${materialTags}</div>` : ''}
-    ${styleTags ? `<div class="tags-group"><div class="tags-group-label">Estilo</div>${styleTags}</div>` : ''}
-    ${zoneTags ? `<div class="tags-group"><div class="tags-group-label">Zona</div>${zoneTags}</div>` : ''}
-  </div>` : ''}
-
-  ${p.result ? `<!-- ── 10. Resultado ── -->
+  ${p.result ? `<!-- ── 10. El Resultado ── -->
   <div class="section-result">
     <h2>El Resultado</h2>
     <p>${escapeHtml(p.result)}</p>
@@ -588,8 +604,8 @@ ${specsCards}
 
   <!-- ── 12. CTA de Cierre ── -->
   <div class="cta-inline">
-    <h3>¿Te gustaría un resultado similar?</h3>
-    <p>Platícanos sobre tu proyecto y recibe una cotización sin compromiso.</p>
+    <h3>${escapeHtml(seo.closeCta || '¿Te gustaría un resultado similar?')}</h3>
+    <p>Cada proyecto ZenHome se diseña a la medida de tu espacio, tu estilo y tu presupuesto.</p>
     <a href="https://wa.me/528115269496?text=${waClose}" class="cta-wa-btn" target="_blank" rel="noopener"
        onclick="gtag('event','click_whatsapp',{event_category:'conversion',event_label:'footer_cta_${slug}'});">
       ${WA_SVG} Quiero una cotización
