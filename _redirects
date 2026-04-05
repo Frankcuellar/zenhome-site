@@ -6,3 +6,7 @@ https://www.zenhome.com.mx/* https://zenhome.com.mx/:splat 301
 /disenodecocinas /#servicios 301
 /sobrenosotros /#equipo 301
 /contacto /#locaciones 301
+
+# Migración portafolio → proyectos
+/portafolio/ /proyectos/ 301
+/portafolio/:slug/ /proyectos/:slug/ 301

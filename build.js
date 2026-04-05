@@ -21,7 +21,7 @@ const path = require('path')
 const PROJECT_ID = process.env.SANITY_PROJECT_ID
 const DATASET = process.env.SANITY_DATASET || 'production'
 const TOKEN = process.env.SANITY_TOKEN || ''
-const OUTPUT_DIR = path.resolve(__dirname, 'portafolio')
+const OUTPUT_DIR = path.resolve(__dirname, 'proyectos')
 
 if (!PROJECT_ID) {
   console.error('❌ Falta SANITY_PROJECT_ID. Configura tu archivo .env')
@@ -117,6 +117,32 @@ const CATEGORY_TAGS = {
   constructora: 'CONSTRUCTORAS',
 }
 
+// ─── SEO helpers ───
+const CATEGORY_SEO = {
+  cocina: { keyword: 'cocina integral', cta: 'Cotiza tu cocina integral', midCta: '¿Te imaginas tu cocina así?' },
+  closet: { keyword: 'clóset a medida', cta: 'Cotiza tu clóset', midCta: '¿Te imaginas tu vestidor así?' },
+  interior: { keyword: 'diseño de interiores', cta: 'Cotiza tu proyecto', midCta: '¿Te imaginas tu espacio así?' },
+  constructora: { keyword: 'mobiliario para constructoras', cta: 'Cotiza tu proyecto', midCta: '¿Te imaginas un resultado así?' },
+}
+
+function generateSeoTitle(p) {
+  const cat = CATEGORY_LABELS[p.category] || 'Proyecto'
+  const style = p.style ? ` ${p.style.charAt(0).toUpperCase() + p.style.slice(1)}` : ''
+  const zone = p.location ? ` en ${p.location}` : ''
+  return `${cat}${style}${zone} | ZenHome Monterrey`
+}
+
+function generateSeoDescription(p) {
+  const cat = CATEGORY_LABELS[p.category] || 'Proyecto'
+  const materials = (p.materials || []).slice(0, 2).join(' y ')
+  const matText = materials ? ` Acabados en ${materials}.` : ''
+  const zone = p.location ? ` en ${p.location}` : ''
+  return `Proyecto real de ${cat.toLowerCase()}${zone}.${matText} Fotos, materiales y proceso completo. +300 proyectos entregados.`
+}
+
+// WhatsApp SVG icon (reusable)
+const WA_SVG = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.625.846 5.059 2.284 7.034L.789 23.492a.5.5 0 00.611.611l4.458-1.495A11.943 11.943 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-2.24 0-4.318-.726-6.003-1.956l-.42-.317-2.65.889.889-2.65-.317-.42A9.956 9.956 0 012 12C2 6.486 6.486 2 12 2s10 4.486 10 10-4.486 10-10 10z"/></svg>'
+
 // ─── Format date ───
 function formatDate(dateStr) {
   if (!dateStr) return ''
@@ -133,7 +159,7 @@ function projectCardHtml(p) {
   const img = imageUrl(p.heroImage, 600)
   const slug = p.slug?.current || ''
   return `
-    <a href="/portafolio/${slug}/" class="project-card" data-category="${p.category || ''}">
+    <a href="/proyectos/${slug}/" class="project-card" data-category="${p.category || ''}">
       <img src="${img}" alt="${escapeHtml(p.title)}" class="project-card-img" loading="lazy"/>
       <div class="project-card-body">
         <span class="project-card-tag">${CATEGORY_TAGS[p.category] || ''}</span>
@@ -152,66 +178,112 @@ function projectPageHtml(p, relatedProjects) {
   const slug = p.slug?.current || ''
   const dateStr = formatDate(p.deliveryDate)
   const tag = CATEGORY_TAGS[p.category] || ''
+  const seo = CATEGORY_SEO[p.category] || CATEGORY_SEO.interior
+  const catLabel = CATEGORY_LABELS[p.category] || 'Proyecto'
 
-  // Specs table rows
-  const specsRows = (p.specs || [])
-    .map((s) => `    <tr><th>${escapeHtml(s.label)}</th><td>${escapeHtml(s.value)}</td></tr>`)
+  // Dynamic SEO meta
+  const seoTitle = escapeHtml(p.seoTitle || generateSeoTitle(p))
+  const seoDesc = escapeHtml(p.seoDescription || generateSeoDescription(p))
+
+  // Specs as grid cards
+  const specsCards = (p.specs || [])
+    .map((s) => `      <div class="spec-card"><span class="spec-label">${escapeHtml(s.label)}</span><span class="spec-value">${escapeHtml(s.value)}</span></div>`)
     .join('\n')
 
-  // Gallery
+  // Gallery with lightbox data
+  const hasGallery = (p.gallery || []).length > 0
   const galleryImgs = (p.gallery || [])
-    .map(
-      (img) =>
-        `    <img src="${imageUrl(img, 600)}" alt="${escapeHtml(img.caption || p.title)}" loading="lazy"/>`
-    )
+    .map((img, i) => {
+      const alt = escapeHtml(img.caption || `${catLabel} - ${p.title} - foto ${i + 1}`)
+      const cls = i === 0 ? ' class="gallery-featured"' : ''
+      return `      <img src="${imageUrl(img, 800)}" alt="${alt}" loading="lazy"${cls} onclick="openLightbox(${i})"/>`
+    })
     .join('\n')
+
+  // Gallery full-size URLs for lightbox
+  const galleryFull = (p.gallery || []).map((img) => imageUrl(img, 1400))
 
   // Video
   let videoSection = ''
   if (p.videoUrl) {
-    const videoId = p.videoUrl.match(/(?:v=|youtu\.be\/)([a-zA-Z0-9_-]+)/)?.[1]
+    const videoId = p.videoUrl.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/)?.[1]
     if (videoId) {
       videoSection = `
-  <h2>Video del Proyecto</h2>
-  <div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:12px;margin:24px 0 36px;">
-    <iframe src="https://www.youtube.com/embed/${videoId}" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;" allowfullscreen loading="lazy"></iframe>
-  </div>`
+  <section class="section-video">
+    <h2>Video del Proyecto</h2>
+    <div class="video-wrapper">
+      <iframe src="https://www.youtube-nocookie.com/embed/${videoId}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+    </div>
+  </section>`
     }
   }
 
   // Testimonial
   let testimonialSection = ''
+  let reviewSchema = ''
   if (p.testimonial?.quote) {
-    const stars = '★'.repeat(p.testimonial.rating || 5) + '☆'.repeat(5 - (p.testimonial.rating || 5))
+    const rating = p.testimonial.rating || 5
+    const stars = '\u2605'.repeat(rating) + '\u2606'.repeat(5 - rating)
     testimonialSection = `
-  <div class="testimonial">
-    <div class="stars">${stars}</div>
-    <blockquote>"${escapeHtml(p.testimonial.quote)}"</blockquote>
-    <cite>— ${escapeHtml(p.testimonial.author || 'Cliente ZenHome')}</cite>
-  </div>`
+  <section class="section-testimonial">
+    <div class="testimonial">
+      <div class="stars">${stars}</div>
+      <blockquote>\u201C${escapeHtml(p.testimonial.quote)}\u201D</blockquote>
+      <cite>\u2014 ${escapeHtml(p.testimonial.author || 'Cliente ZenHome')}</cite>
+    </div>
+  </section>`
+    reviewSchema = `,
+  "review": {
+    "@type": "Review",
+    "reviewRating": {"@type": "Rating", "ratingValue": "${rating}", "bestRating": "5"},
+    "author": {"@type": "Person", "name": "${escapeHtml(p.testimonial.author || 'Cliente ZenHome')}"},
+    "reviewBody": "${escapeHtml(p.testimonial.quote)}"
+  }`
   }
 
   // Solution
   const solutionHtml = blocksToHtml(p.solution)
 
+  // Tags (materials, style, zone)
+  const materialTags = (p.materials || []).map((m) =>
+    `<a href="/materiales/${m}/" class="seo-tag">${escapeHtml(m.replace(/-/g, ' '))}</a>`).join('')
+  const styleTags = p.style
+    ? `<a href="/estilos/${p.style}/" class="seo-tag">${escapeHtml(p.style.replace(/-/g, ' '))}</a>` : ''
+  const zoneTags = p.zone
+    ? `<a href="/zonas/${p.zone}/" class="seo-tag">${escapeHtml(p.zone.replace(/-/g, ' '))}</a>` : ''
+  const hasTags = materialTags || styleTags || zoneTags
+
+  // Schema about entities
+  const aboutEntities = [
+    `{"@type": "Thing", "name": "${escapeHtml(catLabel)}"}`,
+    ...(p.materials || []).slice(0, 2).map((m) => `{"@type": "Thing", "name": "${escapeHtml(m.replace(/-/g, ' '))}"}`),
+    p.location ? `{"@type": "Place", "name": "${escapeHtml(p.location)}, Nuevo León"}` : '',
+  ].filter(Boolean)
+
   // Related projects
   const relatedHtml = relatedProjects
-    .map(
-      (r) => `
-      <a href="/portafolio/${r.slug?.current || ''}/" class="related-card">
+    .map((r) => `
+      <a href="/proyectos/${r.slug?.current || ''}/" class="related-card">
         <img src="${imageUrl(r.heroImage, 400)}" alt="${escapeHtml(r.title)}" loading="lazy"/>
         <div class="related-card-body">
+          <span class="related-tag">${CATEGORY_TAGS[r.category] || ''}</span>
           <h3>${escapeHtml(r.title)}</h3>
           <p>${escapeHtml(r.location || '')}</p>
         </div>
-      </a>`
-    )
+      </a>`)
     .join('\n')
 
-  // WA message
-  const waMsg = encodeURIComponent(
-    `Hola ZenHome, vi el proyecto "${p.title}" y me interesa algo similar para mi espacio.`
-  )
+  // WA messages (different per CTA placement)
+  const waHero = encodeURIComponent(`Hola ZenHome, vi el proyecto "${p.title}" y me interesa algo similar para mi espacio.`)
+  const waMid = encodeURIComponent(`Hola ZenHome, me gustó la galería de "${p.title}". ¿Podrían cotizarme algo parecido?`)
+  const waClose = encodeURIComponent(`Hola ZenHome, quiero una cotización para mi espacio. Vi su proyecto "${p.title}".`)
+
+  // Money page link for this category
+  const moneyPageLink = p.category === 'cocina'
+    ? '<a href="/cocinas-integrales-monterrey/">Cocinas Integrales en Monterrey</a>'
+    : p.category === 'closet'
+    ? '<a href="/closets-vestidores-monterrey/">Clósets y Vestidores</a>'
+    : '<a href="/diseno-interiores-monterrey/">Diseño de Interiores</a>'
 
   return `<!DOCTYPE html>
 <html lang="es-mx">
@@ -220,16 +292,18 @@ function projectPageHtml(p, relatedProjects) {
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-JSYYXX8Z2K"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-JSYYXX8Z2K');</script>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>${escapeHtml(p.title)} | ZenHome Monterrey</title>
-<link rel="canonical" href="https://zenhome.com.mx/portafolio/${slug}/"/>
-<meta name="description" content="${escapeHtml(p.description || '')}"/>
-<meta property="og:title" content="${escapeHtml(p.title)} | ZenHome"/>
-<meta property="og:description" content="${escapeHtml(p.description || '')}"/>
+<title>${seoTitle}</title>
+<link rel="canonical" href="https://zenhome.com.mx/proyectos/${slug}/"/>
+<meta name="description" content="${seoDesc}"/>
+<meta property="og:title" content="${seoTitle}"/>
+<meta property="og:description" content="${seoDesc}"/>
 <meta property="og:type" content="article"/>
-<meta property="og:url" content="https://zenhome.com.mx/portafolio/${slug}/"/>
+<meta property="og:url" content="https://zenhome.com.mx/proyectos/${slug}/"/>
 <meta property="og:locale" content="es_MX"/>
 <meta property="og:site_name" content="ZenHome"/>
 <meta property="og:image" content="${heroImg}"/>
+<meta property="og:image:width" content="1200"/>
+<meta property="og:image:height" content="630"/>
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="robots" content="index, follow"/>
 <link rel="icon" href="/favicon.ico" sizes="any"/>
@@ -244,32 +318,36 @@ function projectPageHtml(p, relatedProjects) {
   "@context": "https://schema.org",
   "@type": "Article",
   "headline": "${escapeHtml(p.title)}",
-  "description": "${escapeHtml(p.description || '')}",
-  "image": "${heroImg}",
+  "description": "${seoDesc}",
+  "image": ["${heroImg}"],
   "author": {"@type": "Organization", "name": "ZenHome", "url": "https://zenhome.com.mx"},
   "publisher": {"@type": "Organization", "name": "ZenHome", "url": "https://zenhome.com.mx"},
   "datePublished": "${p.deliveryDate || ''}",
-  "mainEntityOfPage": "https://zenhome.com.mx/portafolio/${slug}/",
+  "mainEntityOfPage": "https://zenhome.com.mx/proyectos/${slug}/",
+  "about": [${aboutEntities.join(', ')}],
   "breadcrumb": {
     "@type": "BreadcrumbList",
     "itemListElement": [
       {"@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://zenhome.com.mx/"},
-      {"@type": "ListItem", "position": 2, "name": "Portafolio", "item": "https://zenhome.com.mx/portafolio/"},
+      {"@type": "ListItem", "position": 2, "name": "Proyectos", "item": "https://zenhome.com.mx/proyectos/"},
       {"@type": "ListItem", "position": 3, "name": "${escapeHtml(p.title)}"}
     ]
-  }
+  }${reviewSchema}
 }
 </script>
 
 <style>
   :root {
     --blue-dark: #000321; --blue: #0038FF; --blue-mid: #1542b0; --blue-light: #3668e5;
-    --bg-light: #e7edf9; --bg-soft: #F6F6FF; --gold: #eddb7e; --text: #0E182C;
-    --text-muted: #8893A8; --white: #ffffff; --green-wa: #25D366;
-    --radius: 12px; --shadow: 0 2px 8px rgba(0,3,33,0.10);
+    --bg-light: #e7edf9; --bg-soft: #F6F6FF; --bg-warm: #FAFAF7; --gold: #eddb7e;
+    --text: #0E182C; --text-muted: #8893A8; --white: #ffffff; --green-wa: #25D366;
+    --border: #e8ecf4; --radius: 12px; --radius-sm: 8px;
+    --shadow: 0 2px 8px rgba(0,3,33,0.08); --shadow-md: 0 4px 16px rgba(0,3,33,0.12);
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: 'Roboto', sans-serif; color: var(--text); background: var(--white); line-height: 1.7; -webkit-font-smoothing: antialiased; }
+
+  /* ── Header ── */
   .zh-header { background: var(--blue-dark); padding: 0 40px; height: 70px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
   .zh-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--white); font-size: 22px; font-weight: 700; }
   .zh-logo img { height: 40px; width: auto; }
@@ -286,30 +364,89 @@ function projectPageHtml(p, relatedProjects) {
     .zh-nav.open { display: flex; }
     .zh-nav a { width: 100%; padding: 12px 16px; }
   }
-  .breadcrumb { padding: 16px 40px; font-size: 14px; color: var(--text-muted); background: var(--bg-soft); border-bottom: 1px solid #e0e4ef; }
+
+  /* ── Breadcrumb ── */
+  .breadcrumb { padding: 16px 40px; font-size: 14px; color: var(--text-muted); background: var(--bg-soft); border-bottom: 1px solid var(--border); }
   .breadcrumb a { color: var(--blue); text-decoration: none; }
   .breadcrumb a:hover { text-decoration: underline; }
-  .article { max-width: 900px; margin: 0 auto; padding: 40px; }
-  @media (max-width: 768px) { .article { padding: 24px 20px; } .breadcrumb { padding: 12px 20px; } }
-  .article-tag { display: inline-block; background: var(--bg-light); color: var(--blue); font-size: 12px; font-weight: 600; padding: 4px 14px; border-radius: 14px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; }
-  .article h1 { font-size: clamp(24px, 4vw, 36px); font-weight: 900; line-height: 1.2; margin-bottom: 16px; }
-  .article-meta { display: flex; gap: 20px; flex-wrap: wrap; font-size: 14px; color: var(--text-muted); margin-bottom: 32px; padding-bottom: 24px; border-bottom: 1px solid #eee; }
-  .article-meta span { display: flex; align-items: center; gap: 5px; }
-  .article-hero { width: 100%; border-radius: var(--radius); overflow: hidden; margin-bottom: 32px; box-shadow: var(--shadow); }
-  .article-hero img { width: 100%; display: block; }
+  @media (max-width: 768px) { .breadcrumb { padding: 12px 20px; } }
+
+  /* ── Split Hero ── */
+  .split-hero { display: flex; gap: 40px; max-width: 1100px; margin: 0 auto; padding: 40px; align-items: center; }
+  .split-hero__info { flex: 1; min-width: 0; }
+  .split-hero__image { flex: 1.2; min-width: 0; }
+  .split-hero__image img { width: 100%; border-radius: var(--radius); box-shadow: var(--shadow-md); display: block; }
+  .split-hero__tag { display: inline-block; background: var(--bg-light); color: var(--blue); font-size: 12px; font-weight: 600; padding: 4px 14px; border-radius: 14px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; }
+  .split-hero h1 { font-size: clamp(24px, 3.5vw, 34px); font-weight: 900; line-height: 1.2; margin-bottom: 16px; color: var(--blue-dark); }
+  .split-hero__meta { display: flex; gap: 16px; flex-wrap: wrap; font-size: 14px; color: var(--text-muted); margin-bottom: 20px; }
+  .split-hero__meta span { display: flex; align-items: center; gap: 5px; }
+  .split-hero__desc { font-size: 16px; color: var(--text); margin-bottom: 24px; line-height: 1.7; }
+  .hero-cta { display: inline-flex; align-items: center; gap: 10px; background: var(--green-wa); color: var(--white); text-decoration: none; font-size: 15px; font-weight: 600; padding: 12px 28px; border-radius: 30px; box-shadow: 0 4px 16px rgba(37,211,102,0.3); transition: transform 0.2s; }
+  .hero-cta:hover { transform: scale(1.03); }
+  .hero-cta svg { width: 18px; height: 18px; }
+  @media (max-width: 768px) {
+    .split-hero { flex-direction: column-reverse; padding: 24px 20px; gap: 24px; }
+  }
+
+  /* ── Article body ── */
+  .article { max-width: 860px; margin: 0 auto; padding: 0 40px 40px; }
+  @media (max-width: 768px) { .article { padding: 0 20px 24px; } }
   .article h2 { font-size: 22px; font-weight: 700; margin: 36px 0 14px; color: var(--blue-dark); }
   .article p { margin-bottom: 16px; font-size: 16px; }
-  .specs-table { width: 100%; border-collapse: collapse; margin: 20px 0 32px; font-size: 15px; }
-  .specs-table th, .specs-table td { padding: 12px 16px; text-align: left; border-bottom: 1px solid #eee; }
-  .specs-table th { background: var(--bg-light); font-weight: 600; width: 40%; color: var(--blue-dark); }
-  .specs-table tr:last-child th, .specs-table tr:last-child td { border-bottom: none; }
-  .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; margin: 24px 0 36px; }
-  .gallery img { width: 100%; border-radius: 8px; cursor: pointer; transition: transform 0.2s; box-shadow: var(--shadow); }
+
+  /* ── Challenge block ── */
+  .challenge-block { background: var(--bg-warm); border-left: 4px solid var(--gold); border-radius: 0 var(--radius-sm) var(--radius-sm) 0; padding: 24px 28px; margin: 24px 0; }
+  .challenge-block p { margin: 0; }
+
+  /* ── Specs grid ── */
+  .specs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin: 20px 0 32px; }
+  .spec-card { background: var(--bg-soft); border-radius: var(--radius-sm); padding: 16px; display: flex; flex-direction: column; gap: 4px; }
+  .spec-label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); }
+  .spec-value { font-size: 16px; font-weight: 600; color: var(--blue-dark); }
+
+  /* ── Gallery ── */
+  .gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 24px 0 36px; }
+  .gallery img { width: 100%; height: 220px; object-fit: cover; border-radius: var(--radius-sm); cursor: pointer; transition: transform 0.2s; box-shadow: var(--shadow); }
   .gallery img:hover { transform: scale(1.02); }
+  .gallery img.gallery-featured { grid-column: span 2; height: 320px; }
+  @media (max-width: 600px) {
+    .gallery { grid-template-columns: repeat(2, 1fr); }
+    .gallery img.gallery-featured { grid-column: span 2; height: 200px; }
+    .gallery img { height: 150px; }
+  }
+
+  /* ── Lightbox ── */
+  .lightbox { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 9999; align-items: center; justify-content: center; }
+  .lightbox.active { display: flex; }
+  .lightbox img { max-width: 90vw; max-height: 85vh; border-radius: 8px; object-fit: contain; }
+  .lightbox-close { position: absolute; top: 20px; right: 24px; color: white; font-size: 32px; cursor: pointer; background: none; border: none; z-index: 10; }
+  .lightbox-nav { position: absolute; top: 50%; transform: translateY(-50%); color: white; font-size: 40px; cursor: pointer; background: rgba(255,255,255,0.1); border: none; border-radius: 50%; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+  .lightbox-nav:hover { background: rgba(255,255,255,0.2); }
+  .lightbox-prev { left: 16px; }
+  .lightbox-next { right: 16px; }
+
+  /* ── Video ── */
+  .video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: var(--radius); margin: 24px 0 36px; box-shadow: var(--shadow-md); }
+  .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+
+  /* ── Tags ── */
+  .tags-section { margin: 32px 0; }
+  .tags-group { margin-bottom: 12px; }
+  .tags-group-label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); margin-bottom: 6px; }
+  .seo-tag { display: inline-block; background: var(--bg-light); color: var(--blue); font-size: 13px; font-weight: 500; padding: 4px 14px; border-radius: 14px; text-decoration: none; margin: 3px 4px 3px 0; transition: background 0.2s; text-transform: capitalize; }
+  .seo-tag:hover { background: var(--blue); color: var(--white); }
+
+  /* ── Testimonial ── */
   .testimonial { background: var(--bg-light); border-radius: var(--radius); padding: 28px; margin: 32px 0; border-left: 4px solid var(--blue); }
   .testimonial blockquote { font-size: 16px; font-style: italic; margin-bottom: 10px; }
   .testimonial cite { font-size: 14px; color: var(--text-muted); font-style: normal; font-weight: 600; }
   .testimonial .stars { color: #f59e0b; font-size: 18px; margin-bottom: 8px; }
+
+  /* ── Result ── */
+  .section-result { background: var(--bg-soft); border-radius: var(--radius); padding: 28px; margin: 32px 0; }
+  .section-result h2 { margin-top: 0; }
+
+  /* ── CTA inline ── */
   .cta-inline { background: linear-gradient(135deg, var(--blue-dark) 0%, var(--blue-mid) 100%); color: var(--white); border-radius: var(--radius); padding: 36px; text-align: center; margin: 40px 0; }
   .cta-inline h3 { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
   .cta-inline p { opacity: 0.85; margin-bottom: 20px; font-size: 15px; }
@@ -317,17 +454,34 @@ function projectPageHtml(p, relatedProjects) {
   .cta-wa-btn:hover { transform: scale(1.03); }
   .cta-wa-btn svg { width: 20px; height: 20px; }
   .cta-micro { font-size: 13px; opacity: 0.6; margin-top: 8px; }
+  .cta-mid { background: var(--bg-warm); border-radius: var(--radius); padding: 28px; text-align: center; margin: 36px 0; border: 1px solid var(--border); }
+  .cta-mid h3 { font-size: 20px; font-weight: 700; color: var(--blue-dark); margin-bottom: 12px; }
+
+  /* ── Related ── */
   .related { margin: 48px 0 0; }
   .related h2 { font-size: 22px; margin-bottom: 20px; }
-  .related-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
+  .related-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
   .related-card { text-decoration: none; color: inherit; border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); transition: transform 0.2s; }
   .related-card:hover { transform: translateY(-3px); }
   .related-card img { width: 100%; height: 180px; object-fit: cover; }
   .related-card-body { padding: 14px 16px; }
-  .related-card h3 { font-size: 15px; font-weight: 600; }
+  .related-tag { font-size: 11px; font-weight: 600; color: var(--blue); text-transform: uppercase; letter-spacing: 0.3px; }
+  .related-card h3 { font-size: 15px; font-weight: 600; margin-top: 4px; }
   .related-card p { font-size: 13px; color: var(--text-muted); }
+  @media (max-width: 768px) { .related-grid { grid-template-columns: 1fr; } }
+
+  /* ── SEO links footer ── */
+  .seo-links { background: var(--bg-soft); border-top: 1px solid var(--border); padding: 28px 0; margin-top: 48px; }
+  .seo-links__inner { max-width: 860px; margin: 0 auto; padding: 0 40px; display: flex; flex-wrap: wrap; gap: 24px; justify-content: center; }
+  .seo-links a { color: var(--blue); text-decoration: none; font-size: 14px; font-weight: 500; }
+  .seo-links a:hover { text-decoration: underline; }
+  @media (max-width: 768px) { .seo-links__inner { padding: 0 20px; gap: 16px; } }
+
+  /* ── Footer ── */
   .zh-footer { background: var(--blue-dark); color: var(--white); text-align: center; padding: 32px 40px; font-size: 14px; opacity: 0.7; }
   .zh-footer a { color: var(--gold); text-decoration: none; }
+
+  /* ── WhatsApp float ── */
   .zh-wa-float { position: fixed; bottom: 24px; right: 24px; z-index: 999; display: flex; align-items: center; gap: 8px; text-decoration: none; }
   .zh-wa-float__btn { width: 56px; height: 56px; border-radius: 50%; background: var(--green-wa); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(37,211,102,0.35); transition: transform 0.2s; position: relative; }
   .zh-wa-float:hover .zh-wa-float__btn { transform: scale(1.08); }
@@ -339,6 +493,7 @@ function projectPageHtml(p, relatedProjects) {
 </head>
 <body>
 
+<!-- ── 0. Header ── -->
 <header class="zh-header">
   <a href="/" class="zh-logo">
     <img src="https://images.leadconnectorhq.com/image/f_webp/q_80/r_400/u_https://assets.cdn.filesafe.space/tGT0NBw0s46QQDWPfp3W/media/67531ed7d1a1319bcbad3551.png" alt="ZenHome logo"/>
@@ -347,7 +502,7 @@ function projectPageHtml(p, relatedProjects) {
   <nav class="zh-nav">
     <a href="/">Inicio</a>
     <a href="/#servicios">Diseño de Cocinas</a>
-    <a href="/portafolio/" class="active">Portafolio</a>
+    <a href="/proyectos/" class="active">Proyectos</a>
     <a href="/#equipo">Sobre Nosotros</a>
     <a href="/#locaciones">Contacto</a>
     <a href="https://wa.me/528115269496?text=Hola%20ZenHome%2C%20me%20interesa%20una%20cotización." class="zh-nav-cta" target="_blank" rel="noopener">
@@ -357,54 +512,93 @@ function projectPageHtml(p, relatedProjects) {
   </nav>
 </header>
 
+<!-- ── 1. Breadcrumb ── -->
 <div class="breadcrumb">
-  <a href="/">Inicio</a> &rsaquo; <a href="/portafolio/">Portafolio</a> &rsaquo; <strong>${escapeHtml(p.title)}</strong>
+  <a href="/">Inicio</a> &rsaquo; <a href="/proyectos/">Proyectos</a> &rsaquo; <strong>${escapeHtml(p.title)}</strong>
 </div>
 
+<!-- ── 2. Split Hero ── -->
+<section class="split-hero">
+  <div class="split-hero__info">
+    <span class="split-hero__tag">${tag}</span>
+    <h1>${escapeHtml(p.title)}</h1>
+    <div class="split-hero__meta">
+      ${p.location ? `<span>📍 ${escapeHtml(p.location)}</span>` : ''}
+      ${dateStr ? `<span>📅 ${dateStr}</span>` : ''}
+      ${p.duration ? `<span>⏱ ${escapeHtml(p.duration)}</span>` : ''}
+    </div>
+    ${p.description ? `<p class="split-hero__desc">${escapeHtml(p.description)}</p>` : ''}
+    <a href="https://wa.me/528115269496?text=${waHero}" class="hero-cta" target="_blank" rel="noopener"
+       onclick="gtag('event','click_whatsapp',{event_category:'conversion',event_label:'hero_cta_${slug}'});">
+      ${WA_SVG} ${escapeHtml(seo.cta)}
+    </a>
+  </div>
+  <div class="split-hero__image">
+    <img src="${heroImg}" alt="${escapeHtml(p.title)} - ${escapeHtml(catLabel)} en ${escapeHtml(p.location || 'Monterrey')}" width="900" height="600"/>
+  </div>
+</section>
+
 <article class="article">
-  <span class="article-tag">${tag}</span>
-  <h1>${escapeHtml(p.title)}</h1>
 
-  <div class="article-meta">
-    <span>📍 ${escapeHtml(p.location || '')}</span>
-    ${dateStr ? `<span>📅 Entregado: ${dateStr}</span>` : ''}
-    ${p.duration ? `<span>⏱ Duración: ${escapeHtml(p.duration)}</span>` : ''}
-  </div>
+  ${p.challenge ? `<!-- ── 4. El Reto ── -->
+  <h2>El Reto</h2>
+  <div class="challenge-block"><p>${escapeHtml(p.challenge)}</p></div>` : ''}
 
-  <div class="article-hero">
-    <img src="${heroImg}" alt="${escapeHtml(p.title)}" width="900" height="600"/>
-  </div>
+  ${solutionHtml ? `<!-- ── 5. Nuestra Solución ── -->
+  <h2>Nuestra Solución</h2>
+  ${solutionHtml}` : ''}
 
-  ${p.challenge ? `<h2>El Reto</h2>\n  <p>${escapeHtml(p.challenge)}</p>` : ''}
-
-  ${solutionHtml ? `<h2>Nuestra Solución</h2>\n  ${solutionHtml}` : ''}
-
-  ${specsRows ? `<h2>Ficha Técnica</h2>
-  <table class="specs-table">
-${specsRows}
-  </table>` : ''}
-
-  ${galleryImgs ? `<h2>Galería del Proyecto</h2>
+  ${hasGallery ? `<!-- ── 6. Galería con Lightbox ── -->
+  <h2>Galería del Proyecto</h2>
   <div class="gallery">
 ${galleryImgs}
   </div>` : ''}
 
   ${videoSection}
 
+  ${hasGallery || videoSection ? `<!-- ── CTA Mid-page ── -->
+  <div class="cta-mid">
+    <h3>${escapeHtml(seo.midCta)}</h3>
+    <a href="https://wa.me/528115269496?text=${waMid}" class="cta-wa-btn" target="_blank" rel="noopener"
+       onclick="gtag('event','click_whatsapp',{event_category:'conversion',event_label:'mid_cta_${slug}'});">
+      ${WA_SVG} Platícanos tu idea
+    </a>
+  </div>` : ''}
+
+  ${specsCards ? `<!-- ── 8. Ficha Técnica ── -->
+  <h2>Ficha Técnica</h2>
+  <div class="specs-grid">
+${specsCards}
+  </div>` : ''}
+
+  ${hasTags ? `<!-- ── 9. Tags SEO ── -->
+  <div class="tags-section">
+    ${materialTags ? `<div class="tags-group"><div class="tags-group-label">Materiales</div>${materialTags}</div>` : ''}
+    ${styleTags ? `<div class="tags-group"><div class="tags-group-label">Estilo</div>${styleTags}</div>` : ''}
+    ${zoneTags ? `<div class="tags-group"><div class="tags-group-label">Zona</div>${zoneTags}</div>` : ''}
+  </div>` : ''}
+
+  ${p.result ? `<!-- ── 10. Resultado ── -->
+  <div class="section-result">
+    <h2>El Resultado</h2>
+    <p>${escapeHtml(p.result)}</p>
+  </div>` : ''}
+
   ${testimonialSection}
 
+  <!-- ── 12. CTA de Cierre ── -->
   <div class="cta-inline">
     <h3>¿Te gustaría un resultado similar?</h3>
     <p>Platícanos sobre tu proyecto y recibe una cotización sin compromiso.</p>
-    <a href="https://wa.me/528115269496?text=${waMsg}" class="cta-wa-btn" target="_blank" rel="noopener"
-       onclick="gtag('event','click_whatsapp',{event_category:'conversion',event_label:'proyecto_${slug}'});">
-      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.625.846 5.059 2.284 7.034L.789 23.492a.5.5 0 00.611.611l4.458-1.495A11.943 11.943 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-2.24 0-4.318-.726-6.003-1.956l-.42-.317-2.65.889.889-2.65-.317-.42A9.956 9.956 0 012 12C2 6.486 6.486 2 12 2s10 4.486 10 10-4.486 10-10 10z"/></svg>
-      Quiero una cotización
+    <a href="https://wa.me/528115269496?text=${waClose}" class="cta-wa-btn" target="_blank" rel="noopener"
+       onclick="gtag('event','click_whatsapp',{event_category:'conversion',event_label:'footer_cta_${slug}'});">
+      ${WA_SVG} Quiero una cotización
     </a>
-    <div class="cta-micro">Respuesta rápida · Sin compromiso</div>
+    <div class="cta-micro">Respuesta en menos de 2 horas · Sin compromiso</div>
   </div>
 
-  ${relatedHtml ? `<div class="related">
+  ${relatedHtml ? `<!-- ── 13. Proyectos Relacionados ── -->
+  <div class="related">
     <h2>Proyectos Relacionados</h2>
     <div class="related-grid">
 ${relatedHtml}
@@ -413,14 +607,47 @@ ${relatedHtml}
 
 </article>
 
+<!-- ── 14. Links Internos SEO ── -->
+<div class="seo-links">
+  <div class="seo-links__inner">
+    ${moneyPageLink}
+    <a href="/proyectos/">Ver todos los proyectos</a>
+    <a href="/#servicios">Nuestros servicios</a>
+    <a href="/#locaciones">Showrooms</a>
+    <a href="https://wa.me/528115269496?text=Hola%20ZenHome%2C%20quiero%20agendar%20una%20cita." target="_blank" rel="noopener">Agendar cita</a>
+  </div>
+</div>
+
 <footer class="zh-footer">
   <p>&copy; ${new Date().getFullYear()} <a href="/">ZenHome</a> · Cocinas Integrales y Diseño de Interiores en Monterrey</p>
 </footer>
 
-<a class="zh-wa-float" href="https://wa.me/528115269496?text=Hola%20ZenHome%2C%20vi%20su%20portafolio%20y%20me%20interesa%20una%20cotización." target="_blank" rel="noopener">
+<a class="zh-wa-float" href="https://wa.me/528115269496?text=${waHero}" target="_blank" rel="noopener"
+   onclick="gtag('event','click_whatsapp',{event_category:'conversion',event_label:'floating_wa_${slug}'});">
   <div class="zh-wa-float__btn"><div class="zh-wa-float__pulse"></div><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.625.846 5.059 2.284 7.034L.789 23.492a.5.5 0 00.611.611l4.458-1.495A11.943 11.943 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-2.24 0-4.318-.726-6.003-1.956l-.42-.317-2.65.889.889-2.65-.317-.42A9.956 9.956 0 012 12C2 6.486 6.486 2 12 2s10 4.486 10 10-4.486 10-10 10z"/></svg></div>
   <span class="zh-wa-float__label">Cotiza gratis</span>
 </a>
+
+${hasGallery ? `<!-- Lightbox -->
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" onclick="closeLightbox()">&times;</button>
+  <button class="lightbox-nav lightbox-prev" onclick="navLightbox(-1)">&#8249;</button>
+  <img id="lightbox-img" src="" alt=""/>
+  <button class="lightbox-nav lightbox-next" onclick="navLightbox(1)">&#8250;</button>
+</div>
+<script>
+  var lbImgs = ${JSON.stringify(galleryFull)};
+  var lbIdx = 0;
+  function openLightbox(i) { lbIdx = i; document.getElementById('lightbox-img').src = lbImgs[i]; document.getElementById('lightbox').classList.add('active'); document.body.style.overflow='hidden'; }
+  function closeLightbox() { document.getElementById('lightbox').classList.remove('active'); document.body.style.overflow=''; }
+  function navLightbox(d) { lbIdx = (lbIdx + d + lbImgs.length) % lbImgs.length; document.getElementById('lightbox-img').src = lbImgs[lbIdx]; }
+  document.addEventListener('keydown', function(e) {
+    if (!document.getElementById('lightbox').classList.contains('active')) return;
+    if (e.key === 'Escape') closeLightbox();
+    if (e.key === 'ArrowLeft') navLightbox(-1);
+    if (e.key === 'ArrowRight') navLightbox(1);
+  });
+</script>` : ''}
 
 </body>
 </html>`
@@ -455,16 +682,27 @@ async function build() {
   console.log(`   Sanity: ${PROJECT_ID} / ${DATASET}`)
   console.log(`   Output: ${OUTPUT_DIR}\n`)
 
+  // Normalize category to lowercase (defends against Sanity typos like "Cocinas" vs "cocina")
+  function normalizeCategory(cat) {
+    if (!cat) return ''
+    const map = { cocinas: 'cocina', cocina: 'cocina', closet: 'closet', closets: 'closet', interior: 'interior', constructora: 'constructora' }
+    return map[cat.toLowerCase()] || cat.toLowerCase()
+  }
+
   // Fetch all published projects
   const query = `*[_type == "project" && published == true] | order(featured desc, deliveryDate desc) {
     _id, title, slug, category, location, deliveryDate, duration,
     heroImage, description, challenge, solution, specs, gallery,
-    videoUrl, testimonial, published, featured
+    videoUrl, testimonial, published, featured,
+    materials, style, zone, result, seoTitle, seoDescription
   }`
 
   console.log('📡 Fetching projects from Sanity...')
   const projects = (await sanityFetch(query)) || []
   console.log(`   Found ${projects.length} published projects\n`)
+
+  // Normalize categories
+  projects.forEach((p) => { p.category = normalizeCategory(p.category) })
 
   if (projects.length === 0) {
     console.log('⚠️  No hay proyectos publicados. Nada que generar.')
@@ -480,17 +718,19 @@ async function build() {
       continue
     }
 
-    // Get 2 related projects (same category, excluding current)
-    const related = projects
+    // Get 3 related projects (same category first, then featured as fallback)
+    const sameCategory = projects
       .filter((p) => p._id !== project._id && p.category === project.category)
-      .slice(0, 2)
+    const others = projects
+      .filter((p) => p._id !== project._id && p.category !== project.category && p.featured)
+    const related = [...sameCategory, ...others].slice(0, 3)
 
     const html = projectPageHtml(project, related)
     const dir = path.join(OUTPUT_DIR, slug)
     fs.mkdirSync(dir, { recursive: true })
     fs.writeFileSync(path.join(dir, 'index.html'), html, 'utf-8')
     generated++
-    console.log(`   ✅ /portafolio/${slug}/`)
+    console.log(`   ✅ /proyectos/${slug}/`)
   }
 
   // Update portfolio index
@@ -498,7 +738,7 @@ async function build() {
   const indexHtml = portfolioIndexHtml(projects)
   if (indexHtml) {
     fs.writeFileSync(path.join(OUTPUT_DIR, 'index.html'), indexHtml, 'utf-8')
-    console.log('   ✅ /portafolio/')
+    console.log('   ✅ /proyectos/')
   }
 
   console.log(`\n🎉 Done! Generated ${generated} project pages.`)
