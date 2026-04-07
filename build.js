@@ -818,6 +818,39 @@ async function build() {
     console.log('   ✅ /proyectos/')
   }
 
+  // Generate sitemap.xml dynamically
+  console.log('\n🗺  Generating sitemap.xml...')
+  const today = new Date().toISOString().split('T')[0]
+  const sitemapUrls = [
+    { loc: 'https://zenhome.com.mx/', changefreq: 'weekly', priority: '1.0' },
+    { loc: 'https://zenhome.com.mx/proyectos/', changefreq: 'weekly', priority: '0.9' },
+  ]
+  for (const project of projects) {
+    const s = project.slug?.current
+    if (!s) continue
+    const lastmod = project.deliveryDate
+      ? new Date(project.deliveryDate).toISOString().split('T')[0]
+      : today
+    sitemapUrls.push({
+      loc: `https://zenhome.com.mx/proyectos/${s}/`,
+      lastmod,
+      changefreq: 'monthly',
+      priority: project.featured ? '0.8' : '0.7',
+    })
+  }
+  const sitemapXml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${sitemapUrls.map(u => `  <url>
+    <loc>${u.loc}</loc>
+    <lastmod>${u.lastmod || today}</lastmod>
+    <changefreq>${u.changefreq}</changefreq>
+    <priority>${u.priority}</priority>
+  </url>`).join('\n')}
+</urlset>`
+  const sitemapPath = path.resolve(__dirname, 'sitemap.xml')
+  fs.writeFileSync(sitemapPath, sitemapXml, 'utf-8')
+  console.log(`   ✅ sitemap.xml (${sitemapUrls.length} URLs)`)
+
   console.log(`\n🎉 Done! Generated ${generated} project pages.`)
   console.log('   Next: deploy zenhome-site/ to Cloudflare Pages')
 }
