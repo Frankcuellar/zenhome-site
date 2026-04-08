@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Servicios de cocinas integrales, closets y diseño de interiores en Monterrey. Especialistas en muebles personalizados con +100 proyectos ejecutados. Contáctanos por WhatsApp.">
+    <meta name="robots" content="index, follow">
+    <meta property="og:title" content="Servicios de Cocinas, Closets y Diseño de Interiores | ZenHome Monterrey">
+    <meta property="og:description" content="Descubre nuestros servicios de diseño y fabricación en Monterrey. Cocinas integrales, closets personalizados y diseño de interiores profesional.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://zenhome.com.mx/servicios/">
+    <link rel="canonical" href="https://zenhome.com.mx/servicios/">
+    <title>Servicios de Cocinas, Closets y Diseño de Interiores | ZenHome Monterrey</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- Google Analytics 4 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-JSYYXX8Z2K"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-JSYYXX8Z2K');
+    </script>
+    <!-- JSON-LD LocalBusiness with Service Catalog -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "LocalBusiness",
+        "name": "ZenHome",
+        "description": "Servicios de diseño y fabricación de muebles personalizados en Monterrey",
+        "url": "https://zenhome.com.mx",
+        "telephone": "+528115269496",
+        "image": "https://zenhome.com.mx/logo.png",
+        "address": [
+            {
+                "@type": "PostalAddress",
+                "streetAddress": "Sierra Leona 729",
+                "addressLocality": "Guadalupe",
+                "addressRegion": "NL",
+                "postalCode": "67110",
+                "addressCountry": "MX"
+            },
+            {
+                "@type": "PostalAddress",
+                "streetAddress": "Av. Revolución 3000",
+                "addressLocality": "Monterrey",
+                "addressRegion": "NL",
+                "postalCode": "64830",
+                "addressCountry": "MX"
+            }
+        ],
+        "sameAs": [
+            "https://facebook.com/ZenHomeMx",
+            "https://instagram.com/zenhomemx"
+        ],
+        "hasOfferCatalog": {
+            "@type": "OfferCatalog",
+            "name": "Servicios ZenHome",
+            "itemListElement": [
+                {
+                    "@type": "Offer",
+                    "name": "Cocinas Integrales",
+                    "description": "Diseño y fabricación de cocinas integrales personalizadas con materiales premium"
+                },
+                {
+                    "@type": "Offer",
+                    "name": "Closets y Vestidores",
+                    "description": "Closets y vestidores a medida, optimizando espacios con diseño funcional"
+                },
+                {
+                    "@type": "Offer",
+                    "name": "Diseño de Interiores",
+                    "description": "Proyectos integrales de diseño de interiores para hogares y espacios comerciales"
+                }
+            ]
+        }
+    }
+    </script>
+    <style>
+        :root {
+            --primary: #37ca37;
+            --secondary: #188bf6;
+            --dark: #0E182C;
+            --light-gray: #f8f9fa;
+            --border-gray: #e9ecef;
+            --text-dark: #1a1a1a;
+            --text-light: #666666;
+            --spacing: 1rem;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background-color: #ffffff;
+        }
+
+        /* Header & Navigation */
+        header {
+            background: #ffffff;
+            border-bottom: 1px solid var(--border-gray);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0.75rem var(--spacing);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dark);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo:hover {
+            color: var(--primary);
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 2rem;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--text-dark);
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: color 0.3s ease;
+        }
+
+        nav a:hover {
+            color: var(--primary);
+        }
+
+        nav a.active {
+            color: var(--primary);
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 0.25rem;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, var(--dark) 0%, #1a2a4f 100%);
+            color: #ffffff;
+            padding: 4rem var(--spacing);
+            text-align: center;
+        }
+
+        .hero-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: 2.75rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.8;
+        }
+
+        /* Services Grid */
+        .services-section {
+            max-width: 1200px;
+            margin: 4rem auto;
+            padding: 0 var(--spacing);
+        }
+
+        .services-section h2 {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 3rem;
+            color: var(--dark);
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .service-card {
+            background: #ffffff;
+            border: 2px solid var(--border-gray);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .service-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 8px 24px rgba(55, 202, 55, 0.12);
+            transform: translateY(-4px);
+        }
+
+        .service-icon {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .service-card h3 {
+            font-size: 1.35rem;
+            margin-bottom: 0.75rem;
+            color: var(--dark);
+        }
+
+        .service-card p {
+            color: var(--text-light);
+            margin-bottom: 1.5rem;
+            line-height: 1.7;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(135deg, var(--primary) 0%, #2ab02a 100%);
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 0.95rem;
+        }
+
+        .cta-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(55, 202, 55, 0.3);
+        }
+
+        /* Why ZenHome Section */
+        .why-section {
+            background: var(--light-gray);
+            padding: 4rem var(--spacing);
+            margin: 3rem 0;
+        }
+
+        .why-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .why-section h2 {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 3rem;
+            color: var(--dark);
+        }
+
+        .trust-points {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .trust-point {
+            background: #ffffff;
+            padding: 2rem;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        .trust-point-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .trust-point h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+
+        .trust-point p {
+            color: var(--text-light);
+            font-size: 0.95rem;
+        }
+
+        /* CTA Section */
+        .contact-cta {
+            background: linear-gradient(135deg, var(--primary) 0%, #2ab02a 100%);
+            color: #ffffff;
+            padding: 3rem var(--spacing);
+            text-align: center;
+            margin: 3rem 0;
+        }
+
+        .contact-cta-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .contact-cta h2 {
+            font-size: 1.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .contact-cta p {
+            font-size: 1rem;
+            margin-bottom: 2rem;
+            opacity: 0.95;
+        }
+
+        .whatsapp-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem 2rem;
+            background: #ffffff;
+            color: var(--primary);
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .whatsapp-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--dark);
+            color: #ffffff;
+            padding: 3rem var(--spacing) 2rem;
+            margin-top: 4rem;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h3 {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .footer-section p,
+        .footer-section a,
+        .footer-section li {
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 0.95rem;
+            line-height: 1.8;
+            text-decoration: none;
+        }
+
+        .footer-section a:hover {
+            color: var(--primary);
+            text-decoration: underline;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-links a {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            background: var(--primary);
+            text-decoration: none;
+        }
+
+        .footer-divider {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 1.5rem;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+
+        /* Floating WhatsApp Button */
+        .whatsapp-floating {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #25d366 0%, #20ba61 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            z-index: 50;
+            box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4);
+            transition: all 0.3s ease;
+            font-size: 1.5rem;
+        }
+
+        .whatsapp-floating:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(37, 211, 102, 0.5);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+
+            nav ul {
+                gap: 1rem;
+                font-size: 0.85rem;
+            }
+
+            .services-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .trust-points {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .whatsapp-floating {
+                width: 50px;
+                height: 50px;
+                bottom: 1.5rem;
+                right: 1.5rem;
+                font-size: 1.2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            nav ul {
+                flex-direction: column;
+                gap: 0.5rem;
+                text-align: center;
+            }
+
+            .hero {
+                padding: 2rem var(--spacing);
+            }
+
+            .hero h1 {
+                font-size: 1.4rem;
+            }
+
+            .hero p {
+                font-size: 0.95rem;
+            }
+
+            .services-section h2,
+            .why-section h2 {
+                font-size: 1.5rem;
+            }
+
+            .contact-cta h2 {
+                font-size: 1.35rem;
+            }
+
+            .cta-button,
+            .whatsapp-button {
+                padding: 0.6rem 1.2rem;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header & Navigation -->
+    <header>
+        <div class="header-container">
+            <a href="/" class="logo">🏠 ZenHome</a>
+            <nav>
+                <ul>
+                    <li><a href="/">Inicio</a></li>
+                    <li><a href="/servicios/" class="active">Servicios</a></li>
+                    <li><a href="/proyectos/">Proyectos</a></li>
+                    <li><a href="/contacto/">Contacto</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-container">
+            <h1>Servicios de Diseño y Fabricación en Monterrey</h1>
+            <p>Somos especialistas en cocinas integrales, closets personalizados y diseño de interiores. Transformamos espacios con materiales premium y atención personalizada.</p>
+        </div>
+    </section>
+
+    <!-- Services Grid -->
+    <section class="services-section">
+        <h2>Nuestros Servicios</h2>
+        <div class="services-grid">
+            <!-- Cocinas Integrales -->
+            <div class="service-card">
+                <span class="service-icon">🍳</span>
+                <h3>Cocinas Integrales</h3>
+                <p>Diseño y fabricación de cocinas personalizadas con materiales premium. Optimizamos funcionalidad y estética para crear el espacio que siempre soñaste.</p>
+                <a href="/cocinas-integrales-monterrey/" class="cta-button">Ver más →</a>
+            </div>
+
+            <!-- Closets y Vestidores -->
+            <div class="service-card">
+                <span class="service-icon">🚪</span>
+                <h3>Closets y Vestidores</h3>
+                <p>Closets y vestidores a medida que optimizan espacios con diseño funcional. Soluciones personalizadas para cada necesidad de almacenamiento.</p>
+                <a href="/closets-monterrey/" class="cta-button">Ver más →</a>
+            </div>
+
+            <!-- Diseño de Interiores -->
+            <div class="service-card">
+                <span class="service-icon">🎨</span>
+                <h3>Diseño de Interiores</h3>
+                <p>Proyectos integrales de diseño de interiores para hogares y espacios comerciales. Conceptos coherentes, armoniosos y funcionales.</p>
+                <a href="/diseno-interiores-monterrey/" class="cta-button">Ver más →</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why ZenHome Section -->
+    <section class="why-section">
+        <div class="why-container">
+            <h2>¿Por Qué Elegirnos?</h2>
+            <div class="trust-points">
+                <div class="trust-point">
+                    <span class="trust-point-icon">✨</span>
+                    <h3>Materiales Premium</h3>
+                    <p>Utilizamos materiales de la más alta calidad para asegurar durabilidad y elegancia en cada proyecto.</p>
+                </div>
+                <div class="trust-point">
+                    <span class="trust-point-icon">📊</span>
+                    <h3>+100 Proyectos</h3>
+                    <p>Más de 100 proyectos exitosos en Monterrey y zona metropolitana demuestran nuestra experiencia.</p>
+                </div>
+                <div class="trust-point">
+                    <span class="trust-point-icon">🛡️</span>
+                    <h3>Garantía Completa</h3>
+                    <p>Garantía en materiales y mano de obra para tu tranquilidad y confianza en nuestro trabajo.</p>
+                </div>
+                <div class="trust-point">
+                    <span class="trust-point-icon">👥</span>
+                    <h3>Atención Personalizada</h3>
+                    <p>Atendimiento dedicado en cada etapa del proyecto, desde diseño hasta entrega final.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="contact-cta">
+        <div class="contact-cta-container">
+            <h2>¿No sabes qué servicio necesitas?</h2>
+            <p>Nuestro equipo de expertos está listo para asesorarte y encontrar la solución perfecta para tu espacio.</p>
+            <a href="https://wa.me/528115269496?text=Hola%20ZenHome,%20me%20gustaría%20conocer%20más%20sobre%20vuestros%20servicios" class="whatsapp-button">
+                <span>💬</span> Pregunta por WhatsApp
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-grid">
+                <!-- About -->
+                <div class="footer-section">
+                    <h3>ZenHome</h3>
+                    <p>Especialistas en diseño y fabricación de muebles personalizados en Monterrey. Transformamos espacios con calidad y atención personalizada.</p>
+                </div>
+
+                <!-- Locations -->
+                <div class="footer-section">
+                    <h3>Ubicaciones</h3>
+                    <p><strong>Guadalupe:</strong><br>Sierra Leona 729<br>Guadalupe, NL 67110</p>
+                    <p style="margin-top: 1rem;"><strong>Monterrey:</strong><br>Av. Revolución 3000<br>Monterrey, NL 64830</p>
+                </div>
+
+                <!-- Navigation -->
+                <div class="footer-section">
+                    <h3>Navegación</h3>
+                    <ul>
+                        <li><a href="/">Inicio</a></li>
+                        <li><a href="/servicios/">Servicios</a></li>
+                        <li><a href="/proyectos/">Proyectos</a></li>
+                        <li><a href="/contacto/">Contacto</a></li>
+                    </ul>
+                </div>
+
+                <!-- Social -->
+                <div class="footer-section">
+                    <h3>Síguenos</h3>
+                    <div class="social-links">
+                        <a href="https://facebook.com/ZenHomeMx" title="Facebook" target="_blank">f</a>
+                        <a href="https://instagram.com/zenhomemx" title="Instagram" target="_blank">📸</a>
+                        <a href="https://wa.me/528115269496" title="WhatsApp" target="_blank">💬</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-divider">
+                <p>&copy; 2026 ZenHome. Todos los derechos reservados. | Diseño y fabricación de muebles personalizados en Monterrey.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Floating WhatsApp Button -->
+    <a href="https://wa.me/528115269496?text=Hola%20ZenHome,%20me%20gustaría%20conocer%20más%20sobre%20vuestros%20servicios" class="whatsapp-floating" title="Contáctanos por WhatsApp">💬</a>
+</body>
+</html>

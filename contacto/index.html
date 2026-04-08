@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="es-mx">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contacto | ZenHome Monterrey | WhatsApp, Teléfono y Ubicación</title>
+    <meta name="description" content="Contacta con ZenHome Monterrey para cocinas integrales, closets y diseño de interiores. Respuesta en menos de 1 hora por WhatsApp. Ubicaciones en Guadalupe y Monterrey.">
+    <meta name="robots" content="index, follow">
+    <meta name="language" content="es-mx">
+    <meta property="og:title" content="Contacto | ZenHome Monterrey">
+    <meta property="og:description" content="Contacta con nosotros para tu proyecto de cocinas, closets y diseño de interiores.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://zenhome.com.mx/contacto/">
+    <link rel="canonical" href="https://zenhome.com.mx/contacto/">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+    <!-- Google Analytics 4 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-JSYYXX8Z2K"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-JSYYXX8Z2K');
+    </script>
+
+    <!-- JSON-LD Schema -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "LocalBusiness",
+        "name": "ZenHome",
+        "description": "Cocinas integrales, closets y diseño de interiores en Monterrey",
+        "url": "https://zenhome.com.mx",
+        "telephone": "+528115269496",
+        "contactPoint": {
+            "@type": "ContactPoint",
+            "contactType": "Customer Support",
+            "telephone": "+528115269496",
+            "availableLanguage": "es-mx"
+        },
+        "address": [
+            {
+                "@type": "PostalAddress",
+                "streetAddress": "Sierra Leona 729",
+                "addressLocality": "Guadalupe",
+                "addressRegion": "NL",
+                "postalCode": "67110",
+                "addressCountry": "MX"
+            },
+            {
+                "@type": "PostalAddress",
+                "streetAddress": "Av. Revolución 3000, Col. Primavera",
+                "addressLocality": "Monterrey",
+                "addressRegion": "NL",
+                "postalCode": "64830",
+                "addressCountry": "MX"
+            }
+        ],
+        "openingHoursSpecification": [
+            {
+                "@type": "OpeningHoursSpecification",
+                "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+                "opens": "09:00",
+                "closes": "18:00"
+            },
+            {
+                "@type": "OpeningHoursSpecification",
+                "dayOfWeek": "Saturday",
+                "opens": "10:00",
+                "closes": "14:00"
+            }
+        ],
+        "sameAs": ["https://wa.me/528115269496"]
+    }
+    </script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #37ca37;
+            --secondary: #188bf6;
+            --dark: #0E182C;
+            --light-bg: #f8f9fa;
+            --border-color: #e0e0e0;
+            --text-dark: #1a1a1a;
+            --text-muted: #666;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background-color: #fff;
+        }
+
+        /* Header/Navigation */
+        header {
+            background-color: #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--dark);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo:before {
+            content: "";
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 4px;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--text-dark);
+            font-weight: 500;
+            margin-left: 2.5rem;
+            transition: color 0.3s;
+            font-size: 0.95rem;
+        }
+
+        nav a:hover,
+        nav a.active {
+            color: var(--primary);
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, var(--dark) 0%, rgba(14, 24, 44, 0.9) 100%);
+            color: #fff;
+            padding: 6rem 2rem;
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: #e0e0e0;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Contact Methods Section */
+        .contact-methods {
+            margin-bottom: 5rem;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 3rem;
+            color: var(--dark);
+        }
+
+        .methods-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .contact-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 2.5rem 2rem;
+            text-align: center;
+            border: 2px solid var(--border-color);
+            transition: all 0.3s;
+        }
+
+        .contact-card.primary {
+            border-color: var(--primary);
+            box-shadow: 0 8px 24px rgba(55, 202, 55, 0.15);
+            transform: scale(1.05);
+        }
+
+        .contact-card:hover:not(.primary) {
+            border-color: var(--secondary);
+            box-shadow: 0 8px 24px rgba(24, 139, 246, 0.1);
+        }
+
+        .contact-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .contact-card h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+
+        .contact-card p {
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+        }
+
+        .contact-value {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 1.5rem;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.875rem 1.75rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            font-size: 0.95rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background-color: #2ba82b;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(55, 202, 55, 0.3);
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary);
+            color: #fff;
+        }
+
+        .btn-secondary:hover {
+            background-color: #0a7ec5;
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            border: 2px solid var(--secondary);
+            color: var(--secondary);
+            background-color: transparent;
+        }
+
+        .btn-outline:hover {
+            background-color: var(--secondary);
+            color: #fff;
+        }
+
+        /* Offices Section */
+        .offices-section {
+            margin-bottom: 5rem;
+            padding-bottom: 3rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .offices-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+        }
+
+        .office-card {
+            background: var(--light-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s;
+        }
+
+        .office-card:hover {
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+            transform: translateY(-4px);
+        }
+
+        .office-map {
+            width: 100%;
+            height: 250px;
+            background: linear-gradient(135deg, var(--secondary), var(--primary));
+        }
+
+        .office-map iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .office-info {
+            padding: 2rem;
+        }
+
+        .office-info h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: var(--dark);
+        }
+
+        .office-info p {
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        .office-address {
+            font-weight: 500;
+            color: var(--dark);
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        /* Business Hours */
+        .hours-section {
+            background: var(--light-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 4rem;
+            border-left: 4px solid var(--primary);
+        }
+
+        .hours-section h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--dark);
+        }
+
+        .hours-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .hour-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+        }
+
+        .hour-day {
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .hour-time {
+            color: var(--text-muted);
+        }
+
+        /* Quick Links Section */
+        .services-section {
+            margin-bottom: 5rem;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .service-card {
+            background: linear-gradient(135deg, rgba(55, 202, 55, 0.05), rgba(24, 139, 246, 0.05));
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            border: 2px solid var(--border-color);
+            transition: all 0.3s;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .service-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 8px 24px rgba(55, 202, 55, 0.15);
+            transform: translateY(-4px);
+        }
+
+        .service-card h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+
+        .service-card p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .service-card .btn {
+            margin-top: auto;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--dark);
+            color: #fff;
+            padding: 3rem 2rem 1.5rem;
+            margin-top: 5rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .footer-section p {
+            font-size: 0.9rem;
+            color: #ccc;
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-section a {
+            color: #ccc;
+            text-decoration: none;
+            font-size: 0.9rem;
+            display: block;
+            margin-bottom: 0.5rem;
+            transition: color 0.3s;
+        }
+
+        .footer-section a:hover {
+            color: var(--primary);
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 2rem;
+            text-align: center;
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+
+        /* WhatsApp Floating Button */
+        .whatsapp-btn {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 60px;
+            height: 60px;
+            background-color: #25D366;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            color: #fff;
+            font-size: 1.8rem;
+            box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4);
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+
+        .whatsapp-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(37, 211, 102, 0.6);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+
+            nav {
+                display: flex;
+                gap: 1rem;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            nav a {
+                margin-left: 0;
+                font-size: 0.85rem;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .contact-card.primary {
+                transform: scale(1);
+            }
+
+            .methods-grid,
+            .offices-grid,
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hours-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .whatsapp-btn {
+                bottom: 1.5rem;
+                right: 1.5rem;
+                width: 56px;
+                height: 56px;
+                font-size: 1.5rem;
+            }
+
+            .container {
+                padding: 0 1rem;
+            }
+
+            .section-title {
+                font-size: 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero {
+                padding: 3rem 1rem;
+            }
+
+            .hero h1 {
+                font-size: 1.5rem;
+            }
+
+            .contact-card {
+                padding: 1.5rem 1rem;
+            }
+
+            nav a {
+                margin: 0.25rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header/Navigation -->
+    <header>
+        <div class="header-content">
+            <a href="/" class="logo">ZenHome</a>
+            <nav>
+                <a href="/">Inicio</a>
+                <a href="/servicios/">Servicios</a>
+                <a href="/proyectos/">Proyectos</a>
+                <a href="/contacto/" class="active">Contacto</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Contáctanos</h1>
+            <p>Respuesta en menos de 1 hora por WhatsApp</p>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="container">
+        <!-- Contact Methods -->
+        <section class="contact-methods">
+            <h2 class="section-title">Formas de Contacto</h2>
+            <div class="methods-grid">
+                <!-- WhatsApp -->
+                <div class="contact-card primary">
+                    <div class="contact-icon">💬</div>
+                    <h3>WhatsApp</h3>
+                    <p>Respuesta rápida y directa a tus mensajes. Nuestro equipo está disponible para atenderte.</p>
+                    <div class="contact-value">528115269496</div>
+                    <a href="https://wa.me/528115269496" class="btn btn-primary" target="_blank">Enviar Mensaje</a>
+                </div>
+
+                <!-- Teléfono -->
+                <div class="contact-card">
+                    <div class="contact-icon">📞</div>
+                    <h3>Teléfono</h3>
+                    <p>Llama directamente para consultas inmediatas sobre tu proyecto.</p>
+                    <div class="contact-value">+52 811 526 9496</div>
+                    <a href="tel:+528115269496" class="btn btn-secondary">Llamar Ahora</a>
+                </div>
+
+                <!-- Email -->
+                <div class="contact-card">
+                    <div class="contact-icon">✉️</div>
+                    <h3>Email</h3>
+                    <p>Envía tus consultas y presupuestos por correo electrónico.</p>
+                    <div class="contact-value">contacto@zenhome.com.mx</div>
+                    <a href="mailto:contacto@zenhome.com.mx" class="btn btn-outline">Enviar Email</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Office Locations -->
+        <section class="offices-section">
+            <h2 class="section-title">Nuestras Oficinas</h2>
+            <div class="offices-grid">
+                <!-- Oficina 1 -->
+                <div class="office-card">
+                    <div class="office-map">
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3594.2534567890!2d-100.27416!3d25.66667!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8662c5c5c5c5c5c5%3A0x0!2sSierra%20Leona%20729%2C%20San%20Agust%C3%ADn%2C%20Guadalupe%2C%20NL!5e0!3m2!1ses!2smx!4v1234567890" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                    </div>
+                    <div class="office-info">
+                        <h3>Oficina Guadalupe</h3>
+                        <p><strong>Dirección:</strong></p>
+                        <div class="office-address">
+                            Sierra Leona 729<br>
+                            Residencial San Agustín<br>
+                            Guadalupe, NL 67110
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Oficina 2 -->
+                <div class="office-card">
+                    <div class="office-map">
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3598.5432109876!2d-100.28888!3d25.63333!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8662d5d5d5d5d5d5%3A0x0!2sAv.%20Revoluci%C3%B3n%203000%2C%20Monterrey%2C%20NL!5e0!3m2!1ses!2smx!4v1234567890" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                    </div>
+                    <div class="office-info">
+                        <h3>Oficina Monterrey</h3>
+                        <p><strong>Dirección:</strong></p>
+                        <div class="office-address">
+                            Av. Revolución 3000<br>
+                            Col. Primavera<br>
+                            Monterrey, NL 64830
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Business Hours -->
+        <section class="hours-section">
+            <h3>Horario de Atención</h3>
+            <div class="hours-grid">
+                <div>
+                    <div class="hour-item">
+                        <span class="hour-day">Lunes a Viernes</span>
+                        <span class="hour-time">09:00 - 18:00</span>
+                    </div>
+                    <div class="hour-item">
+                        <span class="hour-day">Sábado</span>
+                        <span class="hour-time">10:00 - 14:00</span>
+                    </div>
+                </div>
+                <p style="color: var(--text-muted); font-size: 0.9rem;">
+                    <strong>Nota:</strong> Para consultas fuera de horario, envía tu mensaje por WhatsApp y te responderemos lo antes posible.
+                </p>
+            </div>
+        </section>
+
+        <!-- Quick Links to Services -->
+        <section class="services-section">
+            <h2 class="section-title">Conoce Nuestros Servicios</h2>
+            <div class="services-grid">
+                <a href="/cocinas-integrales-monterrey/" class="service-card">
+                    <h3>🍳 Cocinas Integrales</h3>
+                    <p>Diseño y fabricación de cocinas personalizadas con los mejores materiales y acabados.</p>
+                    <button class="btn btn-primary">Ver Más</button>
+                </a>
+
+                <a href="/closets-monterrey/" class="service-card">
+                    <h3>🚪 Closets</h3>
+                    <p>Soluciones de almacenamiento elegantes y funcionales para tu hogar.</p>
+                    <button class="btn btn-primary">Ver Más</button>
+                </a>
+
+                <a href="/diseno-interiores-monterrey/" class="service-card">
+                    <h3>🎨 Diseño de Interiores</h3>
+                    <p>Transformamos tus espacios con diseño profesional y moderno.</p>
+                    <button class="btn btn-primary">Ver Más</button>
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>ZenHome</h4>
+                <p>Especialistas en cocinas integrales, closets y diseño de interiores en Monterrey, Nuevo León.</p>
+            </div>
+            <div class="footer-section">
+                <h4>Contacto</h4>
+                <a href="tel:+528115269496">+52 811 526 9496</a>
+                <a href="https://wa.me/528115269496">WhatsApp</a>
+                <a href="mailto:contacto@zenhome.com.mx">contacto@zenhome.com.mx</a>
+            </div>
+            <div class="footer-section">
+                <h4>Ubicaciones</h4>
+                <p>Sierra Leona 729, Guadalupe, NL</p>
+                <p>Av. Revolución 3000, Monterrey, NL</p>
+            </div>
+            <div class="footer-section">
+                <h4>Enlaces</h4>
+                <a href="/">Inicio</a>
+                <a href="/servicios/">Servicios</a>
+                <a href="/proyectos/">Proyectos</a>
+                <a href="/contacto/">Contacto</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 ZenHome. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- WhatsApp Floating Button -->
+    <a href="https://wa.me/528115269496" class="whatsapp-btn" target="_blank" title="Contáctanos por WhatsApp" aria-label="Abrir WhatsApp">
+        💬
+    </a>
+</body>
+</html>
