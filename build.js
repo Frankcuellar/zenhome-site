@@ -823,7 +823,10 @@ async function build() {
   const today = new Date().toISOString().split('T')[0]
   const sitemapUrls = [
     { loc: 'https://zenhome.com.mx/', changefreq: 'weekly', priority: '1.0' },
-    { loc: 'https://zenhome.com.mx/proyectos/', changefreq: 'weekly', priority: '0.9' },
+    { loc: 'https://zenhome.com.mx/cocinas-integrales-monterrey/', changefreq: 'monthly', priority: '0.9' },
+    { loc: 'https://zenhome.com.mx/closets-monterrey/', changefreq: 'monthly', priority: '0.9' },
+    { loc: 'https://zenhome.com.mx/diseno-interiores-monterrey/', changefreq: 'monthly', priority: '0.9' },
+    { loc: 'https://zenhome.com.mx/proyectos/', changefreq: 'weekly', priority: '0.8' },
   ]
   for (const project of projects) {
     const s = project.slug?.current
