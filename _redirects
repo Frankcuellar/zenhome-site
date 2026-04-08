@@ -1,11 +1,8 @@
-# Redirigir www a apex (Cloudflare puede manejar esto por DNS también)
-https://www.zenhome.com.mx/* https://zenhome.com.mx/:splat 301
-
 # Redirigir sub-páginas antiguas de GHL
+# (www → apex se maneja desde Cloudflare DNS/Rules, no aquí)
 /home / 301
-/disenodecocinas /#servicios 301
-/sobrenosotros /#equipo 301
-/contacto /#locaciones 301
+/disenodecocinas /cocinas-integrales-monterrey/ 301
+/sobrenosotros /about/ 301
 
 # Migración portafolio → proyectos
 /portafolio/ /proyectos/ 301
