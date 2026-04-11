@@ -1,0 +1,266 @@
+diff --git a/_redirects b/_redirects
+index 02c94ba..b7511bb 100644
+--- a/_redirects
++++ b/_redirects
+@@ -2,7 +2,8 @@
+ # (www → apex se maneja desde Cloudflare DNS/Rules, no aquí)
+ /home / 301
+ /disenodecocinas /cocinas-integrales-monterrey/ 301
+-/sobrenosotros /about/ 301
++/sobrenosotros /contacto/ 301
++/cotizacion-wa /contacto/ 301
+ 
+ # Migración portafolio → proyectos (hub, no slug-a-slug porque los slugs cambiaron)
+ /portafolio/ /proyectos/ 301
+diff --git a/closets-monterrey/index.html b/closets-monterrey/index.html
+index 130e86a..b255f84 100644
+--- a/closets-monterrey/index.html
++++ b/closets-monterrey/index.html
+@@ -10,7 +10,7 @@
+     <!-- Open Graph -->
+     <meta property="og:type" content="website">
+     <meta property="og:url" content="https://zenhome.com.mx/closets-monterrey/">
+-    <meta property="og:title" content="Clósets y Vestidores a la Medida en Monterrey | ZenHome | WhatsApp">
++    <meta property="og:title" content="Clósets y Vestidores a la Medida en Monterrey | ZenHome">
+     <meta property="og:description" content="Diseño y fabricación de clósets y vestidores a la medida en Monterrey. Aprovecha cada centímetro de tu espacio. Cotización gratis por WhatsApp.">
+     <meta property="og:image" content="https://zenhome.com.mx/og-closets.jpg">
+     <meta property="og:image:width" content="1200">
+@@ -35,7 +35,7 @@
+     <!-- Canonical -->
+     <link rel="canonical" href="https://zenhome.com.mx/closets-monterrey/">
+ 
+-    <title>Clósets y Vestidores a la Medida en Monterrey | ZenHome | WhatsApp</title>
++    <title>Clósets y Vestidores a la Medida en Monterrey | ZenHome</title>
+ 
+     <style>
+         * {
+diff --git a/cocinas-integrales-monterrey/index.html b/cocinas-integrales-monterrey/index.html
+index 5ed6453..e4000d2 100644
+--- a/cocinas-integrales-monterrey/index.html
++++ b/cocinas-integrales-monterrey/index.html
+@@ -6,7 +6,7 @@
+     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+ 
+     <!-- SEO & Meta Tags -->
+-    <title>Cocinas Integrales a la Medida en Monterrey | ZenHome | WhatsApp</title>
++    <title>Cocinas Integrales a la Medida en Monterrey | ZenHome</title>
+     <meta name="description" content="Diseño y fabricación de cocinas integrales a la medida en Monterrey. Materiales premium, acabados de calidad. Cotización gratis por WhatsApp. +100 proyectos entregados.">
+     <meta name="robots" content="index, follow">
+     <link rel="canonical" href="https://zenhome.com.mx/cocinas-integrales-monterrey/">
+diff --git a/contacto/index.html b/contacto/index.html
+index e012dd4..8fb4b06 100644
+--- a/contacto/index.html
++++ b/contacto/index.html
+@@ -3,7 +3,7 @@
+ <head>
+     <meta charset="UTF-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+-    <title>Contacto | ZenHome Monterrey | WhatsApp, Teléfono y Ubicación</title>
++    <title>Contacto | ZenHome Monterrey — Teléfono, Ubicación y WhatsApp</title>
+     <meta name="description" content="Contacta con ZenHome Monterrey para cocinas integrales, closets y diseño de interiores. Respuesta en menos de 1 hora por WhatsApp. Ubicaciones en Guadalupe y Monterrey.">
+     <meta name="robots" content="index, follow">
+     <meta name="language" content="es-mx">
+@@ -765,6 +765,48 @@
+         </div>
+     </footer>
+ 
++    <!-- FAQ Schema -->
++    <script type="application/ld+json">
++    {
++        "@context": "https://schema.org",
++        "@type": "FAQPage",
++        "mainEntity": [
++            {
++                "@type": "Question",
++                "name": "¿Cuál es el horario de atención de ZenHome?",
++                "acceptedAnswer": {
++                    "@type": "Answer",
++                    "text": "Atendemos de lunes a viernes de 9:00 a 18:00 hrs y sábados de 10:00 a 14:00 hrs. Por WhatsApp respondemos en menos de 1 hora durante horario laboral."
++                }
++            },
++            {
++                "@type": "Question",
++                "name": "¿Dónde están ubicados?",
++                "acceptedAnswer": {
++                    "@type": "Answer",
++                    "text": "Contamos con dos ubicaciones: Sierra Leona 729, Residencial San Agustín, Guadalupe N.L. (CP 67110) y Av. Revolución 3000, Col. Primavera, Monterrey N.L. (CP 64830). Ambas oficinas atienden con cita previa."
++                }
++            },
++            {
++                "@type": "Question",
++                "name": "¿La cotización tiene costo?",
++                "acceptedAnswer": {
++                    "@type": "Answer",
++                    "text": "No, la cotización inicial es completamente gratuita y sin compromiso. Contáctanos por WhatsApp al 811 526 9496 para agendar tu consulta personalizada."
++                }
++            },
++            {
++                "@type": "Question",
++                "name": "¿Atienden fuera de Monterrey?",
++                "acceptedAnswer": {
++                    "@type": "Answer",
++                    "text": "Nuestro servicio cubre todo el área metropolitana de Monterrey: San Pedro Garza García, Guadalupe, San Nicolás, Apodaca, Santa Catarina y Escobedo. Para proyectos especiales fuera de la zona metro, contáctanos para evaluar disponibilidad."
++                }
++            }
++        ]
++    }
++    </script>
++
+     <!-- WhatsApp Floating Button -->
+     <a href="https://wa.me/528115269496" class="whatsapp-btn" target="_blank" title="Contáctanos por WhatsApp" aria-label="Abrir WhatsApp">
+         💬
+diff --git a/diseno-interiores-monterrey/index.html b/diseno-interiores-monterrey/index.html
+index 9b0033d..2beb7f3 100644
+--- a/diseno-interiores-monterrey/index.html
++++ b/diseno-interiores-monterrey/index.html
+@@ -4,20 +4,20 @@
+     <meta charset="UTF-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <meta name="robots" content="index, follow">
+-    <meta name="description" content="Transformamos espacios residenciales y comerciales en Monterrey. Diseño de interiores personalizado, renders 3D, supervisión de obra. Cotización gratis por WhatsApp.">
++    <meta name="description" content="Interior Design & Diseño de Interiores en Monterrey. Espacios residenciales y comerciales personalizados, renders 3D, supervisión de obra. +100 proyectos. Cotización gratis.">
+     <link rel="canonical" href="https://zenhome.com.mx/diseno-interiores-monterrey/">
+ 
+     <!-- OG Tags -->
+     <meta property="og:type" content="website">
+-    <meta property="og:title" content="Diseño de Interiores en Monterrey | ZenHome | WhatsApp">
+-    <meta property="og:description" content="Transformamos espacios residenciales y comerciales en Monterrey. Diseño de interiores personalizado, renders 3D, supervisión de obra. Cotización gratis por WhatsApp.">
++    <meta property="og:title" content="Interior Design | Diseño de Interiores en Monterrey | ZenHome">
++    <meta property="og:description" content="Interior Design & Diseño de Interiores en Monterrey. Espacios personalizados, renders 3D, supervisión de obra. +100 proyectos entregados.">
+     <meta property="og:url" content="https://zenhome.com.mx/diseno-interiores-monterrey/">
+     <meta property="og:site_name" content="ZenHome">
+     <meta property="og:image" content="https://zenhome.com.mx/og-diseno-interiores.jpg">
+ 
+     <!-- Twitter Card -->
+     <meta name="twitter:card" content="summary_large_image">
+-    <meta name="twitter:title" content="Diseño de Interiores en Monterrey | ZenHome">
++    <meta name="twitter:title" content="Interior Design | Diseño de Interiores en Monterrey | ZenHome">
+     <meta name="twitter:description" content="Transformamos espacios residenciales y comerciales. Diseño personalizado, renders 3D, supervisión de obra.">
+     <meta name="twitter:image" content="https://zenhome.com.mx/og-diseno-interiores.jpg">
+ 
+@@ -30,7 +30,7 @@
+         gtag('config', 'G-JSYYXX8Z2K');
+     </script>
+ 
+-    <title>Diseño de Interiores en Monterrey | ZenHome | WhatsApp</title>
++    <title>Interior Design | Diseño de Interiores en Monterrey | ZenHome</title>
+ 
+     <style>
+         * {
+@@ -687,7 +687,7 @@
+     <!-- HERO -->
+     <section class="hero">
+         <div class="hero-container">
+-            <h1>Diseño de Interiores en Monterrey</h1>
++            <h1>Diseño de Interiores en Monterrey — Interior Design</h1>
+             <p class="subtitle">Transformamos espacios residenciales y comerciales en lugares que cuentan tu historia y reflejan quién eres</p>
+             <a href="https://wa.me/528115269496?text=Hola,%20vi%20su%20página%20de%20diseño%20de%20interiores%20y%20me%20gustaría%20una%20cotización" class="cta-primary">Solicita tu Cotización</a>
+             <a href="#servicios" class="cta-secondary">Conoce Nuestros Servicios</a>
+diff --git a/servicios/index.html b/servicios/index.html
+index 1c17ee0..712dc33 100644
+--- a/servicios/index.html
++++ b/servicios/index.html
+@@ -670,6 +670,48 @@
+         </div>
+     </footer>
+ 
++    <!-- FAQ Schema -->
++    <script type="application/ld+json">
++    {
++        "@context": "https://schema.org",
++        "@type": "FAQPage",
++        "mainEntity": [
++            {
++                "@type": "Question",
++                "name": "¿Qué servicios ofrece ZenHome en Monterrey?",
++                "acceptedAnswer": {
++                    "@type": "Answer",
++                    "text": "Ofrecemos diseño y fabricación de cocinas integrales a la medida, clósets y vestidores personalizados, diseño de interiores residencial y comercial, y proyectos especializados para constructoras en toda el área metropolitana de Monterrey."
++                }
++            },
++            {
++                "@type": "Question",
++                "name": "¿Cuánto tiempo tarda un proyecto con ZenHome?",
++                "acceptedAnswer": {
++                    "@type": "Answer",
++                    "text": "Los tiempos varían según el tipo de proyecto. Una cocina integral toma entre 4-8 semanas desde el diseño hasta la instalación. Clósets pueden estar listos en 3-6 semanas. Proyectos de interiorismo completo de 2 a 6 meses según la complejidad."
++                }
++            },
++            {
++                "@type": "Question",
++                "name": "¿Cómo solicito una cotización?",
++                "acceptedAnswer": {
++                    "@type": "Answer",
++                    "text": "Puedes solicitar una cotización gratuita y sin compromiso por WhatsApp al 811 526 9496. Nuestro equipo te contactará en menos de 1 hora para agendar una visita o consulta virtual."
++                }
++            },
++            {
++                "@type": "Question",
++                "name": "¿Qué materiales utilizan en sus proyectos?",
++                "acceptedAnswer": {
++                    "@type": "Answer",
++                    "text": "Trabajamos con materiales premium: MDF, melamina de alta calidad, cubiertas de cuarzo, granito, acero inoxidable, y herrajes europeos de marcas como Blum y Hettich. Cada proyecto se personaliza según tu presupuesto y preferencias."
++                }
++            }
++        ]
++    }
++    </script>
++
+     <!-- Floating WhatsApp Button -->
+     <a href="https://wa.me/528115269496?text=Hola%20ZenHome,%20me%20gustaría%20conocer%20más%20sobre%20vuestros%20servicios" class="whatsapp-floating" title="Contáctanos por WhatsApp">💬</a>
+ </body>
+diff --git a/sitemap.xml b/sitemap.xml
+index 4979d45..c0b5e54 100644
+--- a/sitemap.xml
++++ b/sitemap.xml
+@@ -2,43 +2,43 @@
+ <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+   <url>
+     <loc>https://zenhome.com.mx/</loc>
+-    <lastmod>2026-04-08</lastmod>
++    <lastmod>2026-04-11</lastmod>
+     <changefreq>weekly</changefreq>
+     <priority>1.0</priority>
+   </url>
+   <url>
+     <loc>https://zenhome.com.mx/cocinas-integrales-monterrey/</loc>
+-    <lastmod>2026-04-08</lastmod>
++    <lastmod>2026-04-11</lastmod>
+     <changefreq>monthly</changefreq>
+     <priority>0.9</priority>
+   </url>
+   <url>
+     <loc>https://zenhome.com.mx/closets-monterrey/</loc>
+-    <lastmod>2026-04-08</lastmod>
++    <lastmod>2026-04-11</lastmod>
+     <changefreq>monthly</changefreq>
+     <priority>0.9</priority>
+   </url>
+   <url>
+     <loc>https://zenhome.com.mx/diseno-interiores-monterrey/</loc>
+-    <lastmod>2026-04-08</lastmod>
++    <lastmod>2026-04-11</lastmod>
+     <changefreq>monthly</changefreq>
+     <priority>0.9</priority>
+   </url>
+   <url>
+     <loc>https://zenhome.com.mx/servicios/</loc>
+-    <lastmod>2026-04-08</lastmod>
++    <lastmod>2026-04-11</lastmod>
+     <changefreq>monthly</changefreq>
+     <priority>0.8</priority>
+   </url>
+   <url>
+     <loc>https://zenhome.com.mx/contacto/</loc>
+-    <lastmod>2026-04-08</lastmod>
++    <lastmod>2026-04-11</lastmod>
+     <changefreq>monthly</changefreq>
+     <priority>0.7</priority>
+   </url>
+   <url>
+     <loc>https://zenhome.com.mx/proyectos/</loc>
+-    <lastmod>2026-04-08</lastmod>
++    <lastmod>2026-04-11</lastmod>
+     <changefreq>weekly</changefreq>
+     <priority>0.8</priority>
+   </url>
