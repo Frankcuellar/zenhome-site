@@ -169,22 +169,69 @@
             color: var(--primary);
         }
 
+        /* ========== MOBILE HAMBURGER MENU ========== */
         .menu-toggle {
             display: none;
             background: none;
             border: none;
             color: #ffffff;
-            font-size: 1.5rem;
+            font-size: 1.8rem;
             cursor: pointer;
             padding: 0.5rem;
+            line-height: 1;
+            z-index: 101;
         }
 
         @media (max-width: 768px) {
             .menu-toggle {
-                display: block;
+                display: block !important;
+            }
+
+            .header-container {
+                position: relative;
+                padding: 1rem;
             }
 
             nav ul {
+                display: none !important;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background-color: #184ac6;
+                flex-direction: column;
+                padding: 0.5rem 1.5rem;
+                gap: 0;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+                z-index: 100;
+                list-style: none;
+            }
+
+            nav ul.open {
+                display: flex !important;
+            }
+
+            nav ul li {
+                padding: 0.75rem 0;
+                border-bottom: 1px solid rgba(255,255,255,0.15);
+            }
+
+            nav ul li:last-child {
+                border-bottom: none;
+            }
+
+            nav a {
+                font-size: 0.95rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo img {
+                height: 24px;
+            }
+        }
+@media (max-width: 768px) {
+nav ul {
                 display: none;
                 position: absolute;
                 top: 100%;
@@ -212,13 +259,6 @@
 
             .header-container {
                 position: relative;
-            }
-        }
-
-        @media (max-width: 600px) {
-            nav ul {
-                gap: 0;
-                flex-wrap: nowrap;
             }
         }
 
@@ -724,7 +764,7 @@
     <header>
         <div class="header-container">
             <a href="/" class="logo"><img src="https://images.leadconnectorhq.com/image/f_webp/q_80/r_1200/u_https://assets.cdn.filesafe.space/tGT0NBw0s46QQDWPfp3W/media/67531ed7d1a1319bcbad3551.png" alt="ZenHome" height="30"></a>
-            <button class="menu-toggle" onclick="document.querySelector('nav ul').classList.toggle('open')">☰</button>
+            <button class="menu-toggle" aria-label="Menú" onclick="this.nextElementSibling.querySelector('ul').classList.toggle('open')">☰</button>
             <nav>
                 <ul>
                     <li><a href="/">Inicio</a></li>
@@ -966,6 +1006,33 @@
                 this.parentElement.classList.toggle('active');
             });
         });
+    </script>
+
+    <!-- HAMBURGER MENU SCRIPT -->
+    <script>
+    (function() {
+        var btn = document.querySelector('.menu-toggle');
+        if (!btn) return;
+        var menu = document.querySelector('nav ul');
+        if (!menu) return;
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            menu.classList.toggle('open');
+        });
+        // Close menu when clicking a link
+        menu.querySelectorAll('a').forEach(function(link) {
+            link.addEventListener('click', function() {
+                menu.classList.remove('open');
+            });
+        });
+        // Close menu when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!btn.contains(e.target) && !menu.contains(e.target)) {
+                menu.classList.remove('open');
+            }
+        });
+    })();
     </script>
 </body>
 </html>
