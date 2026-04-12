@@ -366,6 +366,73 @@
             }
         }
 
+        /* ========== TEAM SECTION ========== */
+        .team {
+            background-color: var(--light-gray);
+            padding: 4rem 2rem;
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .team-card {
+            text-align: center;
+            background-color: #ffffff;
+            border-radius: 12px;
+            padding: 2rem;
+            border: 1px solid var(--border-gray);
+            transition: all 0.3s ease;
+        }
+
+        .team-card:hover {
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            transform: translateY(-4px);
+        }
+
+        .team-photo {
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 1.2rem;
+            border: 3px solid var(--primary);
+        }
+
+        .team-card h3 {
+            font-size: 1.2rem;
+            color: var(--dark);
+            margin-bottom: 0.3rem;
+        }
+
+        .team-role {
+            font-size: 0.85rem;
+            color: var(--primary);
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+        }
+
+        .team-card p.team-desc {
+            font-size: 0.95rem;
+            color: var(--medium-gray);
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            .team-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .team-photo {
+                width: 120px;
+                height: 120px;
+            }
+        }
+
         /* ========== TRUST / STATS SECTION ========== */
         .trust {
             background-color: #ffffff;
@@ -804,6 +871,27 @@
                     <div class="problem-icon">📏</div>
                     <h3>A la Medida Exacta de Tu Espacio</h3>
                     <p>Cada milímetro cuenta. Diseñamos para que tu cocina o closet aproveche el 100% del espacio disponible sin desperdiciar nada.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TEAM SECTION -->
+    <section class="team" id="equipo">
+        <div class="section-container">
+            <h2 class="section-title">Nuestro Equipo</h2>
+            <div class="team-grid">
+                <div class="team-card">
+                    <img src="https://images.leadconnectorhq.com/image/f_webp/q_80/r_1200/u_https://assets.cdn.filesafe.space/tGT0NBw0s46QQDWPfp3W/media/6761a27f2bd55e3b35248157.png" alt="Lic. Carina Navarro — Coordinadora de Proyectos ZenHome" class="team-photo" loading="lazy">
+                    <h3>Lic. Carina Navarro</h3>
+                    <div class="team-role">Coordinadora de Proyectos</div>
+                    <p class="team-desc">Chef apasionada, Carina se asegura de que tu proyecto cobre vida con puntualidad y excelencia, supervisando cada detalle para que todo salga perfecto.</p>
+                </div>
+                <div class="team-card">
+                    <img src="https://images.leadconnectorhq.com/image/f_webp/q_80/r_1200/u_https://assets.cdn.filesafe.space/tGT0NBw0s46QQDWPfp3W/media/6761a27ffdcc6f5441ab8db4.png" alt="Lic. Mayra López — Diseñadora ZenHome" class="team-photo" loading="lazy">
+                    <h3>Lic. Mayra López</h3>
+                    <div class="team-role">Diseñadora</div>
+                    <p class="team-desc">Con amplia experiencia en diseño, análisis y optimización, Mayra te guía para transformar tu visión de cocina en un diseño funcional y personalizado.</p>
                 </div>
             </div>
         </div>
