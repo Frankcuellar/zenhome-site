@@ -987,6 +987,130 @@
                 grid-template-columns: 1fr;
                 gap: 1.5rem;
             }
+
+            .gallery .carousel-track {
+                gap: 0.75rem;
+            }
+
+            .gallery .carousel-slide {
+                min-width: 280px;
+            }
+
+            .gallery .carousel-btn {
+                width: 36px;
+                height: 36px;
+                font-size: 1rem;
+            }
+        }
+
+        /* ===== GALLERY / CAROUSEL ===== */
+        .gallery {
+            padding: 4rem 0;
+            background: var(--light-gray);
+        }
+
+        .carousel-wrapper {
+            position: relative;
+            overflow: hidden;
+            margin-top: 2rem;
+        }
+
+        .carousel-track {
+            display: flex;
+            gap: 1.5rem;
+            transition: transform 0.5s ease;
+            cursor: grab;
+        }
+
+        .carousel-track.dragging {
+            cursor: grabbing;
+            transition: none;
+        }
+
+        .carousel-slide {
+            min-width: 350px;
+            flex-shrink: 0;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        .carousel-slide img,
+        .carousel-slide video {
+            width: 100%;
+            height: 280px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .carousel-slide .slide-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 1rem;
+            background: linear-gradient(transparent, rgba(0,0,0,0.7));
+            color: white;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .carousel-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .carousel-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 2px solid var(--secondary);
+            background: white;
+            color: var(--secondary);
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .carousel-btn:hover {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .carousel-dots {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .carousel-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--border-gray);
+            border: none;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .carousel-dot.active {
+            background: var(--secondary);
+            width: 28px;
+            border-radius: 5px;
+        }
+
+        .gallery .section-subtitle {
+            color: var(--medium-gray);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0.5rem auto 0;
+            text-align: center;
         }
     </style>
 </head>
@@ -1139,6 +1263,38 @@
                     <p class="testimonial-text">"Pedimos un vestidor walk-in y superó nuestras expectativas. Los materiales son de primera, el diseño 3D nos ayudó a visualizar todo antes de fabricar. Lo recomiendo totalmente."</p>
                     <div class="testimonial-author">— Roberto Garza</div>
                     <div class="testimonial-role">San Pedro Garza García, NL</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- GALLERY / CAROUSEL -->
+    <section class="gallery" id="proyectos">
+        <div class="section-container">
+            <h2 class="section-title">Nuestros Proyectos de Clósets</h2>
+            <p class="section-subtitle">Cada clóset es diseñado a la medida de tu espacio y estilo de vida</p>
+            <div class="carousel-wrapper">
+                <div class="carousel-track" id="carouselTrack">
+                    <div class="carousel-slide">
+                        <img src="img/closet-proyecto-1.jpg" alt="Clóset moderno a la medida con acabado beige y compartimentos abiertos — Proyecto ZenHome Monterrey" loading="lazy">
+                        <div class="slide-caption">Clóset integral con organización de calzado</div>
+                    </div>
+                    <div class="carousel-slide">
+                        <video src="Proyectos Closets para pagina web/IMG_4802 2.MOV" muted playsinline loop preload="metadata" poster="img/closet-proyecto-1.jpg"></video>
+                        <div class="slide-caption">Video: Acabados y detalles de instalación</div>
+                    </div>
+                    <!-- Agregar más slides aquí cuando haya más fotos disponibles -->
+                    <!--
+                    <div class="carousel-slide">
+                        <img src="img/closet-proyecto-2.jpg" alt="Vestidor moderno ZenHome" loading="lazy">
+                        <div class="slide-caption">Vestidor con iluminación LED integrada</div>
+                    </div>
+                    -->
+                </div>
+                <div class="carousel-controls">
+                    <button class="carousel-btn" id="prevBtn" aria-label="Anterior">&#8249;</button>
+                    <div class="carousel-dots" id="carouselDots"></div>
+                    <button class="carousel-btn" id="nextBtn" aria-label="Siguiente">&#8250;</button>
                 </div>
             </div>
         </div>
@@ -1327,5 +1483,86 @@
     <a href="https://wa.me/528115269496?text=Hola%2C%20quiero%20agendar%20una%20visita%20para%20mi%20proyecto%20de%20cl%C3%B3set" class="floating-whatsapp" title="Contactar por WhatsApp">
         💬
     </a>
+
+    <!-- CAROUSEL SCRIPT -->
+    <script>
+    (function() {
+        const track = document.getElementById('carouselTrack');
+        const dotsContainer = document.getElementById('carouselDots');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        if (!track) return;
+
+        const slides = track.querySelectorAll('.carousel-slide');
+        let currentIndex = 0;
+        let slideWidth = 0;
+        let slidesVisible = 1;
+
+        function calcDimensions() {
+            if (!slides.length) return;
+            const gap = parseFloat(getComputedStyle(track).gap) || 24;
+            slideWidth = slides[0].offsetWidth + gap;
+            const wrapperWidth = track.parentElement.offsetWidth;
+            slidesVisible = Math.max(1, Math.floor(wrapperWidth / slides[0].offsetWidth));
+        }
+
+        function buildDots() {
+            dotsContainer.innerHTML = '';
+            const totalPages = Math.max(1, slides.length - slidesVisible + 1);
+            for (let i = 0; i < totalPages; i++) {
+                const dot = document.createElement('button');
+                dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+                dot.setAttribute('aria-label', 'Ir a slide ' + (i + 1));
+                dot.addEventListener('click', function() { goTo(i); });
+                dotsContainer.appendChild(dot);
+            }
+        }
+
+        function goTo(index) {
+            const maxIndex = Math.max(0, slides.length - slidesVisible);
+            currentIndex = Math.min(Math.max(0, index), maxIndex);
+            track.style.transform = 'translateX(-' + (currentIndex * slideWidth) + 'px)';
+            var dots = dotsContainer.querySelectorAll('.carousel-dot');
+            dots.forEach(function(d, i) {
+                d.classList.toggle('active', i === currentIndex);
+            });
+        }
+
+        prevBtn.addEventListener('click', function() { goTo(currentIndex - 1); });
+        nextBtn.addEventListener('click', function() { goTo(currentIndex + 1); });
+
+        // Play video on hover
+        slides.forEach(function(slide) {
+            var video = slide.querySelector('video');
+            if (video) {
+                slide.addEventListener('mouseenter', function() { video.play(); });
+                slide.addEventListener('mouseleave', function() { video.pause(); });
+                // Mobile: play on tap
+                slide.addEventListener('click', function() {
+                    if (video.paused) video.play(); else video.pause();
+                });
+            }
+        });
+
+        // Touch/drag support
+        var startX = 0, isDragging = false, dragOffset = 0;
+        track.addEventListener('touchstart', function(e) { startX = e.touches[0].clientX; isDragging = true; }, {passive: true});
+        track.addEventListener('touchmove', function(e) {
+            if (!isDragging) return;
+            dragOffset = e.touches[0].clientX - startX;
+        }, {passive: true});
+        track.addEventListener('touchend', function() {
+            isDragging = false;
+            if (dragOffset < -50) goTo(currentIndex + 1);
+            else if (dragOffset > 50) goTo(currentIndex - 1);
+            dragOffset = 0;
+        });
+
+        // Init
+        calcDimensions();
+        buildDots();
+        window.addEventListener('resize', function() { calcDimensions(); buildDots(); goTo(currentIndex); });
+    })();
+    </script>
 </body>
 </html>
