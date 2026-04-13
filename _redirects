@@ -1,10 +1,17 @@
 # Redirigir sub-páginas antiguas de GHL
 # (www → apex se maneja desde Cloudflare DNS/Rules, no aquí)
+# Ambas variantes (con y sin trailing slash) para evitar 404
 /home / 301
+/home/ / 301
 /disenodecocinas /cocinas-integrales-monterrey/ 301
-/sobrenosotros /contacto/ 301
+/disenodecocinas/ /cocinas-integrales-monterrey/ 301
+/sobrenosotros /sobre-nosotros/ 301
+/sobrenosotros/ /sobre-nosotros/ 301
 /cotizacion-wa /contacto/ 301
+/cotizacion-wa/ /contacto/ 301
 
 # Migración portafolio → proyectos (hub, no slug-a-slug porque los slugs cambiaron)
+/portafolio /proyectos/ 301
 /portafolio/ /proyectos/ 301
+/portafolio/:slug /proyectos/ 301
 /portafolio/:slug/ /proyectos/ 301

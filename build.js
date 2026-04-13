@@ -826,9 +826,12 @@ async function build() {
     { loc: 'https://zenhome.com.mx/cocinas-integrales-monterrey/', changefreq: 'monthly', priority: '0.9' },
     { loc: 'https://zenhome.com.mx/closets-monterrey/', changefreq: 'monthly', priority: '0.9' },
     { loc: 'https://zenhome.com.mx/diseno-interiores-monterrey/', changefreq: 'monthly', priority: '0.9' },
+    { loc: 'https://zenhome.com.mx/cuanto-cuesta-cocina-integral-monterrey/', changefreq: 'monthly', priority: '0.9' },
+    { loc: 'https://zenhome.com.mx/sobre-nosotros/', changefreq: 'monthly', priority: '0.8' },
     { loc: 'https://zenhome.com.mx/servicios/', changefreq: 'monthly', priority: '0.8' },
     { loc: 'https://zenhome.com.mx/contacto/', changefreq: 'monthly', priority: '0.7' },
     { loc: 'https://zenhome.com.mx/proyectos/', changefreq: 'weekly', priority: '0.8' },
+    { loc: 'https://zenhome.com.mx/blog/5-errores-remodelar-cocina', changefreq: 'monthly', priority: '0.7' },
   ]
   for (const project of projects) {
     const s = project.slug?.current
