@@ -15,3 +15,6 @@
 /portafolio/ /proyectos/ 301
 /portafolio/:slug /proyectos/ 301
 /portafolio/:slug/ /proyectos/ 301
+
+# Contacto sin trailing slash (página vieja GHL — 88 imp en GSC)
+/contacto /contacto/ 301
