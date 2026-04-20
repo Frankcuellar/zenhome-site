@@ -5,6 +5,20 @@
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=()
 
+# Bloquear indexación de archivos internos
+/*.md
+  X-Robots-Tag: noindex, nofollow
+/*.xlsx
+  X-Robots-Tag: noindex, nofollow
+/*.bak
+  X-Robots-Tag: noindex, nofollow
+/*.docx
+  X-Robots-Tag: noindex, nofollow
+/HANDOFF.md
+  X-Robots-Tag: noindex, nofollow
+/UPGRADE-PROYECTO-TEMPLATE.md
+  X-Robots-Tag: noindex, nofollow
+
 # Cache largo para assets estáticos
 /favicon.ico
   Cache-Control: public, max-age=2592000

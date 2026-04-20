@@ -24,3 +24,14 @@
 # Servicios (página vieja GHL — 15 imp en GSC)
 /servicios /contacto/ 301
 /servicios/ /contacto/ 301
+
+# Bloquear archivos internos — devolver 404 real
+/GPT-CONTEXT.md /404.html 404
+/ARQUITECTURA-SEO.md /404.html 404
+/QUICKWINS-PLAN.md /404.html 404
+/HANDOFF.md /404.html 404
+/UPGRADE-PROYECTO-TEMPLATE.md /404.html 404
+/qa-matrix.xlsx /404.html 404
+/index.html.bak /404.html 404
+/ZenHome-Estrategia-SEO-2026.docx /404.html 404
+/ZenHome-Plantilla-Proyecto-Estrategia.docx /404.html 404

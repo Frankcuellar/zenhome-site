@@ -826,7 +826,7 @@ async function build() {
     { loc: 'https://zenhome.com.mx/cocinas-integrales-monterrey/', changefreq: 'monthly', priority: '0.9' },
     { loc: 'https://zenhome.com.mx/closets-monterrey/', changefreq: 'monthly', priority: '0.9' },
     { loc: 'https://zenhome.com.mx/diseno-interiores-monterrey/', changefreq: 'monthly', priority: '0.9' },
-    { loc: 'https://zenhome.com.mx/servicios/', changefreq: 'monthly', priority: '0.8' },
+    // /servicios/ removed — it 301s to /contacto/, shouldn't be in sitemap
     { loc: 'https://zenhome.com.mx/contacto/', changefreq: 'monthly', priority: '0.7' },
     { loc: 'https://zenhome.com.mx/proyectos/', changefreq: 'weekly', priority: '0.8' },
     { loc: 'https://zenhome.com.mx/cuanto-cuesta-cocina-integral-monterrey/', changefreq: 'monthly', priority: '0.8' },
@@ -835,12 +835,16 @@ async function build() {
     { loc: 'https://zenhome.com.mx/blog/', changefreq: 'weekly', priority: '0.7' },
     { loc: 'https://zenhome.com.mx/blog/5-errores-remodelar-cocina', changefreq: 'monthly', priority: '0.7' },
   ]
+  const seenSlugs = new Set()
   for (const project of projects) {
     const s = project.slug?.current
-    if (!s) continue
-    const lastmod = project.deliveryDate
+    if (!s || seenSlugs.has(s)) continue  // skip duplicates
+    seenSlugs.add(s)
+    let lastmod = project.deliveryDate
       ? new Date(project.deliveryDate).toISOString().split('T')[0]
       : today
+    // Cap lastmod to today — no future dates in sitemap
+    if (lastmod > today) lastmod = today
     sitemapUrls.push({
       loc: `https://zenhome.com.mx/proyectos/${s}/`,
       lastmod,
