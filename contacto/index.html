@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contacto | ZenHome Monterrey | WhatsApp, Teléfono y Ubicación</title>
+    <title>Contacto | ZenHome Monterrey — Teléfono, Ubicación y WhatsApp</title>
     <meta name="description" content="Contacta con ZenHome Monterrey para cocinas integrales, closets y diseño de interiores. Respuesta en menos de 1 hora por WhatsApp. Ubicaciones en Guadalupe y Monterrey.">
     <meta name="robots" content="index, follow">
     <meta name="language" content="es-mx">
@@ -45,18 +45,18 @@
         "address": [
             {
                 "@type": "PostalAddress",
-                "streetAddress": "Sierra Leona 729",
+                "streetAddress": "C. Tauro 206",
                 "addressLocality": "Guadalupe",
                 "addressRegion": "NL",
-                "postalCode": "67110",
+                "postalCode": "67129",
                 "addressCountry": "MX"
             },
             {
                 "@type": "PostalAddress",
-                "streetAddress": "Av. Revolución 3000, Col. Primavera",
+                "streetAddress": "Pedro Martínez, Nuevo Repueblo",
                 "addressLocality": "Monterrey",
                 "addressRegion": "NL",
-                "postalCode": "64830",
+                "postalCode": "64700",
                 "addressCountry": "MX"
             }
         ],
@@ -104,55 +104,113 @@
 
         /* Header/Navigation */
         header {
-            background-color: #fff;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            background-color: #184ac6;
             position: sticky;
             top: 0;
             z-index: 100;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
         }
 
-        .header-content {
+        .header-container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 1.5rem 2rem;
+            padding: 1rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
         .logo {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--dark);
             text-decoration: none;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
         }
 
-        .logo:before {
-            content: "";
-            width: 28px;
-            height: 28px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border-radius: 4px;
+        .logo img {
+            height: 30px;
+            width: auto;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
         }
 
         nav a {
             text-decoration: none;
-            color: var(--text-dark);
+            color: #ffffff;
             font-weight: 500;
-            margin-left: 2.5rem;
-            transition: color 0.3s;
             font-size: 0.95rem;
+            transition: color 0.3s ease;
         }
 
-        nav a:hover,
-        nav a.active {
+        nav a:hover {
             color: var(--primary);
         }
 
-        /* Hero Section */
+        /* ========== MOBILE HAMBURGER MENU ========== */
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: #ffffff;
+            font-size: 1.8rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            line-height: 1;
+            z-index: 101;
+        }
+
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: block !important;
+            }
+
+            .header-container {
+                position: relative;
+                padding: 1rem;
+            }
+
+            nav ul {
+                display: none !important;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background-color: #184ac6;
+                flex-direction: column;
+                padding: 0.5rem 1.5rem;
+                gap: 0;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+                z-index: 100;
+                list-style: none;
+            }
+
+            nav ul.open {
+                display: flex !important;
+            }
+
+            nav ul li {
+                padding: 0.75rem 0;
+                border-bottom: 1px solid rgba(255,255,255,0.15);
+            }
+
+            nav ul li:last-child {
+                border-bottom: none;
+            }
+
+            nav a {
+                font-size: 0.95rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo img {
+                height: 24px;
+            }
+        }
+/* Hero Section */
         .hero {
             background: linear-gradient(135deg, var(--dark) 0%, rgba(14, 24, 44, 0.9) 100%);
             color: #fff;
@@ -519,21 +577,34 @@
 
         /* Responsive */
         @media (max-width: 768px) {
-            .header-content {
+nav ul {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background-color: #184ac6;
                 flex-direction: column;
-                gap: 1.5rem;
+                padding: 1rem 2rem;
+                gap: 0;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             }
 
-            nav {
+            nav ul.open {
                 display: flex;
-                gap: 1rem;
-                flex-wrap: wrap;
-                justify-content: center;
             }
 
-            nav a {
-                margin-left: 0;
-                font-size: 0.85rem;
+            nav ul li {
+                padding: 0.8rem 0;
+                border-bottom: 1px solid rgba(255,255,255,0.1);
+            }
+
+            nav ul li:last-child {
+                border-bottom: none;
+            }
+
+            .header-container {
+                position: relative;
             }
 
             .hero h1 {
@@ -597,13 +668,19 @@
 <body>
     <!-- Header/Navigation -->
     <header>
-        <div class="header-content">
-            <a href="/" class="logo">ZenHome</a>
+        <div class="header-container">
+            <a href="/" class="logo"><img src="https://images.leadconnectorhq.com/image/f_webp/q_80/r_1200/u_https://assets.cdn.filesafe.space/tGT0NBw0s46QQDWPfp3W/media/67531ed7d1a1319bcbad3551.png" alt="ZenHome" height="30"></a>
+            <button class="menu-toggle" aria-label="Menú">☰</button>
             <nav>
-                <a href="/">Inicio</a>
-                <a href="/servicios/">Servicios</a>
-                <a href="/proyectos/">Proyectos</a>
-                <a href="/contacto/" class="active">Contacto</a>
+                <ul>
+                    <li><a href="/">Inicio</a></li>
+                    <li><a href="/cocinas-integrales-monterrey/">Cocinas</a></li>
+                    <li><a href="/closets-monterrey/">Closets</a></li>
+                    <li><a href="/proyectos/">Proyectos</a></li>
+                    <li><a href="/sobre-nosotros/">Nosotros</a></li>
+                    <li><a href="/blog/5-errores-remodelar-cocina">Blog</a></li>
+                    <li><a href="/contacto/">Contacto</a></li>
+                </ul>
             </nav>
         </div>
     </header>
@@ -658,15 +735,15 @@
                 <!-- Oficina 1 -->
                 <div class="office-card">
                     <div class="office-map">
-                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3594.2534567890!2d-100.27416!3d25.66667!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8662c5c5c5c5c5c5%3A0x0!2sSierra%20Leona%20729%2C%20San%20Agust%C3%ADn%2C%20Guadalupe%2C%20NL!5e0!3m2!1ses!2smx!4v1234567890" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3594.2534567890!2d-100.27416!3d25.66667!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8662c5c5c5c5c5c5%3A0x0!2sC.%20Tauro%20206%2C%20Linda%20Vista%2C%20Guadalupe%2C%20NL!5e0!3m2!1ses!2smx!4v1234567890" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                     </div>
                     <div class="office-info">
                         <h3>Oficina Guadalupe</h3>
                         <p><strong>Dirección:</strong></p>
                         <div class="office-address">
-                            Sierra Leona 729<br>
-                            Residencial San Agustín<br>
-                            Guadalupe, NL 67110
+                            C. Tauro 206<br>
+                            Linda Vista<br>
+                            Guadalupe, NL 67129
                         </div>
                     </div>
                 </div>
@@ -674,15 +751,15 @@
                 <!-- Oficina 2 -->
                 <div class="office-card">
                     <div class="office-map">
-                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3598.5432109876!2d-100.28888!3d25.63333!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8662d5d5d5d5d5d5%3A0x0!2sAv.%20Revoluci%C3%B3n%203000%2C%20Monterrey%2C%20NL!5e0!3m2!1ses!2smx!4v1234567890" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3598.5432109876!2d-100.28888!3d25.63333!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8662d5d5d5d5d5d5%3A0x0!2sPedro%20Mart%C3%ADnez%2C%20Monterrey%2C%20NL!5e0!3m2!1ses!2smx!4v1234567890" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                     </div>
                     <div class="office-info">
                         <h3>Oficina Monterrey</h3>
                         <p><strong>Dirección:</strong></p>
                         <div class="office-address">
-                            Av. Revolución 3000<br>
-                            Col. Primavera<br>
-                            Monterrey, NL 64830
+                            Pedro Martínez<br>
+                            Nuevo Repueblo<br>
+                            Monterrey, NL 64700
                         </div>
                     </div>
                 </div>
@@ -749,15 +826,18 @@
             </div>
             <div class="footer-section">
                 <h4>Ubicaciones</h4>
-                <p>Sierra Leona 729, Guadalupe, NL</p>
-                <p>Av. Revolución 3000, Monterrey, NL</p>
+                <p>C. Tauro 206, Guadalupe, NL</p>
+                <p>Pedro Martínez, Monterrey, NL</p>
             </div>
             <div class="footer-section">
-                <h4>Enlaces</h4>
+                <h4>Navegación</h4>
                 <a href="/">Inicio</a>
-                <a href="/servicios/">Servicios</a>
+                <a href="/cocinas-integrales-monterrey/">Cocinas</a>
+                <a href="/closets-monterrey/">Closets</a>
+                <a href="/diseno-interiores-monterrey/">Diseño Interior</a>
+                <a href="/sobre-nosotros/">Nosotros</a>
+                <a href="/blog/5-errores-remodelar-cocina">Blog</a>
                 <a href="/proyectos/">Proyectos</a>
-                <a href="/contacto/">Contacto</a>
             </div>
         </div>
         <div class="footer-bottom">
@@ -765,9 +845,78 @@
         </div>
     </footer>
 
+    <!-- FAQ Schema -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+            {
+                "@type": "Question",
+                "name": "¿Cuál es el horario de atención de ZenHome?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Atendemos de lunes a viernes de 9:00 a 18:00 hrs y sábados de 10:00 a 14:00 hrs. Por WhatsApp respondemos en menos de 1 hora durante horario laboral."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "¿Dónde están ubicados?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Contamos con dos ubicaciones: C. Tauro 206, Linda Vista, Guadalupe N.L. (CP 67129) y Pedro Martínez, Nuevo Repueblo, Monterrey N.L. (CP 64700). Ambas oficinas atienden con cita previa."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "¿La cotización tiene costo?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "No, la cotización inicial es completamente gratuita y sin compromiso. Contáctanos por WhatsApp al 811 526 9496 para agendar tu consulta personalizada."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "¿Atienden fuera de Monterrey?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Nuestro servicio cubre todo el área metropolitana de Monterrey: San Pedro Garza García, Guadalupe, San Nicolás, Apodaca, Santa Catarina y Escobedo. Para proyectos especiales fuera de la zona metro, contáctanos para evaluar disponibilidad."
+                }
+            }
+        ]
+    }
+    </script>
+
     <!-- WhatsApp Floating Button -->
     <a href="https://wa.me/528115269496" class="whatsapp-btn" target="_blank" title="Contáctanos por WhatsApp" aria-label="Abrir WhatsApp">
         💬
     </a>
+
+    <!-- HAMBURGER MENU SCRIPT -->
+    <script>
+    (function() {
+        var btn = document.querySelector('.menu-toggle');
+        if (!btn) return;
+        var menu = document.querySelector('nav ul');
+        if (!menu) return;
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            menu.classList.toggle('open');
+        });
+        // Close menu when clicking a link
+        menu.querySelectorAll('a').forEach(function(link) {
+            link.addEventListener('click', function() {
+                menu.classList.remove('open');
+            });
+        });
+        // Close menu when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!btn.contains(e.target) && !menu.contains(e.target)) {
+                menu.classList.remove('open');
+            }
+        });
+    })();
+    </script>
 </body>
 </html>

@@ -77,60 +77,142 @@
 
   /* ===== HEADER ===== */
   .zh-header {
-    background: var(--blue-dark);
-    padding: 0 40px;
-    height: 70px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    background-color: #184ac6;
     position: sticky;
     top: 0;
     z-index: 100;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   }
-  .zh-logo {
+
+  .header-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .logo {
+    text-decoration: none;
     display: flex;
     align-items: center;
-    gap: 10px;
-    text-decoration: none;
-    color: var(--white);
-    font-size: 22px;
-    font-weight: 700;
   }
-  .zh-logo img { height: 40px; width: auto; }
-  .zh-nav { display: flex; align-items: center; gap: 8px; }
-  .zh-nav a {
-    color: var(--white);
-    text-decoration: none;
-    font-size: 14px;
-    font-weight: 400;
-    padding: 8px 16px;
-    border-radius: 6px;
-    transition: background 0.2s;
-  }
-  .zh-nav a:hover, .zh-nav a.active { background: var(--blue-light); }
-  .zh-nav-cta {
-    background: var(--gold) !important;
-    color: var(--blue-dark) !important;
-    font-weight: 500 !important;
-    padding: 10px 20px !important;
-    border-radius: 8px !important;
-    display: flex; align-items: center; gap: 6px;
-  }
-  .zh-nav-cta:hover { opacity: 0.9; }
 
-  /* Mobile nav */
-  .zh-hamburger { display: none; background: none; border: none; cursor: pointer; padding: 8px; }
-  .zh-hamburger span { display: block; width: 24px; height: 2px; background: white; margin: 5px 0; transition: 0.3s; }
-  @media (max-width: 768px) {
-    .zh-header { padding: 0 20px; }
-    .zh-hamburger { display: block; }
-    .zh-nav {
-      display: none; position: absolute; top: 70px; left: 0; right: 0;
-      background: var(--blue-dark); flex-direction: column; padding: 20px;
-      gap: 4px; box-shadow: var(--shadow);
+  .logo img {
+    height: 30px;
+    width: auto;
+  }
+
+  nav ul {
+    display: flex;
+    list-style: none;
+    gap: 2rem;
+  }
+
+  nav a {
+    text-decoration: none;
+    color: #ffffff;
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: color 0.3s ease;
+  }
+
+  nav a:hover {
+    color: var(--primary);
+  }
+
+        /* ========== MOBILE HAMBURGER MENU ========== */
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: #ffffff;
+            font-size: 1.8rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            line-height: 1;
+            z-index: 101;
+        }
+
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: block !important;
+            }
+
+            .header-container {
+                position: relative;
+                padding: 1rem;
+            }
+
+            nav ul {
+                display: none !important;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background-color: #184ac6;
+                flex-direction: column;
+                padding: 0.5rem 1.5rem;
+                gap: 0;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+                z-index: 100;
+                list-style: none;
+            }
+
+            nav ul.open {
+                display: flex !important;
+            }
+
+            nav ul li {
+                padding: 0.75rem 0;
+                border-bottom: 1px solid rgba(255,255,255,0.15);
+            }
+
+            nav ul li:last-child {
+                border-bottom: none;
+            }
+
+            nav a {
+                font-size: 0.95rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo img {
+                height: 24px;
+            }
+        }
+@media (max-width: 768px) {
+nav ul {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background-color: #184ac6;
+      flex-direction: column;
+      padding: 1rem 2rem;
+      gap: 0;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     }
-    .zh-nav.open { display: flex; }
-    .zh-nav a { width: 100%; padding: 12px 16px; }
+
+    nav ul.open {
+      display: flex;
+    }
+
+    nav ul li {
+      padding: 0.8rem 0;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    nav ul li:last-child {
+      border-bottom: none;
+    }
+
+    .header-container {
+      position: relative;
+    }
   }
 
   /* ===== HERO ===== */
@@ -345,23 +427,21 @@
 
 <!-- HEADER -->
 <header class="zh-header">
-  <a href="/" class="zh-logo">
-    <img src="https://images.leadconnectorhq.com/image/f_webp/q_80/r_400/u_https://assets.cdn.filesafe.space/tGT0NBw0s46QQDWPfp3W/media/67531ed7d1a1319bcbad3551.png" alt="ZenHome logo"/>
-  </a>
-  <button class="zh-hamburger" onclick="document.querySelector('.zh-nav').classList.toggle('open')" aria-label="Menú">
-    <span></span><span></span><span></span>
-  </button>
-  <nav class="zh-nav">
-    <a href="/">Inicio</a>
-    <a href="/#servicios">Diseño de Cocinas</a>
-    <a href="/proyectos/" class="active">Proyectos</a>
-    <a href="/#equipo">Sobre Nosotros</a>
-    <a href="/#locaciones">Contacto</a>
-    <a href="https://wa.me/528115269496?text=Hola%20ZenHome%2C%20me%20interesa%20una%20cotización%20para%20mi%20proyecto." class="zh-nav-cta" target="_blank" rel="noopener">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.625.846 5.059 2.284 7.034L.789 23.492a.5.5 0 00.611.611l4.458-1.495A11.943 11.943 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-2.24 0-4.318-.726-6.003-1.956l-.42-.317-2.65.889.889-2.65-.317-.42A9.956 9.956 0 012 12C2 6.486 6.486 2 12 2s10 4.486 10 10-4.486 10-10 10z"/></svg>
-      Agenda una cita
-    </a>
-  </nav>
+  <div class="header-container">
+    <a href="/" class="logo"><img src="https://images.leadconnectorhq.com/image/f_webp/q_80/r_1200/u_https://assets.cdn.filesafe.space/tGT0NBw0s46QQDWPfp3W/media/67531ed7d1a1319bcbad3551.png" alt="ZenHome" height="30"></a>
+    <button class="menu-toggle" aria-label="Menú">☰</button>
+    <nav>
+      <ul>
+        <li><a href="/">Inicio</a></li>
+        <li><a href="/cocinas-integrales-monterrey/">Cocinas</a></li>
+        <li><a href="/closets-monterrey/">Closets</a></li>
+        <li><a href="/proyectos/">Proyectos</a></li>
+        <li><a href="/sobre-nosotros/">Nosotros</a></li>
+        <li><a href="/blog/5-errores-remodelar-cocina">Blog</a></li>
+        <li><a href="/contacto/">Contacto</a></li>
+      </ul>
+    </nav>
+  </div>
 </header>
 
 <!-- HERO -->
@@ -500,5 +580,32 @@
 })();
 </script>
 
+
+    <!-- HAMBURGER MENU SCRIPT -->
+    <script>
+    (function() {
+        var btn = document.querySelector('.menu-toggle');
+        if (!btn) return;
+        var menu = document.querySelector('nav ul');
+        if (!menu) return;
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            menu.classList.toggle('open');
+        });
+        // Close menu when clicking a link
+        menu.querySelectorAll('a').forEach(function(link) {
+            link.addEventListener('click', function() {
+                menu.classList.remove('open');
+            });
+        });
+        // Close menu when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!btn.contains(e.target) && !menu.contains(e.target)) {
+                menu.classList.remove('open');
+            }
+        });
+    })();
+    </script>
 </body>
 </html>

@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="es-mx">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <!-- SEO & Meta Tags -->
+    <title>Blog | ZenHome — Tips de Cocinas, Closets y Diseño Interior en Monterrey</title>
+    <meta name="description" content="Artículos y guías prácticas sobre cocinas integrales, closets a la medida y diseño interior en Monterrey. Tips de expertos con +300 proyectos de experiencia.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://zenhome.com.mx/blog/">
+
+    <!-- Open Graph Tags -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Blog | ZenHome — Tips de Cocinas, Closets y Diseño Interior">
+    <meta property="og:description" content="Artículos y guías prácticas sobre cocinas integrales, closets a la medida y diseño interior en Monterrey.">
+    <meta property="og:url" content="https://zenhome.com.mx/blog/">
+    <meta property="og:site_name" content="ZenHome">
+
+    <!-- Twitter Cards -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Blog | ZenHome — Tips de Cocinas, Closets y Diseño Interior">
+    <meta name="twitter:description" content="Artículos y guías prácticas sobre cocinas integrales, closets a la medida y diseño interior en Monterrey.">
+
+    <!-- GA4 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-JSYYXX8Z2K"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-JSYYXX8Z2K');
+    </script>
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Blog",
+        "name": "Blog ZenHome",
+        "url": "https://zenhome.com.mx/blog/",
+        "description": "Artículos y guías prácticas sobre cocinas integrales, closets a la medida y diseño interior en Monterrey",
+        "publisher": {
+            "@type": "Organization",
+            "name": "ZenHome",
+            "url": "https://zenhome.com.mx",
+            "logo": "https://images.leadconnectorhq.com/image/f_webp/q_80/r_1200/u_https://assets.cdn.filesafe.space/tGT0NBw0s46QQDWPfp3W/media/67531ed7d1a1319bcbad3551.png"
+        }
+    }
+    </script>
+
+    <style>
+        /* ========== CSS VARIABLES ========== */
+        :root {
+            --primary: #37ca37;
+            --secondary: #188bf6;
+            --dark: #0E182C;
+            --light-gray: #f5f5f5;
+            --medium-gray: #6b7280;
+            --border-gray: #e5e7eb;
+        }
+
+        /* ========== GENERAL STYLES ========== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #374151;
+            background-color: #ffffff;
+        }
+
+        /* ========== HEADER ========== */
+        header {
+            background-color: #184ac6;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 2rem;
+        }
+
+        .logo {
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .logo img {
+            height: 30px;
+            width: auto;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        nav a {
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: color 0.3s ease;
+        }
+
+        nav a:hover {
+            color: var(--primary);
+        }
+
+        /* ========== MOBILE HAMBURGER MENU ========== */
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: #ffffff;
+            font-size: 1.8rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            line-height: 1;
+            z-index: 101;
+        }
+
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: block !important;
+            }
+
+            .header-container {
+                position: relative;
+                padding: 1rem;
+            }
+
+            nav ul {
+                display: none !important;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background-color: #184ac6;
+                flex-direction: column;
+                padding: 0.5rem 1.5rem;
+                gap: 0;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+                z-index: 100;
+                list-style: none;
+            }
+
+            nav ul.open {
+                display: flex !important;
+            }
+
+            nav ul li {
+                padding: 0.75rem 0;
+                border-bottom: 1px solid rgba(255,255,255,0.15);
+            }
+
+            nav ul li:last-child {
+                border-bottom: none;
+            }
+
+            nav a {
+                font-size: 0.95rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo img {
+                height: 24px;
+            }
+        }
+
+        /* ========== HERO ========== */
+        .hero {
+            background: linear-gradient(135deg, #0E182C 0%, #1a2847 100%);
+            color: white;
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: #d1d5db;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        @media (max-width: 768px) {
+            .hero { padding: 3rem 1.5rem; }
+            .hero h1 { font-size: 1.8rem; }
+            .hero p { font-size: 1rem; }
+        }
+
+        /* ========== BLOG LISTING ========== */
+        .blog-listing {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        .blog-card {
+            display: block;
+            text-decoration: none;
+            color: inherit;
+            border-radius: 12px;
+            border: 2px solid var(--border-gray);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            transition: border-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .blog-card:hover {
+            border-color: var(--secondary);
+            transform: translateY(-2px);
+        }
+
+        .blog-card-tag {
+            display: inline-block;
+            background-color: var(--secondary);
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            margin-bottom: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .blog-card h2 {
+            font-size: 1.4rem;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .blog-card p {
+            color: var(--medium-gray);
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        .blog-card-meta {
+            margin-top: 1rem;
+            font-size: 0.85rem;
+            color: var(--medium-gray);
+        }
+
+        @media (max-width: 768px) {
+            .blog-listing { padding: 2rem 1.5rem; }
+            .blog-card { padding: 1.5rem; }
+            .blog-card h2 { font-size: 1.2rem; }
+        }
+
+        /* ========== CTA SECTION ========== */
+        .cta-section {
+            background: linear-gradient(135deg, var(--primary) 0%, #2db82d 100%);
+            color: white;
+            text-align: center;
+            padding: 3rem 2rem;
+        }
+
+        .cta-section h2 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .cta-section p {
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            opacity: 0.95;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background-color: white;
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 1.1rem;
+            padding: 1rem 2.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: transform 0.3s ease;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+        }
+
+        /* ========== FOOTER ========== */
+        footer {
+            background-color: var(--dark);
+            color: #d1d5db;
+            padding: 3rem 2rem 1.5rem;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+        }
+
+        .footer-section h3 {
+            color: var(--primary);
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .footer-section p,
+        .footer-section a {
+            color: #d1d5db;
+            text-decoration: none;
+            font-size: 0.9rem;
+            line-height: 1.8;
+        }
+
+        .footer-section a:hover {
+            color: var(--primary);
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section ul li a {
+            display: block;
+            padding: 0.2rem 0;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .social-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: rgba(255,255,255,0.1);
+            color: #d1d5db;
+            text-decoration: none;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+        }
+
+        .social-link:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            color: #9ca3af;
+            font-size: 0.85rem;
+        }
+
+        @media (max-width: 768px) {
+            .footer-container {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .footer-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ========== FLOATING WHATSAPP ========== */
+        .floating-whatsapp {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background-color: #25D366;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: white;
+            text-decoration: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            z-index: 999;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.5); }
+            70% { box-shadow: 0 0 0 15px rgba(37, 211, 102, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-container">
+            <a href="/" class="logo"><img src="https://images.leadconnectorhq.com/image/f_webp/q_80/r_1200/u_https://assets.cdn.filesafe.space/tGT0NBw0s46QQDWPfp3W/media/67531ed7d1a1319bcbad3551.png" alt="ZenHome" height="30"></a>
+            <button class="menu-toggle" aria-label="Menú">☰</button>
+            <nav>
+                <ul>
+                    <li><a href="/">Inicio</a></li>
+                    <li><a href="/cocinas-integrales-monterrey/">Cocinas</a></li>
+                    <li><a href="/closets-monterrey/">Closets</a></li>
+                    <li><a href="/proyectos/">Proyectos</a></li>
+                    <li><a href="/sobre-nosotros/">Nosotros</a></li>
+                    <li><a href="/blog/">Blog</a></li>
+                    <li><a href="/contacto/">Contacto</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- HERO SECTION -->
+    <section class="hero">
+        <h1>Blog ZenHome</h1>
+        <p>Tips, guías y consejos prácticos para tu próximo proyecto de cocina, closet o diseño interior en Monterrey.</p>
+    </section>
+
+    <!-- BLOG LISTING -->
+    <section class="blog-listing">
+
+        <a href="/blog/5-errores-remodelar-cocina" class="blog-card">
+            <span class="blog-card-tag">Cocinas</span>
+            <h2>5 Errores al Remodelar tu Cocina (y Cómo Evitarlos)</h2>
+            <p>Evita los errores más comunes al remodelar tu cocina en Monterrey. Aprende sobre presupuesto, materiales, diseño y cómo elegir al contratista correcto.</p>
+            <div class="blog-card-meta">Guía práctica &middot; Lectura de 8 min</div>
+        </a>
+
+    </section>
+
+    <!-- CTA SECTION -->
+    <section class="cta-section">
+        <h2>¿Listo para tu proyecto?</h2>
+        <p>Platícanos tu idea y te ayudamos a hacerla realidad.</p>
+        <a href="https://wa.me/528115269496?text=Hola%2C%20vi%20el%20blog%20de%20ZenHome%20y%20me%20interesa%20platicar%20sobre%20mi%20proyecto" class="cta-button"
+           onclick="gtag('event','click_whatsapp',{event_category:'conversion',event_label:'blog_hub_cta'});">
+            Cotiza por WhatsApp →
+        </a>
+    </section>
+
+    <footer>
+        <div class="footer-container">
+            <div class="footer-section">
+                <h3>ZenHome</h3>
+                <p>Diseño y fabricación de cocinas integrales, closets y espacios a la medida en Monterrey.</p>
+                <p><strong>Teléfono:</strong> <a href="tel:+528115269496">+52 811 526 9496</a></p>
+                <p><strong>WhatsApp:</strong> <a href="https://wa.me/528115269496">528115269496</a></p>
+            </div>
+            <div class="footer-section">
+                <h3>Dirección</h3>
+                <p><strong>Oficina 1:</strong><br>C. Tauro 206<br>Linda Vista<br>Guadalupe, NL 67129</p>
+                <p><strong>Oficina 2:</strong><br>Pedro Martínez<br>Nuevo Repueblo<br>Monterrey, NL 64700</p>
+            </div>
+            <div class="footer-section">
+                <h3>Navegación</h3>
+                <ul>
+                    <li><a href="/">Inicio</a></li>
+                    <li><a href="/cocinas-integrales-monterrey/">Cocinas</a></li>
+                    <li><a href="/closets-monterrey/">Closets</a></li>
+                    <li><a href="/diseno-interiores-monterrey/">Diseño Interior</a></li>
+                    <li><a href="/sobre-nosotros/">Nosotros</a></li>
+                    <li><a href="/blog/">Blog</a></li>
+                    <li><a href="/proyectos/">Proyectos</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Redes Sociales</h3>
+                <div class="social-links">
+                    <a href="https://www.facebook.com/ZenHomeMx" class="social-link" target="_blank">f</a>
+                    <a href="https://www.instagram.com/zenhomemx" class="social-link" target="_blank">📷</a>
+                </div>
+                <p style="margin-top: 1rem;">Síguenos para ver proyectos, tips de decoración y antes/después.</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 ZenHome. Todos los derechos reservados. Monterrey, Nuevo León, México.</p>
+        </div>
+    </footer>
+
+    <!-- FLOATING WHATSAPP BUTTON -->
+    <a href="https://wa.me/528115269496?text=Hola,%20quiero%20conocer%20m%C3%A1s%20sobre%20ZenHome%20y%20platicar%20sobre%20mi%20proyecto" class="floating-whatsapp" title="Contactar por WhatsApp">
+        💬
+    </a>
+
+    <!-- HAMBURGER MENU SCRIPT -->
+    <script>
+    (function() {
+        var btn = document.querySelector('.menu-toggle');
+        if (!btn) return;
+        var menu = document.querySelector('nav ul');
+        if (!menu) return;
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            menu.classList.toggle('open');
+        });
+        menu.querySelectorAll('a').forEach(function(link) {
+            link.addEventListener('click', function() {
+                menu.classList.remove('open');
+            });
+        });
+        document.addEventListener('click', function(e) {
+            if (!btn.contains(e.target) && !menu.contains(e.target)) {
+                menu.classList.remove('open');
+            }
+        });
+    })();
+    </script>
+</body>
+</html>

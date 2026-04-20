@@ -6,8 +6,8 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
     <!-- SEO & Meta Tags -->
-    <title>Cocinas Integrales a la Medida en Monterrey | ZenHome | WhatsApp</title>
-    <meta name="description" content="Diseño y fabricación de cocinas integrales a la medida en Monterrey. Materiales premium, acabados de calidad. Cotización gratis por WhatsApp. +100 proyectos entregados.">
+    <title>Cocinas Integrales a la Medida en Monterrey | ZenHome</title>
+    <meta name="description" content="Diseño y fabricación de cocinas integrales a la medida en Monterrey. Materiales premium, acabados de calidad. Cotización gratis por WhatsApp. +300 proyectos entregados.">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://zenhome.com.mx/cocinas-integrales-monterrey/">
 
@@ -21,7 +21,7 @@
     <!-- Twitter Cards -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Cocinas Integrales a la Medida en Monterrey | ZenHome">
-    <meta name="twitter:description" content="Diseño y fabricación de cocinas integrales a la medida. Materiales premium. +100 proyectos entregados.">
+    <meta name="twitter:description" content="Diseño y fabricación de cocinas integrales a la medida. Materiales premium. +300 proyectos entregados.">
 
     <!-- GA4 -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-JSYYXX8Z2K"></script>
@@ -44,18 +44,18 @@
         "address": [
             {
                 "@type": "PostalAddress",
-                "streetAddress": "Sierra Leona 729",
+                "streetAddress": "C. Tauro 206",
                 "addressLocality": "Guadalupe",
                 "addressRegion": "NL",
-                "postalCode": "67110",
+                "postalCode": "67129",
                 "addressCountry": "MX"
             },
             {
                 "@type": "PostalAddress",
-                "streetAddress": "Av. Revolución 3000, Col. Primavera",
+                "streetAddress": "Pedro Martínez, Nuevo Repueblo",
                 "addressLocality": "Monterrey",
                 "addressRegion": "NL",
-                "postalCode": "64830",
+                "postalCode": "64700",
                 "addressCountry": "MX"
             }
         ],
@@ -163,12 +163,11 @@
 
         /* ========== HEADER ========== */
         header {
-            background-color: #ffffff;
-            border-bottom: 1px solid var(--border-gray);
+            background-color: #184ac6;
             position: sticky;
             top: 0;
             z-index: 100;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
         }
 
         .header-container {
@@ -181,14 +180,14 @@
         }
 
         .logo {
-            font-weight: 700;
-            font-size: 1.5rem;
-            color: var(--dark);
             text-decoration: none;
+            display: flex;
+            align-items: center;
         }
 
-        .logo span {
-            color: var(--primary);
+        .logo img {
+            height: 30px;
+            width: auto;
         }
 
         nav ul {
@@ -199,7 +198,7 @@
 
         nav a {
             text-decoration: none;
-            color: #1f2937;
+            color: #ffffff;
             font-weight: 500;
             font-size: 0.95rem;
             transition: color 0.3s ease;
@@ -209,29 +208,96 @@
             color: var(--primary);
         }
 
+        /* ========== MOBILE HAMBURGER MENU ========== */
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: #ffffff;
+            font-size: 1.8rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            line-height: 1;
+            z-index: 101;
+        }
+
         @media (max-width: 768px) {
-            nav ul {
-                gap: 1rem;
-                font-size: 0.85rem;
+            .menu-toggle {
+                display: block !important;
             }
 
             .header-container {
+                position: relative;
                 padding: 1rem;
             }
-        }
 
-        @media (max-width: 600px) {
             nav ul {
-                gap: 0.5rem;
-                flex-wrap: wrap;
+                display: none !important;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background-color: #184ac6;
+                flex-direction: column;
+                padding: 0.5rem 1.5rem;
+                gap: 0;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+                z-index: 100;
+                list-style: none;
+            }
+
+            nav ul.open {
+                display: flex !important;
+            }
+
+            nav ul li {
+                padding: 0.75rem 0;
+                border-bottom: 1px solid rgba(255,255,255,0.15);
+            }
+
+            nav ul li:last-child {
+                border-bottom: none;
             }
 
             nav a {
-                font-size: 0.85rem;
+                font-size: 0.95rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo img {
+                height: 24px;
+            }
+        }
+@media (max-width: 768px) {
+nav ul {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background-color: #184ac6;
+                flex-direction: column;
+                padding: 1rem 2rem;
+                gap: 0;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             }
 
-            .logo {
-                font-size: 1.2rem;
+            nav ul.open {
+                display: flex;
+            }
+
+            nav ul li {
+                padding: 0.8rem 0;
+                border-bottom: 1px solid rgba(255,255,255,0.1);
+            }
+
+            nav ul li:last-child {
+                border-bottom: none;
+            }
+
+            .header-container {
+                position: relative;
             }
         }
 
@@ -795,13 +861,17 @@
     <!-- HEADER -->
     <header>
         <div class="header-container">
-            <a href="/" class="logo">Zen<span>Home</span></a>
+            <a href="/" class="logo"><img src="https://images.leadconnectorhq.com/image/f_webp/q_80/r_1200/u_https://assets.cdn.filesafe.space/tGT0NBw0s46QQDWPfp3W/media/67531ed7d1a1319bcbad3551.png" alt="ZenHome" height="30"></a>
+            <button class="menu-toggle" aria-label="Menú">☰</button>
             <nav>
                 <ul>
                     <li><a href="/">Inicio</a></li>
-                    <li><a href="#servicios">Servicios</a></li>
+                    <li><a href="/cocinas-integrales-monterrey/">Cocinas</a></li>
+                    <li><a href="/closets-monterrey/">Closets</a></li>
                     <li><a href="/proyectos/">Proyectos</a></li>
-                    <li><a href="#contacto">Contacto</a></li>
+                    <li><a href="/sobre-nosotros/">Nosotros</a></li>
+                    <li><a href="/blog/5-errores-remodelar-cocina">Blog</a></li>
+                    <li><a href="/contacto/">Contacto</a></li>
                 </ul>
             </nav>
         </div>
@@ -882,15 +952,15 @@
 
             <div class="stats-container">
                 <div class="stat-box">
-                    <div class="stat-number">100+</div>
+                    <div class="stat-number">300+</div>
                     <div class="stat-label">Proyectos entregados</div>
                 </div>
                 <div class="stat-box">
-                    <div class="stat-number">8+</div>
+                    <div class="stat-number">+11</div>
                     <div class="stat-label">Años de experiencia</div>
                 </div>
                 <div class="stat-box">
-                    <div class="stat-number">5★</div>
+                    <div class="stat-number">4.4★</div>
                     <div class="stat-label">Garantía en instalación</div>
                 </div>
             </div>
@@ -990,6 +1060,10 @@
         <div class="section-container">
             <h2 class="cross-links-title">Otros servicios ZenHome</h2>
             <div class="cross-links-grid">
+                <a href="/materiales-cocina-integral-monterrey/" class="cross-link-card">
+                    <h3>🪵 Guía de Materiales</h3>
+                    <p>MDF con melamina, lacado o madera — te explicamos cuál conviene según tu caso y presupuesto.</p>
+                </a>
                 <a href="/closets-monterrey/" class="cross-link-card">
                     <h3>🚪 Closets a la Medida</h3>
                     <p>Diseño y fabricación de closets personalizados con organización inteligente y acabados premium en Monterrey.</p>
@@ -1000,7 +1074,7 @@
                 </a>
                 <a href="/proyectos/" class="cross-link-card">
                     <h3>📸 Galería de Proyectos</h3>
-                    <p>Mira 100+ proyectos realizados en Monterrey. Cocinas, closets y espacios que transformamos para nuestros clientes.</p>
+                    <p>Mira 300+ proyectos realizados en Monterrey. Cocinas, closets y espacios que transformamos para nuestros clientes.</p>
                 </a>
             </div>
         </div>
@@ -1026,17 +1100,19 @@
             </div>
             <div class="footer-section">
                 <h3>Dirección</h3>
-                <p><strong>Oficina 1:</strong><br>Sierra Leona 729<br>Residencial San Agustín<br>Guadalupe, NL 67110</p>
-                <p><strong>Oficina 2:</strong><br>Av. Revolución 3000<br>Col. Primavera<br>Monterrey, NL 64830</p>
+                <p><strong>Oficina 1:</strong><br>C. Tauro 206<br>Linda Vista<br>Guadalupe, NL 67129</p>
+                <p><strong>Oficina 2:</strong><br>Pedro Martínez<br>Nuevo Repueblo<br>Monterrey, NL 64700</p>
             </div>
             <div class="footer-section">
                 <h3>Navegación</h3>
                 <ul>
                     <li><a href="/">Inicio</a></li>
-                    <li><a href="#servicios">Servicios</a></li>
-                    <li><a href="/proyectos/">Proyectos</a></li>
+                    <li><a href="/cocinas-integrales-monterrey/">Cocinas</a></li>
                     <li><a href="/closets-monterrey/">Closets</a></li>
                     <li><a href="/diseno-interiores-monterrey/">Diseño Interior</a></li>
+                    <li><a href="/sobre-nosotros/">Nosotros</a></li>
+                    <li><a href="/blog/5-errores-remodelar-cocina">Blog</a></li>
+                    <li><a href="/proyectos/">Proyectos</a></li>
                 </ul>
             </div>
             <div class="footer-section">
@@ -1057,5 +1133,32 @@
     <a href="https://wa.me/528115269496?text=Hola,%20estoy%20interesado%20en%20una%20cocina%20integral%20a%20la%20medida.%20%C2%BFPodemos%20platicar?" class="floating-whatsapp" title="Contactar por WhatsApp">
         💬
     </a>
+
+    <!-- HAMBURGER MENU SCRIPT -->
+    <script>
+    (function() {
+        var btn = document.querySelector('.menu-toggle');
+        if (!btn) return;
+        var menu = document.querySelector('nav ul');
+        if (!menu) return;
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            menu.classList.toggle('open');
+        });
+        // Close menu when clicking a link
+        menu.querySelectorAll('a').forEach(function(link) {
+            link.addEventListener('click', function() {
+                menu.classList.remove('open');
+            });
+        });
+        // Close menu when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!btn.contains(e.target) && !menu.contains(e.target)) {
+                menu.classList.remove('open');
+            }
+        });
+    })();
+    </script>
 </body>
 </html>
