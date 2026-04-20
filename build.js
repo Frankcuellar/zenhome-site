@@ -839,7 +839,8 @@ async function build() {
 
   // Generate sitemap.xml dynamically
   console.log('\n🗺  Generating sitemap.xml...')
-  const today = new Date().toISOString().split('T')[0]
+  // Use Mexico City timezone to avoid UTC date being "tomorrow" when build runs at night CDT
+  const today = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Monterrey' })
   const sitemapUrls = [
     { loc: 'https://zenhome.com.mx/', changefreq: 'weekly', priority: '1.0' },
     { loc: 'https://zenhome.com.mx/cocinas-integrales-monterrey/', changefreq: 'monthly', priority: '0.9' },
@@ -874,8 +875,8 @@ async function build() {
   const sitemapXml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${sitemapUrls.map(u => `  <url>
-    <loc>${u.loc}</loc>
-    <lastmod>${u.lastmod || today}</lastmod>
+    <loc>${u.loc}</loc>${u.lastmod ? `
+    <lastmod>${u.lastmod}</lastmod>` : ''}
     <changefreq>${u.changefreq}</changefreq>
     <priority>${u.priority}</priority>
   </url>`).join('\n')}
