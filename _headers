@@ -10,6 +10,8 @@
   X-Robots-Tag: noindex, nofollow
 /*.xlsx
   X-Robots-Tag: noindex, nofollow
+/qa-matrix.xlsx
+  X-Robots-Tag: noindex, nofollow
 /*.bak
   X-Robots-Tag: noindex, nofollow
 /*.docx
