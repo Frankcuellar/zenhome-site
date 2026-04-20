@@ -278,7 +278,7 @@ function projectPageHtml(p, relatedProjects) {
   // Video
   let videoSection = ''
   if (p.videoUrl) {
-    const videoId = p.videoUrl.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/)?.[1]
+    const videoId = p.videoUrl.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/)?.[1]
     if (videoId) {
       const videoIntro = `Recorre este proyecto en video y observa los detalles de acabados, materiales y funcionalidad.`
       videoSection = `
