@@ -780,6 +780,25 @@ async function build() {
   // Normalize categories
   projects.forEach((p) => { p.category = normalizeCategory(p.category) })
 
+  // Deduplicate by slug — prevents duplicate cards if Sanity has
+  // multiple documents with the same slug (e.g. after duplicating)
+  const slugSet = new Set()
+  const dedupedProjects = []
+  for (const p of projects) {
+    const s = p.slug?.current
+    if (!s || slugSet.has(s)) {
+      if (s) console.log(`⚠️  Skipping duplicate slug "${s}" (_id: ${p._id})`)
+      continue
+    }
+    slugSet.add(s)
+    dedupedProjects.push(p)
+  }
+  if (dedupedProjects.length < projects.length) {
+    console.log(`   Deduped: ${projects.length} → ${dedupedProjects.length} unique slugs\n`)
+  }
+  projects.length = 0
+  projects.push(...dedupedProjects)
+
   if (projects.length === 0) {
     console.log('⚠️  No hay proyectos publicados. Nada que generar.')
     return
