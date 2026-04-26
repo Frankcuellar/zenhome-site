@@ -421,6 +421,7 @@
             100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
         }
     </style>
+    <link rel="stylesheet" href="/styles/nav-dropdown.css">
 </head>
 <body>
 
@@ -431,7 +432,13 @@
             <nav>
                 <ul>
                     <li><a href="/">Inicio</a></li>
-                    <li><a href="/cocinas-integrales-monterrey/">Cocinas</a></li>
+                    <li class="nav-has-submenu"><a href="/cocinas-integrales-monterrey/">Cocinas</a>
+                    <ul class="nav-submenu">
+                        <li><a href="/cocinas-integrales-monterrey/">Monterrey</a></li>
+                        <li><a href="/cocinas-integrales-guadalupe/">Guadalupe</a></li>
+                        <li><a href="/cocinas-integrales-apodaca/">Apodaca</a></li>
+                    </ul>
+                </li>
                     <li><a href="/closets-monterrey/">Closets</a></li>
                     <li><a href="/proyectos/">Proyectos</a></li>
                     <li><a href="/sobre-nosotros/">Nosotros</a></li>

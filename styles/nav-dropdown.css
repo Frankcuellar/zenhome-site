@@ -1,0 +1,104 @@
+/* ZenHome — Nav dropdown ("Cocinas" → Monterrey · Guadalupe · Apodaca)
+   CSS only, sin JS. Hover en desktop, expandido dentro del hamburger en mobile.
+*/
+
+/* === Desktop (≥ 769px): hover dropdown === */
+@media (min-width: 769px) {
+  nav ul li.nav-has-submenu {
+    position: relative;
+  }
+
+  nav ul li.nav-has-submenu > a::after {
+    content: "▾";
+    font-size: 0.7em;
+    margin-left: 4px;
+    opacity: 0.7;
+  }
+
+  nav ul li.nav-has-submenu .nav-submenu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: -12px;
+    margin: 0;
+    padding: 8px 0;
+    list-style: none;
+    background: #ffffff;
+    min-width: 220px;
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14), 0 2px 6px rgba(0, 0, 0, 0.06);
+    z-index: 200;
+  }
+
+  nav ul li.nav-has-submenu:hover .nav-submenu,
+  nav ul li.nav-has-submenu:focus-within .nav-submenu {
+    display: block;
+  }
+
+  /* Bridge invisible para que el hover no se "rompa" entre el item y el submenu */
+  nav ul li.nav-has-submenu::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    height: 14px;
+  }
+
+  nav ul li.nav-has-submenu .nav-submenu li {
+    padding: 0 !important;
+    margin: 0 !important;
+    border-bottom: none !important;
+    list-style: none !important;
+  }
+
+  nav ul li.nav-has-submenu .nav-submenu a {
+    display: block;
+    padding: 10px 18px;
+    color: #1f2937 !important;
+    font-size: 0.93rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background-color 0.15s ease, color 0.15s ease;
+  }
+
+  nav ul li.nav-has-submenu .nav-submenu a:hover {
+    background: #f5f5f5;
+    color: #37ca37 !important;
+  }
+}
+
+/* === Mobile (≤ 768px): submenu siempre expandido dentro del hamburger === */
+@media (max-width: 768px) {
+  nav ul li.nav-has-submenu .nav-submenu {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    background: rgba(0, 0, 0, 0.18);
+    border-radius: 6px;
+    margin-top: 0.4rem;
+  }
+
+  nav ul li.nav-has-submenu .nav-submenu li {
+    padding: 0 !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+  }
+
+  nav ul li.nav-has-submenu .nav-submenu li:last-child {
+    border-bottom: none !important;
+  }
+
+  nav ul li.nav-has-submenu .nav-submenu a {
+    display: block;
+    padding: 0.6rem 1.2rem;
+    font-size: 0.88rem !important;
+    color: rgba(255, 255, 255, 0.92) !important;
+    text-decoration: none;
+  }
+
+  nav ul li.nav-has-submenu > a::after {
+    content: " ▾";
+    font-size: 0.75em;
+    opacity: 0.6;
+  }
+}
