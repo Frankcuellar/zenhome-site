@@ -1,0 +1,419 @@
+/* ZenHome v2 — Sistema visual del refresh
+   Paleta: sage primary + warm gold accent + neutros cálidos
+   Tipografía: Fraunces (serif H1/H2) + Inter (body)
+   Sin azul saturado. Verde primario menos lime, más sage.
+*/
+
+:root {
+  /* === Tipografía === */
+  --font-serif: "Fraunces", Georgia, "Times New Roman", serif;
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+  /* === Neutros warm — escala de 9 === */
+  --n-50:  #FAF8F4;   /* off-white cálido — bg principal */
+  --n-100: #F2EEE6;   /* cream — sections alternas */
+  --n-200: #E6E0D2;   /* border claro / dividers */
+  --n-300: #C8BFAB;   /* tertiary text light */
+  --n-400: #8E8472;   /* placeholder, captions */
+  --n-500: #6B6356;   /* text secondary */
+  --n-600: #4A4339;   /* text body */
+  --n-700: #2E2A24;   /* text fuerte */
+  --n-800: #1C1A16;   /* near-black warm */
+  --n-900: #0E0D0B;   /* deepest — hero overlays */
+
+  /* === Sage (primary) — verde menos lime, más profundo === */
+  --sage-50:  #EEF1EC;
+  --sage-100: #DCE3D6;
+  --sage-300: #9CAE91;
+  --sage-500: #5F724C;   /* PRIMARIO — sage profundo */
+  --sage-600: #4D5E3D;
+  --sage-700: #3A4A2D;
+
+  /* === Gold warm (acento premium) === */
+  --gold-300: #E5CFA1;
+  --gold-500: #C4A265;   /* dorado warm — stars, acentos */
+  --gold-600: #9E8048;
+
+  /* === WhatsApp oficial (intacto) === */
+  --wa: #25D366;
+  --wa-deep: #128C7E;
+
+  /* === Estado === */
+  --danger: #B23A2E;
+
+  /* === Spacing scale (4px) === */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 24px;
+  --s-6: 32px;
+  --s-7: 48px;
+  --s-8: 64px;
+  --s-9: 96px;
+
+  /* === Radii — UN solo sistema === */
+  --r-xs: 4px;
+  --r-sm: 8px;
+  --r-md: 12px;
+  --r-lg: 18px;
+  --r-xl: 24px;
+  --r-pill: 999px;
+
+  /* === Shadow === */
+  --shadow-sm: 0 1px 3px rgba(28,26,22,0.06), 0 1px 2px rgba(28,26,22,0.04);
+  --shadow-md: 0 4px 14px rgba(28,26,22,0.08), 0 2px 4px rgba(28,26,22,0.05);
+  --shadow-lg: 0 18px 40px rgba(28,26,22,0.12), 0 6px 14px rgba(28,26,22,0.06);
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+  margin: 0; padding: 0;
+  background: var(--n-50);
+  color: var(--n-700);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  letter-spacing: -0.005em;
+}
+
+img { max-width: 100%; display: block; }
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; cursor: pointer; }
+
+/* === Tipografía utilitaria — Fraunces serif para H1/H2 === */
+.h1 {
+  font-family: var(--font-serif);
+  font-size: clamp(38px, 10vw, 52px);
+  line-height: 1.04;
+  letter-spacing: -0.022em;
+  font-weight: 400;
+  font-variation-settings: "SOFT" 30, "opsz" 80;
+  margin: 0;
+  color: var(--n-800);
+}
+.h2 {
+  font-family: var(--font-serif);
+  font-size: clamp(30px, 8vw, 38px);
+  line-height: 1.08;
+  letter-spacing: -0.018em;
+  font-weight: 400;
+  font-variation-settings: "SOFT" 30, "opsz" 60;
+  margin: 0;
+  color: var(--n-800);
+}
+.h3 {
+  font-family: var(--font-serif);
+  font-size: 22px;
+  line-height: 1.18;
+  letter-spacing: -0.012em;
+  font-weight: 500;
+  margin: 0;
+  color: var(--n-800);
+}
+
+.eyebrow {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--n-500);
+}
+
+.lede {
+  font-size: 17px;
+  line-height: 1.5;
+  color: var(--n-600);
+  letter-spacing: -0.005em;
+  font-weight: 400;
+  margin: 0;
+}
+
+.body {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--n-600);
+  margin: 0;
+}
+
+/* === Layout === */
+.section { padding: var(--s-9) var(--s-5); }
+.section--cream { background: var(--n-100); }
+.section--dark { background: var(--n-900); color: var(--n-100); }
+.section--dark .h1, .section--dark .h2, .section--dark .h3 { color: var(--n-50); }
+.section--dark .eyebrow { color: var(--n-300); }
+.section--dark .lede, .section--dark .body { color: var(--n-200); }
+
+/* === Botones — un solo sistema === */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 50px;
+  padding: 0 22px;
+  border-radius: var(--r-pill);
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  border: none;
+  background: var(--n-800);
+  color: var(--n-50);
+  transition: transform .2s ease, opacity .2s ease, background .2s ease;
+}
+.btn:hover { transform: translateY(-1px); opacity: 0.94; }
+.btn--ghost { background: transparent; color: var(--n-800); border: 1px solid var(--n-200); }
+.btn--inverse { background: var(--n-50); color: var(--n-800); }
+.btn--sage { background: var(--sage-500); color: #fff; }
+.btn--sage:hover { background: var(--sage-600); opacity: 1; }
+.btn--wa { background: var(--wa); color: #04341B; }
+.btn--full { width: 100%; }
+.btn--lg { height: 56px; padding: 0 28px; font-size: 16px; }
+
+/* === Header — neutro, sin azul === */
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(250, 248, 244, 0.85);
+  backdrop-filter: saturate(180%) blur(18px);
+  -webkit-backdrop-filter: saturate(180%) blur(18px);
+  border-bottom: 1px solid var(--n-200);
+}
+.nav__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 56px;
+  padding: 0 var(--s-5);
+}
+.nav__brand {
+  display: flex; align-items: center; gap: 8px;
+  font-family: var(--font-serif);
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  font-size: 20px;
+  color: var(--n-800);
+}
+.nav__brand-mark {
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  background: var(--sage-500);
+  display: grid; place-items: center;
+}
+.nav__brand-mark svg { width: 14px; height: 14px; color: #fff; }
+.nav__menu {
+  width: 36px; height: 36px;
+  display: grid; place-items: center;
+  border-radius: var(--r-pill);
+  background: transparent;
+  border: 1px solid var(--n-200);
+}
+.nav__menu svg { width: 16px; height: 16px; color: var(--n-700); }
+
+/* === WhatsApp FAB — patrón canónico === */
+.wa-fab {
+  position: fixed;
+  right: 16px;
+  bottom: 20px;
+  z-index: 100;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 20px 0 16px;
+  border-radius: var(--r-pill);
+  background: var(--wa);
+  color: #04341B;
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: -0.005em;
+  box-shadow: 0 10px 30px rgba(18, 140, 126, 0.28), 0 2px 6px rgba(0,0,0,0.06);
+  border: 1px solid rgba(0,0,0,0.05);
+}
+.wa-fab svg { width: 22px; height: 22px; }
+
+/* === Trust card 4.4★ — patrón canónico replicable === */
+.trust {
+  background: #fff;
+  border: 1px solid var(--n-200);
+  border-radius: var(--r-lg);
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  box-shadow: var(--shadow-sm);
+}
+.trust__rating {
+  display: flex; flex-direction: column; align-items: flex-start;
+  flex-shrink: 0;
+}
+.trust__num {
+  font-family: var(--font-serif);
+  font-size: 36px;
+  line-height: 1;
+  font-weight: 500;
+  color: var(--n-800);
+  letter-spacing: -0.02em;
+}
+.trust__stars {
+  color: var(--gold-500);
+  font-size: 14px;
+  letter-spacing: 1px;
+  margin-top: 4px;
+}
+.trust__divider {
+  width: 1px; height: 56px;
+  background: var(--n-200);
+  flex-shrink: 0;
+}
+.trust__body { flex: 1; min-width: 0; }
+.trust__label {
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--n-500);
+  font-weight: 500;
+}
+.trust__count {
+  font-size: 15px;
+  color: var(--n-700);
+  margin-top: 2px;
+  font-weight: 500;
+}
+.trust__link {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 13px;
+  color: var(--sage-600);
+  margin-top: 6px;
+  border-bottom: 1px solid var(--sage-300);
+  padding-bottom: 1px;
+}
+
+/* === Hero unificado — UNA sola variante === */
+.hero {
+  position: relative;
+  height: 88vh;
+  min-height: 600px;
+  max-height: 780px;
+  overflow: hidden;
+  background: var(--n-900);
+}
+.hero__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.hero__scrim {
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(180deg,
+      rgba(14,13,11,0.30) 0%,
+      rgba(14,13,11,0.0) 30%,
+      rgba(14,13,11,0.0) 50%,
+      rgba(14,13,11,0.72) 100%);
+}
+.hero__content {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  padding: 0 24px 44px;
+  color: var(--n-50);
+}
+.hero__eyebrow {
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(250,248,244,0.85);
+  margin: 0 0 14px;
+  font-weight: 500;
+}
+.hero__title {
+  font-family: var(--font-serif);
+  font-size: clamp(42px, 11vw, 56px);
+  line-height: 1.0;
+  letter-spacing: -0.022em;
+  font-weight: 400;
+  margin: 0 0 16px;
+  color: var(--n-50);
+  max-width: 14ch;
+  text-wrap: balance;
+}
+.hero__sub {
+  font-size: 17px;
+  line-height: 1.45;
+  color: rgba(250,248,244,0.88);
+  letter-spacing: -0.005em;
+  max-width: 32ch;
+  margin: 0 0 28px;
+}
+.hero__cta { display: flex; gap: 10px; flex-wrap: wrap; }
+
+/* === Footer === */
+.foot {
+  background: var(--n-900);
+  color: var(--n-300);
+  padding: var(--s-8) var(--s-5) var(--s-7);
+}
+.foot__brand {
+  display: flex; align-items: center; gap: 10px;
+  font-family: var(--font-serif);
+  font-size: 28px;
+  font-weight: 500;
+  letter-spacing: -0.018em;
+  color: var(--n-50);
+  margin: 0 0 var(--s-5);
+}
+.foot__brand-mark {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: var(--sage-500);
+  display: grid; place-items: center;
+}
+.foot__brand-mark svg { width: 16px; height: 16px; color: #fff; }
+.foot__cols { display: grid; gap: var(--s-6); }
+.foot__col h4 {
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--n-400);
+  margin: 0 0 var(--s-3);
+  font-weight: 500;
+}
+.foot__col a { display: block; padding: 6px 0; color: var(--n-200); font-size: 15px; }
+.foot__social {
+  display: flex; gap: 10px; margin-top: var(--s-3);
+}
+.foot__social a {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.06);
+  display: grid; place-items: center;
+  padding: 0;
+}
+.foot__social svg { width: 16px; height: 16px; color: var(--n-200); }
+.foot__legal {
+  margin-top: var(--s-7);
+  padding-top: var(--s-5);
+  border-top: 1px solid rgba(255,255,255,0.08);
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--n-400);
+}
+
+/* === Misc === */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  height: 28px;
+  padding: 0 12px;
+  border-radius: var(--r-pill);
+  background: var(--n-100);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--n-700);
+}
+.tag--sage { background: var(--sage-50); color: var(--sage-700); }
+.tag--gold { background: var(--gold-300); color: var(--gold-600); }
+
+.divider { height: 1px; background: var(--n-200); border: none; margin: 0; }
