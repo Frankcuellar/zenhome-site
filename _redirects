@@ -21,9 +21,6 @@
 # Contacto sin trailing slash (página vieja GHL — 88 imp en GSC)
 /contacto /contacto/ 301
 
-# Servicios (página vieja GHL — 15 imp en GSC)
-/servicios /contacto/ 301
-/servicios/ /contacto/ 301
 
 # Nota: archivos internos (.md, .xlsx, .bak, .docx) protegidos con
 # X-Robots-Tag: noindex en _headers. Cloudflare Pages no soporta
