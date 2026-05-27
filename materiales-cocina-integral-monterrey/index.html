@@ -927,6 +927,45 @@
                 height: 26px;
             }
         }
+    
+        /* FLOATING WHATSAPP BUTTON */
+        .floating-whatsapp {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 60px;
+            height: 60px;
+            background-color: #25D366;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            text-decoration: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            z-index: 1000;
+            animation: pulse 2s infinite;
+            transition: transform 0.3s;
+        }
+        .floating-whatsapp:hover {
+            transform: scale(1.1);
+        }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(37,211,102,0.5); }
+            70% { box-shadow: 0 0 0 15px rgba(37,211,102,0); }
+            100% { box-shadow: 0 0 0 0 rgba(37,211,102,0); }
+        }
+        @media (max-width: 768px) {
+            .floating-whatsapp {
+                bottom: 1.5rem;
+                right: 1.5rem;
+                width: 55px;
+                height: 55px;
+                font-size: 1.5rem;
+            }
+        }
+
     </style>
     <link rel="stylesheet" href="/styles/nav-dropdown.css">
 </head>
@@ -1425,5 +1464,11 @@
         </div>
         <span class="whatsapp-float__label">Cotiza gratis</span>
     </a>
+
+    <!-- FLOATING WHATSAPP BUTTON -->
+    <a href="https://wa.me/528115269496?text=Hola%2C%20vi%20la%20p%C3%A1gina%20de%20materiales%20para%20cocinas%20y%20me%20gustar%C3%ADa%20asesor%C3%ADa%20sobre%20qu%C3%A9%20material%20conviene%20para%20mi%20cocina." class="floating-whatsapp" title="Consultar materiales por WhatsApp">
+        💬
+    </a>
+
 </body>
 </html>
