@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Optimizador de Corte · ZenHome</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+:root{
+  --primary:#37ca37; --primary-dark:#2db82d; --secondary:#188bf6; --dark:#0E182C;
+  --light-gray:#f5f6f8; --medium-gray:#6b7280; --border-gray:#e5e7eb;
+  --board:#efe3cf; --board-edge:#bfa87e; --grain:#dcc8a3; --banding:#ff2d2d;
+  --error:#dc2626; --ok:#16a34a;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  background:var(--light-gray);color:var(--dark);font-size:14px;line-height:1.45}
+header{background:#184ac6;color:#fff;padding:.6rem 1.1rem;display:flex;align-items:center;
+  justify-content:space-between;position:sticky;top:0;z-index:50;box-shadow:0 2px 8px rgba(0,0,0,.12);gap:1rem;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:.7rem}
+.brand img{height:28px;width:auto}
+.brand .titles small{display:block;color:#bcd0ff;font-size:.68rem;letter-spacing:.04em;text-transform:uppercase}
+.brand .titles strong{font-size:1rem;font-weight:700}
+.proj{display:flex;align-items:center;gap:.4rem}
+.proj input{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;
+  border-radius:6px;padding:.3rem .55rem;font-size:.85rem;font-family:inherit}
+.proj input::placeholder{color:#cdd9f5}
+.head-actions{display:flex;gap:.45rem;align-items:center;flex-wrap:wrap}
+.badge-proto{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.35);color:#fff;
+  font-size:.66rem;padding:.22rem .55rem;border-radius:50px;letter-spacing:.05em}
+
+.app{display:flex;flex-direction:column;height:calc(100vh - 50px)}
+.panel{overflow:auto;padding:.9rem 1.15rem}
+.panel-top{background:#fff;border-bottom:2px solid var(--border-gray);flex:0 0 auto;max-height:40vh;resize:vertical}
+.panel-bottom{background:var(--light-gray);flex:1 1 auto;min-height:0}
+/* settings desplegable */
+.settings{background:#fff;border-bottom:1px solid var(--border-gray);overflow:hidden;max-height:0;transition:max-height .2s ease;padding:0 1.15rem}
+.settings.open{max-height:260px;padding:.85rem 1.15rem}
+.top-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:.55rem;flex-wrap:wrap;gap:.5rem}
+.top-head h2.section{margin:0}
+.tablero-chip{font-size:.7rem;color:var(--medium-gray);background:var(--light-gray);border:1px solid var(--border-gray);
+  border-radius:50px;padding:.25rem .7rem}
+.tablero-chip b{color:var(--dark)}
+.veta-switch{display:inline-flex;align-items:center;gap:.35rem;font-size:.74rem;font-weight:700;color:#067647;
+  background:#ecfdf3;border:1px solid #abefc6;border-radius:50px;padding:.28rem .7rem;cursor:pointer}
+.veta-switch input{accent-color:var(--primary)}
+
+h2.section{font-size:.74rem;text-transform:uppercase;letter-spacing:.06em;color:var(--medium-gray);
+  margin:1.2rem 0 .55rem;font-weight:700}
+h2.section:first-child{margin-top:0}
+.config-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.55rem .7rem}
+.field label{display:block;font-size:.68rem;color:var(--medium-gray);margin-bottom:.18rem;font-weight:600}
+.field input,.field select{width:100%;padding:.42rem .5rem;border:1px solid var(--border-gray);
+  border-radius:7px;font-size:.83rem;background:#fff;font-family:inherit}
+.field input:focus,.field select:focus{outline:none;border-color:var(--secondary)}
+.checkline{display:flex;align-items:center;gap:.4rem;font-size:.78rem;color:var(--dark);margin-top:.55rem}
+.hint{font-size:.7rem;color:var(--medium-gray);margin-top:.35rem}
+
+button{cursor:pointer;border:none;border-radius:7px;font-weight:600;font-family:inherit;padding:.5rem .8rem;transition:.15s;font-size:.8rem}
+.btn-primary{background:var(--primary);color:#fff}.btn-primary:hover{background:var(--primary-dark)}
+.btn-blue{background:#fff;color:#184ac6;border:1px solid #cdd9f5}.btn-blue:hover{background:#eef3ff}
+.btn-secondary{background:#fff;color:var(--dark);border:1px solid var(--border-gray)}.btn-secondary:hover{border-color:var(--secondary);color:var(--secondary)}
+.btn-ghost{background:transparent;color:var(--medium-gray)}.btn-ghost:hover{color:var(--error)}
+.row-actions{display:flex;gap:.5rem;flex-wrap:wrap;margin:.7rem 0}
+
+.table-wrap{overflow-x:auto;border:1px solid var(--border-gray);border-radius:9px;max-height:33vh;overflow-y:auto}
+table.pieces{border-collapse:collapse;width:100%;min-width:880px;font-size:.78rem}
+table.pieces th{background:var(--dark);color:#fff;font-size:.62rem;text-transform:uppercase;letter-spacing:.02em;
+  padding:.45rem .3rem;text-align:center;position:sticky;top:0;white-space:nowrap;z-index:2}
+table.pieces td{border-bottom:1px solid var(--border-gray);padding:.1rem .15rem;text-align:center}
+table.pieces tr:nth-child(even) td{background:#fafbfc}
+table.pieces input{width:100%;border:none;background:transparent;text-align:center;padding:.32rem .12rem;font-size:.78rem;font-family:inherit;border-radius:4px}
+table.pieces input:focus{outline:2px solid var(--secondary);background:#fff}
+td.swatch-cell{width:10px;padding:0}.swatch{width:5px;height:30px;border-radius:3px;display:inline-block}
+.cw{width:42px}.cm{width:54px}.cc{width:70px}
+.veta-toggle{display:inline-flex;align-items:center;justify-content:center;width:28px;height:22px;border-radius:6px;
+  cursor:pointer;font-size:.66rem;font-weight:700;border:1px solid var(--border-gray);background:#fff}
+.veta-toggle.on{background:var(--secondary);color:#fff;border-color:var(--secondary)}
+.del-btn{color:var(--medium-gray);background:none;border:none;font-size:.95rem;cursor:pointer;padding:0 .15rem}
+.del-btn:hover{color:var(--error)}
+.legend-borde{font-size:.68rem;color:var(--medium-gray);margin-top:.4rem;line-height:1.6}
+
+/* validation banner */
+.validbar{display:flex;align-items:center;gap:.6rem;padding:.6rem .85rem;border-radius:10px;margin-bottom:1rem;font-size:.82rem;font-weight:600}
+.validbar.ok{background:#ecfdf3;border:1px solid #abefc6;color:#067647}
+.validbar.bad{background:#fef3f2;border:1px solid #fecaca;color:#b42318}
+.validbar .dot{width:9px;height:9px;border-radius:50%;flex:none}
+.validbar.ok .dot{background:var(--ok)}.validbar.bad .dot{background:var(--error)}
+
+.metrics{display:grid;grid-template-columns:repeat(5,1fr);gap:.6rem;margin-bottom:1rem}
+.metric{background:#fff;border-radius:11px;padding:.7rem .8rem;border-top:3px solid var(--primary);box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.metric .num{font-size:1.35rem;font-weight:800;line-height:1.1}
+.metric .num small{font-size:.8rem;font-weight:600;color:var(--medium-gray)}
+.metric .lbl{font-size:.68rem;color:var(--medium-gray);margin-top:.12rem}
+.metric.blue{border-top-color:var(--secondary)}.metric.amber{border-top-color:#f59e0b}.metric.gray{border-top-color:#94a3b8}
+
+.group{margin-bottom:1.6rem}
+.group-head{display:flex;align-items:center;justify-content:space-between;background:var(--dark);color:#fff;
+  padding:.55rem .9rem;border-radius:9px 9px 0 0;flex-wrap:wrap;gap:.5rem}
+.group-head .gt{font-weight:700;font-size:.92rem;display:flex;align-items:center;gap:.5rem}
+.group-head .gmeta{font-size:.74rem;color:#cdd9f5;display:flex;gap:1rem;flex-wrap:wrap}
+.group-body{background:#fff;border:1px solid var(--border-gray);border-top:none;border-radius:0 0 9px 9px;padding:.9rem}
+.board-card{margin:0 auto 1.4rem;max-width:640px}
+.board-card:last-child{margin-bottom:0}
+.board-title{font-size:.8rem;font-weight:700;margin-bottom:.4rem;display:flex;justify-content:space-between;flex-wrap:wrap;gap:.4rem}
+.board-title .util{font-weight:600;color:var(--medium-gray);font-size:.74rem}
+.board-svg{width:100%;max-width:640px;max-height:56vh;height:auto;margin:0 auto;display:block;border-radius:5px;border:1px solid var(--border-gray)}
+.legend{display:flex;gap:1rem;flex-wrap:wrap;font-size:.7rem;color:var(--medium-gray);align-items:center;margin-bottom:.6rem}
+.legend span{display:inline-flex;align-items:center;gap:.3rem}
+.legend .k-band{width:15px;height:5px;background:var(--banding);border-radius:2px}
+.legend .k-grain{width:15px;border-top:2px dashed var(--secondary)}
+.legend .k-rest{width:13px;height:11px;background:repeating-linear-gradient(45deg,#fff,#fff 3px,#e5e7eb 3px,#e5e7eb 6px);border:1px solid #cbd5e1}
+.empty-state{text-align:center;color:var(--medium-gray);padding:3rem 1rem}
+.piece-rect{stroke:#fff;stroke-width:1.5;transition:stroke .15s}
+.piece-rect.hl{stroke:#0E182C;stroke-width:4;animation:flashPiece .5s ease}
+@keyframes flashPiece{0%{stroke:#f59e0b;stroke-width:6}100%{stroke:#0E182C;stroke-width:4}}
+tr.row-active td{background:#eef6ff!important}
+.piece-label{font-weight:700;fill:#15203a;font-family:inherit}
+.piece-dim{fill:#33405c;font-family:inherit}
+.edge-dim{fill:#64748b;font-family:inherit;font-size:9px}
+.band-line{stroke:var(--banding);stroke-width:4.5;stroke-linecap:round}
+.grain-arrow{stroke:var(--secondary);stroke-width:1.3;opacity:.85;fill:none}
+.board-grain{stroke:var(--grain);stroke-width:1;opacity:.5}
+
+/* modal */
+.modal-bg{position:fixed;inset:0;background:rgba(14,24,44,.55);display:none;align-items:center;justify-content:center;z-index:100;padding:1rem}
+.modal-bg.show{display:flex}
+.modal{background:#fff;border-radius:14px;max-width:680px;width:100%;padding:1.3rem;max-height:88vh;overflow:auto}
+.modal h3{font-size:1.05rem;margin-bottom:.3rem}
+.modal p{font-size:.82rem;color:var(--medium-gray);margin-bottom:.7rem}
+.modal textarea{width:100%;height:180px;border:1px solid var(--border-gray);border-radius:8px;padding:.6rem;font-family:ui-monospace,monospace;font-size:.78rem;resize:vertical}
+.modal-actions{display:flex;gap:.5rem;justify-content:flex-end;margin-top:.8rem}
+
+/* ---- Pantalla de Gestión de Proyectos ---- */
+.pv-wrap{max-width:1100px;margin:0 auto;padding:1.6rem 1.25rem}
+.pv-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.3rem;flex-wrap:wrap;gap:.8rem}
+.pv-head h1{font-size:1.5rem;color:var(--dark);font-weight:800}
+.pv-head .sub{font-size:.82rem;color:var(--medium-gray);margin-top:.15rem;font-weight:500}
+.pv-head .btn-primary{font-size:.95rem;padding:.7rem 1.3rem}
+.pv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:1rem}
+.pv-card{background:#fff;border:1px solid var(--border-gray);border-radius:14px;overflow:hidden;
+  box-shadow:0 1px 3px rgba(0,0,0,.05);transition:.15s;display:flex;flex-direction:column}
+.pv-card:hover{box-shadow:0 6px 18px rgba(0,0,0,.1);transform:translateY(-2px);border-color:var(--secondary)}
+.pv-card-top{padding:1rem 1.1rem .8rem;cursor:pointer;flex:1;border-top:4px solid var(--primary)}
+.pv-name{font-weight:800;font-size:1.05rem;color:var(--dark);line-height:1.2}
+.pv-date{font-size:.74rem;color:var(--medium-gray);margin:.2rem 0 .7rem}
+.pv-stats{display:flex;flex-wrap:wrap;gap:.4rem .9rem;font-size:.78rem;color:var(--medium-gray)}
+.pv-stats b{color:var(--dark);font-size:.95rem}
+.pv-actions{display:flex;gap:.4rem;padding:.7rem 1.1rem;background:var(--light-gray);border-top:1px solid var(--border-gray)}
+.pv-actions button{font-size:.78rem;padding:.45rem .7rem}
+.pv-actions .btn-primary{flex:1}
+.pv-empty{text-align:center;color:var(--medium-gray);padding:3.5rem 1rem;background:#fff;border:2px dashed var(--border-gray);border-radius:14px}
+.pv-empty svg{opacity:.3;margin-bottom:.7rem}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--dark);color:#fff;
+  padding:.7rem 1.3rem;border-radius:50px;font-size:.9rem;font-weight:600;z-index:300;opacity:0;transition:opacity .25s;box-shadow:0 6px 20px rgba(0,0,0,.25)}
+.toast.show{opacity:1}
+/* ---- Modo Taller (pantalla completa) ---- */
+.ws-overlay{position:fixed;inset:0;background:var(--light-gray);z-index:200;display:none;flex-direction:column}
+.ws-overlay.show{display:flex}
+.ws-bar{background:var(--dark);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:.6rem 1.1rem;gap:1rem;flex-wrap:wrap}
+.ws-bar .ws-title{font-weight:800;font-size:1.15rem;line-height:1.1}
+.ws-bar .ws-sub{color:#cdd9f5;font-size:.85rem;margin-top:.1rem}
+.ws-nav{display:flex;align-items:center;gap:.7rem}
+.ws-nav button{background:var(--primary);color:#fff;border:none;border-radius:9px;padding:.6rem 1.1rem;font-size:1rem;font-weight:700;cursor:pointer}
+.ws-nav button:hover{background:var(--primary-dark)}
+.ws-nav button:disabled{opacity:.35;cursor:default;background:#94a3b8}
+.ws-counter{font-weight:800;font-size:1.05rem;min-width:74px;text-align:center}
+.ws-close{background:rgba(255,255,255,.15)!important;border:1px solid rgba(255,255,255,.4)!important;color:#fff!important}
+.ws-body{flex:1;display:flex;align-items:center;justify-content:center;padding:1rem;overflow:auto}
+.workshop .board-card{max-width:none;margin:0}
+.workshop .board-svg{height:80vh;max-width:97vw;width:auto;margin:0 auto}
+.workshop .board-title{font-size:1.05rem;justify-content:center;gap:1.5rem}
+.workshop .board-title .util{font-size:.95rem}
+@media print{
+  header .head-actions,.panel-top,.settings,.legend,.validbar.ok{display:none!important}
+  .app{display:block;height:auto}.panel-bottom{background:#fff;padding:0;overflow:visible}
+  .group{page-break-inside:avoid}.board-card{page-break-inside:avoid}
+  header{position:static}
+}
+</style>
+</head>
+<body>
+
+<!-- ============ PANTALLA: GESTIÓN DE PROYECTOS ============ -->
+<div id="projectsView">
+  <header>
+    <div class="brand">
+      <img src="https://images.leadconnectorhq.com/image/f_webp/q_80/r_1200/u_https://assets.cdn.filesafe.space/tGT0NBw0s46QQDWPfp3W/media/67531ed7d1a1319bcbad3551.png" alt="ZenHome">
+      <div class="titles"><small>Herramienta interna</small><strong>Gestión de Proyectos</strong></div>
+    </div>
+    <span class="badge-proto">Historial de cortes</span>
+  </header>
+  <div class="pv-wrap">
+    <div class="pv-head">
+      <div>
+        <h1>Proyectos</h1>
+        <div class="sub">Historial de cocinas y muebles que hemos cortado</div>
+        <div class="sub" id="pvBackupInfo" style="margin-top:.2rem"></div>
+      </div>
+      <div style="display:flex;gap:.5rem;flex-wrap:wrap;align-items:center">
+        <button class="btn-secondary" id="btnConnect" onclick="connectDrive()">☁️ Conectar Google Drive</button>
+        <button class="btn-secondary" onclick="backupHistory()">⬇ Respaldar</button>
+        <button class="btn-secondary" onclick="document.getElementById('restoreInput').click()">⬆ Restaurar</button>
+        <button class="btn-primary" onclick="newProject()">＋ Nuevo proyecto</button>
+      </div>
+    </div>
+    <div id="pvWarn"></div>
+    <input type="file" id="restoreInput" accept=".json,application/json" style="display:none" onchange="restoreHistory(event)">
+    <div id="pvList" class="pv-grid"></div>
+  </div>
+</div>
+
+<!-- ============ PANTALLA: OPTIMIZADOR ============ -->
+<div id="appView" style="display:none">
+<header>
+  <div class="brand">
+    <img src="https://images.leadconnectorhq.com/image/f_webp/q_80/r_1200/u_https://assets.cdn.filesafe.space/tGT0NBw0s46QQDWPfp3W/media/67531ed7d1a1319bcbad3551.png" alt="ZenHome">
+    <div class="titles"><small>Herramienta interna</small><strong>Optimizador de Corte</strong></div>
+  </div>
+  <div class="proj">
+    <span style="font-size:.7rem;color:#bcd0ff">Proyecto</span>
+    <input id="projName" placeholder="ej. Cocina LAURA" value="">
+  </div>
+  <div class="head-actions">
+    <button class="btn-blue" onclick="backToProjects()">← Proyectos</button>
+    <button class="btn-primary" onclick="saveCurrentProject()">💾 Guardar</button>
+    <button class="btn-blue" onclick="toggleSettings()">⚙ Ajustes</button>
+    <button class="btn-blue" onclick="openImport()">⬆ Importar Excel</button>
+    <button class="btn-blue" onclick="exportExcel()">⬇ Exportar Excel</button>
+    <button class="btn-primary" onclick="openWorkshop()">🖥️ Modo Taller</button>
+    <button class="btn-blue" onclick="window.print()">🖨️ Imprimir / PDF</button>
+  </div>
+</header>
+
+<!-- AJUSTES (oculto por default — tablero estándar 2440×1220×15mm) -->
+<div class="settings" id="settingsPanel">
+  <div class="config-grid">
+    <div class="field"><label>Largo tablero (mm)</label><input id="boardL" type="number" value="2440"></div>
+    <div class="field"><label>Ancho tablero (mm)</label><input id="boardW" type="number" value="1220"></div>
+    <div class="field"><label>Espesor estándar (mm)</label><input id="espDef" type="number" value="15"></div>
+    <div class="field"><label>Kerf sierra (mm)</label><input id="kerf" type="number" value="4"></div>
+    <div class="field"><label>Refilado / lado (mm)</label><input id="trim" type="number" value="5"></div>
+    <div class="field"><label>Grosor canto (mm)</label><input id="cantoMM" type="number" value="0.45" step="0.05"></div>
+  </div>
+  <label class="checkline"><input type="checkbox" id="compCanto"> Descontar canto de la medida de corte</label>
+  <p class="hint">La veta del tablero corre a lo <strong>largo</strong>. Las piezas con veta no se rotan. El refilado escuadra la placa cruda (reduce el área útil). Las piezas se agrupan por Material + Color + Espesor.</p>
+</div>
+
+<div class="app">
+  <!-- ARRIBA: CAPTURA -->
+  <section class="panel panel-top">
+    <div class="top-head">
+      <h2 class="section">Captura de cortes <span style="color:var(--secondary)">(formato Excel)</span></h2>
+      <span style="font-size:.7rem;color:var(--medium-gray)">Se agrega una fila sola al llenar la última</span>
+    </div>
+    <div class="table-wrap">
+      <table class="pieces">
+        <thead><tr>
+          <th></th><th>Código</th><th>Material</th><th>Color</th><th>Cant</th>
+          <th>Largo</th><th>Ancho</th><th>Esp</th><th>Veta</th>
+          <th title="Borde superior">Sup</th><th title="Borde derecho">Der</th>
+          <th title="Borde inferior">Inf</th><th title="Borde izquierdo">Izq</th><th></th>
+        </tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+    <p class="legend-borde">
+      🟩 En Sup/Der/Inf/Izq escribe <strong>1</strong> si ese lado lleva canto · <strong>Veta</strong> ✓ = no rota la pieza ·
+      Se agrupan por <strong>Material + Color + Espesor</strong> (una optimización por grupo).
+    </p>
+  </section>
+
+  <!-- ABAJO: DIAGRAMAS EN TIEMPO REAL -->
+  <section class="panel panel-bottom">
+    <div id="validBar"></div>
+    <div class="legend">
+      <span><span class="k-band"></span> Canto / cinta</span>
+      <span><span class="k-grain"></span> Sentido veta</span>
+      <span><span class="k-rest"></span> Retazo aprovechable</span>
+      <span style="margin-left:auto;color:var(--primary);font-weight:700">● recalcula en vivo</span>
+    </div>
+    <div id="results"></div>
+
+    <h2 class="section" id="resumenTitulo" style="margin-top:1.6rem">Resumen de optimización</h2>
+    <div class="metrics">
+      <div class="metric"><div class="num" id="mBoards">0</div><div class="lbl">Tableros totales</div></div>
+      <div class="metric blue"><div class="num" id="mUtil">0<small>%</small></div><div class="lbl">Aprovechamiento</div></div>
+      <div class="metric amber"><div class="num" id="mWaste">0<small>%</small></div><div class="lbl">Merma real</div></div>
+      <div class="metric gray"><div class="num" id="mGroups">0</div><div class="lbl">Materiales/colores</div></div>
+      <div class="metric"><div class="num" id="mBand">0<small> m</small></div><div class="lbl">Cubrecanto total</div></div>
+    </div>
+  </section>
+</div>
+</div><!-- /appView -->
+
+<!-- MODO TALLER (pantalla completa) -->
+<div class="ws-overlay" id="wsOverlay">
+  <div class="ws-bar">
+    <div>
+      <div class="ws-title" id="wsTitle"></div>
+      <div class="ws-sub" id="wsSub"></div>
+    </div>
+    <div class="ws-nav">
+      <button id="wsPrev" onclick="wsNav(-1)">◀ Anterior</button>
+      <span class="ws-counter" id="wsCounter"></span>
+      <button id="wsNext" onclick="wsNav(1)">Siguiente ▶</button>
+      <button class="ws-close" onclick="closeWorkshop()">✕ Cerrar</button>
+    </div>
+  </div>
+  <div class="ws-body" id="wsBody"></div>
+</div>
+
+<!-- MODAL IMPORT -->
+<div class="modal-bg" id="importModal">
+  <div class="modal">
+    <h3>Importar lista de corte</h3>
+    <p>Sube el archivo <strong>.xlsx / .xls / .csv</strong> con tu formato, o copia las filas desde Excel y pégalas abajo (incluye encabezados). Columnas reconocidas: Código, Material, Color, Cantidad, Largo, Ancho, Espesor, Veta, Borde Sup/Der/Inf/Izq.</p>
+    <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" style="margin-bottom:.7rem">
+    <textarea id="pasteArea" placeholder="Pega aquí desde Excel (separado por tabulaciones)…"></textarea>
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="closeImport()">Cancelar</button>
+      <button class="btn-primary" onclick="importPaste()">Importar texto pegado</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ====================== MOTOR (validado vs WoodLabPlan: 31=31 tableros) ====================== */
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+// Empaquetado guillotina con BEST-FIT GLOBAL (elige el mejor tablero, no el primero). 'list' ya viene ordenada/barajada.
+function packGuillotine(list,BW,BH,kerf,opt){
+  const boards=[];
+  const newBoard=()=>{const b={w:BW,h:BH,free:[{x:0,y:0,w:BW,h:BH}],placed:[]};boards.push(b);return b;};
+  function score(f,pw,ph){const dw=f.w-pw,dh=f.h-ph;switch(opt.heur){
+    case 'bssf':return Math.min(dw,dh); case 'blsf':return Math.max(dw,dh);
+    case 'bl':return f.y*1e5+f.x; default:return f.w*f.h-pw*ph;}}
+  const orients=p=>(!p.veta)?[{w:p.l,h:p.w,rot:false},{w:p.w,h:p.l,rot:true}]:[{w:p.l,h:p.w,rot:false}];
+  function findBest(b,p){let best=null;
+    b.free.forEach((r,ri)=>orients(p).forEach(o=>{if(o.w<=r.w+1e-6&&o.h<=r.h+1e-6){const s=score(r,o.w,o.h);if(!best||s<best.s)best={ri,o,s,r};}}));
+    return best;}
+  function doPlace(b,bt,p){const r=bt.r,o=bt.o;
+    b.placed.push({x:r.x,y:r.y,w:o.w,h:o.h,rot:o.rot,piece:p});
+    const remW=r.w-o.w-kerf,remH=r.h-o.h-kerf;let r1,r2;
+    const hs=(opt.split==='sas')?(remW<remH):(opt.split==='slas')?(remW>remH):((r.w*remH)>(remW*r.h));
+    if(hs){r1={x:r.x+o.w+kerf,y:r.y,w:remW,h:o.h};r2={x:r.x,y:r.y+o.h+kerf,w:r.w,h:remH};}
+    else{r1={x:r.x+o.w+kerf,y:r.y,w:remW,h:r.h};r2={x:r.x,y:r.y+o.h+kerf,w:o.w,h:remH};}
+    b.free.splice(bt.ri,1);if(r1.w>1&&r1.h>1)b.free.push(r1);if(r2.w>1&&r2.h>1)b.free.push(r2);mergeFree(b);}
+  function mergeFree(b){let m=true;while(m){m=false;
+    for(let i=0;i<b.free.length&&!m;i++)for(let j=i+1;j<b.free.length&&!m;j++){
+      const a=b.free[i],c=b.free[j];
+      if(Math.abs(a.x-c.x)<1e-6&&Math.abs(a.w-c.w)<1e-6){
+        if(Math.abs(a.y+a.h-c.y)<1e-6){a.h+=c.h;b.free.splice(j,1);m=true;break;}
+        if(Math.abs(c.y+c.h-a.y)<1e-6){c.h+=a.h;b.free.splice(i,1);m=true;break;}}
+      if(Math.abs(a.y-c.y)<1e-6&&Math.abs(a.h-c.h)<1e-6){
+        if(Math.abs(a.x+a.w-c.x)<1e-6){a.w+=c.w;b.free.splice(j,1);m=true;break;}
+        if(Math.abs(c.x+c.w-a.x)<1e-6){c.w+=a.w;b.free.splice(i,1);m=true;break;}}}}}
+  const unplaced=[];
+  for(const piece of list){
+    if(piece.l>Math.max(BW,BH)+1e-6&&piece.w>Math.max(BW,BH)+1e-6){unplaced.push(piece);continue;}
+    let gb=null,gboard=null;
+    for(const b of boards){const f=findBest(b,piece);if(f&&(!gb||f.s<gb.s)){gb=f;gboard=b;}}
+    if(!gb){const b=newBoard();const f=findBest(b,piece);if(!f){unplaced.push(piece);continue;}gb=f;gboard=b;}
+    doPlace(gboard,gb,piece);
+  }
+  return {boards,unplaced};
+}
+function utilization(boards,BW,BH){let u=0;boards.forEach(b=>b.placed.forEach(p=>u+=p.w*p.h));return boards.length?u/(boards.length*BW*BH):0;}
+function validate(boards,BW,BH){for(const b of boards){
+  for(const p of b.placed)if(p.x<-1e-6||p.y<-1e-6||p.x+p.w>BW+1e-6||p.y+p.h>BH+1e-6)return 'pieza fuera de tablero';
+  for(let i=0;i<b.placed.length;i++)for(let j=i+1;j<b.placed.length;j++){const A=b.placed[i],B=b.placed[j];
+    if(A.x<B.x+B.w-1e-6&&A.x+A.w>B.x+1e-6&&A.y<B.y+B.h-1e-6&&A.y+A.h>B.y+1e-6)return 'solapamiento de piezas';}}
+  return null;}
+// Verifica que el plano sea realmente cortable con cortes guillotina (borde a borde)
+function cuttable(reg,ps){
+  if(ps.length<=1)return true; const E=1;
+  const xs=new Set(),ys=new Set();
+  ps.forEach(p=>{xs.add(p.x);xs.add(p.x+p.w);ys.add(p.y);ys.add(p.y+p.h);});
+  for(const cx of xs){ if(cx<=reg.x+E||cx>=reg.x+reg.w-E)continue;
+    if(ps.some(p=>p.x<cx-E&&p.x+p.w>cx+E))continue;
+    const L=ps.filter(p=>p.x+p.w<=cx+E),Rr=ps.filter(p=>p.x>=cx-E);
+    if(L.length&&Rr.length&&L.length+Rr.length===ps.length&&
+       cuttable({x:reg.x,y:reg.y,w:cx-reg.x,h:reg.h},L)&&cuttable({x:cx,y:reg.y,w:reg.x+reg.w-cx,h:reg.h},Rr))return true;}
+  for(const cy of ys){ if(cy<=reg.y+E||cy>=reg.y+reg.h-E)continue;
+    if(ps.some(p=>p.y<cy-E&&p.y+p.h>cy+E))continue;
+    const T=ps.filter(p=>p.y+p.h<=cy+E),B=ps.filter(p=>p.y>=cy-E);
+    if(T.length&&B.length&&T.length+B.length===ps.length&&
+       cuttable({x:reg.x,y:reg.y,w:reg.w,h:cy-reg.y},T)&&cuttable({x:reg.x,y:cy,w:reg.w,h:reg.y+reg.h-cy},B))return true;}
+  return false;}
+function boardCuttable(b,BW,BH){return cuttable({x:0,y:0,w:BW,h:BH},b.placed);}
+const SORTERS={area:(a,b)=>b.l*b.w-a.l*a.w,long:(a,b)=>Math.max(b.l,b.w)-Math.max(a.l,a.w)||b.l*b.w-a.l*a.w,
+  wide:(a,b)=>b.w-a.w||b.l-a.l,tall:(a,b)=>b.l-a.l||b.w-a.w,peri:(a,b)=>(b.l+b.w)-(a.l+a.w)};
+// Multi-start: estrategias deterministas + reinicios aleatorios (semilla fija = reproducible), limitado por tiempo.
+function optimizeMulti(instances,boardL,boardW,kerf,trim,budgetMs){
+  const BW=boardL-2*trim,BH=boardW-2*trim;
+  const heurs=['baf','bssf','blsf','bl'],splits=['sas','slas','maxarea'],sorts=Object.keys(SORTERS);
+  let best=null;
+  const consider=(res)=>{if(validate(res.boards,BW,BH))return;const u=utilization(res.boards,BW,BH);
+    const k={boards:res.boards.length,unplaced:res.unplaced.length,util:u};
+    if(!best||k.unplaced<best.k.unplaced||(k.unplaced===best.k.unplaced&&k.boards<best.k.boards)||
+       (k.unplaced===best.k.unplaced&&k.boards===best.k.boards&&k.util>best.k.util))best={res,k,BW,BH};};
+  // 1) deterministas: 5 órdenes × 4 heurísticas × 3 cortes
+  for(const so of sorts)for(const h of heurs)for(const s of splits){
+    const l=instances.map(p=>({...p})).sort(SORTERS[so]);consider(packGuillotine(l,BW,BH,kerf,{heur:h,split:s}));}
+  // 2) reinicios aleatorios con semilla fija → número FIJO de intentos = resultado reproducible
+  //    (tope de tiempo de seguridad solo para trabajos enormes)
+  const rnd=mulberry32(0x9E3779B1);
+  const iters=Math.max(200,Math.min(2500,Math.round(60000/Math.max(1,instances.length))));
+  const hardCap=(typeof budgetMs==='number'&&budgetMs>0)?Math.max(budgetMs,1200):1500;
+  const t0=Date.now();
+  for(let it=0;it<iters;it++){
+    const l=instances.map(p=>({...p}));
+    for(let i=l.length-1;i>0;i--){const j=(rnd()*(i+1))|0;[l[i],l[j]]=[l[j],l[i]];}
+    consider(packGuillotine(l,BW,BH,kerf,{heur:heurs[(rnd()*4)|0],split:splits[(rnd()*3)|0]}));
+    if((it&31)===0 && Date.now()-t0>hardCap) break;
+  }
+  return best;
+}
+
+/* ====================== MODELO + UI ====================== */
+const PALETTE=['#188bf6','#37ca37','#f59e0b','#8b5cf6','#ec4899','#14b8a6','#ef4444','#0ea5e9','#84cc16','#f97316','#6366f1','#06b6d4'];
+let pieces=[],uid=1,debounce=null;
+function espDefault(){const e=document.getElementById('espDef');return e?(+e.value||15):15;}
+function blank(){return{id:uid++,codigo:'',desc:'',material:'Melamina',color:'',cant:1,largo:'',ancho:'',esp:espDefault(),veta:false,bSup:false,bDer:false,bInf:false,bIzq:false};}
+function toggleSettings(){document.getElementById('settingsPanel').classList.toggle('open');}
+function colorFor(key,i){key=(key||('p'+i)).toString();let h=0;for(let c=0;c<key.length;c++)h=(h*31+key.charCodeAt(c))>>>0;return PALETTE[h%PALETTE.length];}
+function esc(s){return(s==null?'':String(s)).replace(/"/g,'&quot;').replace(/</g,'&lt;');}
+
+function buildRowEl(p,i){
+  const col=colorFor((p.color||'')+'|'+(p.codigo||''),i);
+  const tr=document.createElement('tr');
+  tr.dataset.id=p.id;
+  tr.innerHTML=`<td class="swatch-cell"><span class="swatch" style="background:${col}"></span></td>
+    <td><input class="cm" value="${esc(p.codigo)}" oninput="upd(${p.id},'codigo',this.value)" placeholder="C1…"></td>
+    <td><input class="cc" value="${esc(p.material)}" oninput="upd(${p.id},'material',this.value)"></td>
+    <td><input class="cc" value="${esc(p.color)}" oninput="upd(${p.id},'color',this.value)" placeholder="Blanco…"></td>
+    <td><input class="cw" type="number" min="1" value="${p.cant}" oninput="upd(${p.id},'cant',this.value)"></td>
+    <td><input class="cm" type="number" value="${p.largo}" oninput="upd(${p.id},'largo',this.value)"></td>
+    <td><input class="cm" type="number" value="${p.ancho}" oninput="upd(${p.id},'ancho',this.value)"></td>
+    <td><input class="cw" type="number" value="${p.esp}" oninput="upd(${p.id},'esp',this.value)"></td>
+    <td><span class="veta-toggle ${p.veta?'on':''}" onclick="tv(${p.id})">${p.veta?'✓':'—'}</span></td>
+    <td><input class="cw" value="${p.bSup?'1':''}" oninput="ub(${p.id},'bSup',this.value)"></td>
+    <td><input class="cw" value="${p.bDer?'1':''}" oninput="ub(${p.id},'bDer',this.value)"></td>
+    <td><input class="cw" value="${p.bInf?'1':''}" oninput="ub(${p.id},'bInf',this.value)"></td>
+    <td><input class="cw" value="${p.bIzq?'1':''}" oninput="ub(${p.id},'bIzq',this.value)"></td>
+    <td><button class="del-btn" onclick="del(${p.id})">✕</button></td>`;
+  return tr;
+}
+function renderRows(){
+  const tb=document.getElementById('rows');tb.innerHTML='';
+  pieces.forEach((p,i)=>tb.appendChild(buildRowEl(p,i)));
+}
+function rowHasData(p){return !!(p.codigo||p.largo||p.ancho||p.color&&p.color!=='');}
+// mantiene SIEMPRE una fila vacía al final (estilo Excel) sin perder el foco
+function ensureTrailingBlank(){
+  if(!pieces.length || rowHasData(pieces[pieces.length-1])){
+    const np=blank(); pieces.push(np);
+    document.getElementById('rows').appendChild(buildRowEl(np,pieces.length-1));
+  }
+}
+function updSwatch(id){
+  const i=pieces.findIndex(x=>x.id===id);if(i<0)return;
+  const sw=document.querySelector('#rows tr[data-id="'+id+'"] .swatch');
+  if(sw)sw.style.background=colorFor((pieces[i].color||'')+'|'+(pieces[i].codigo||''),i);
+}
+function upd(id,k,v){const p=pieces.find(x=>x.id===id);if(!p)return;
+  p[k]=['codigo','desc','material','color'].includes(k)?v:(v===''?'':Number(v));
+  if(k==='color'||k==='codigo')updSwatch(id);
+  if(p===pieces[pieces.length-1])ensureTrailingBlank();
+  sched();}
+function ub(id,k,v){const p=pieces.find(x=>x.id===id);if(!p)return;p[k]=!!(v&&v.trim()&&v.trim()!=='0');sched();}
+function tv(id){const p=pieces.find(x=>x.id===id);if(!p)return;p.veta=!p.veta;renderRows();focusRow(id);sched();}
+function del(id){pieces=pieces.filter(x=>x.id!==id);renderRows();if(!pieces.length)ensureTrailingBlank();sched();}
+function sched(){clearTimeout(debounce);document.getElementById('validBar').innerHTML='<div class="validbar ok"><span class="dot"></span>Recalculando…</div>';debounce=setTimeout(recompute,350);}
+
+/* --- vínculo fila ↔ pieza en el diagrama --- */
+let activeRowId=null;
+function focusRow(id){activeRowId=id;markActiveRow();applyHighlight(true);}
+function markActiveRow(){
+  document.querySelectorAll('#rows tr.row-active').forEach(t=>t.classList.remove('row-active'));
+  const tr=document.querySelector('#rows tr[data-id="'+activeRowId+'"]');if(tr)tr.classList.add('row-active');
+}
+function applyHighlight(scroll){
+  if(activeRowId==null)return;
+  document.querySelectorAll('#results .piece-rect.hl').forEach(e=>e.classList.remove('hl'));
+  const els=document.querySelectorAll('#results [data-row="'+activeRowId+'"]');
+  els.forEach(e=>e.classList.add('hl'));
+  if(scroll&&els.length)els[0].scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+/* ====================== AGRUPAR + OPTIMIZAR + RENDER ====================== */
+function recompute(){
+  const BL=+document.getElementById('boardL').value||2440;
+  const BWv=+document.getElementById('boardW').value||1220;
+  const kerf=+document.getElementById('kerf').value||0;
+  const trim=+document.getElementById('trim').value||0;
+  const cantoMM=+document.getElementById('cantoMM').value||0;
+  const comp=document.getElementById('compCanto').checked;
+  const respeta=true; // la veta se honra siempre por pieza (paloma Veta)
+
+  // construir instancias por grupo material+color+espesor
+  const groups={}; const errors=[];
+  pieces.forEach((p,idx)=>{
+    const L=Number(p.largo),W=Number(p.ancho),c=Number(p.cant)||0;
+    if(!L||!W||c<1)return;
+    // medida de corte (real) con compensación de canto
+    let cl=L, cw=W;
+    if(comp){ if(p.bSup)cl-=cantoMM; if(p.bInf)cl-=cantoMM; if(p.bIzq)cw-=cantoMM; if(p.bDer)cw-=cantoMM; }
+    const key=`${p.material||'—'} · ${p.color||'—'} · ${p.esp||'?'}mm`;
+    if(!groups[key])groups[key]={key,material:p.material,color:p.color,esp:p.esp,inst:[]};
+    if((cl>BL+1e-6||cw>BWv+1e-6)&&(cw>BL+1e-6||cl>BWv+1e-6))
+      errors.push(`Pieza ${p.codigo||('#'+(idx+1))} (${cl}×${cw}) no cabe en ${BL}×${BWv}.`);
+    for(let i=0;i<c;i++)groups[key].inst.push({l:cl,w:cw,nomL:L,nomW:W,veta:respeta?!!p.veta:false,
+      codigo:p.codigo,desc:p.desc,color:p.color,material:p.material,bSup:p.bSup,bDer:p.bDer,bInf:p.bInf,bIzq:p.bIzq,idx,rowId:p.id});
+  });
+
+  const groupKeys=Object.keys(groups);
+  let totalBoards=0,totalUsed=0,totalArea=0,totalBand=0,anyUnplaced=0,anyOverlap=false,anyNotCut=false;
+  const rendered=[];
+
+  groupKeys.forEach(gk=>{
+    const g=groups[gk];
+    const best=optimizeMulti(g.inst,BL,BWv,kerf,trim);
+    const err=validate(best.res.boards,best.BW,best.BH);
+    if(err)anyOverlap=true;
+    best.res.boards.forEach(b=>{if(!boardCuttable(b,best.BW,best.BH))anyNotCut=true;});
+    anyUnplaced+=best.res.unplaced.length;
+    totalBoards+=best.res.boards.length;
+    totalArea+=best.res.boards.length*best.BW*best.BH;
+    best.res.boards.forEach(b=>b.placed.forEach(pl=>{
+      totalUsed+=pl.w*pl.h; const p=pl.piece;
+      if(p.bSup)totalBand+=p.nomL; if(p.bInf)totalBand+=p.nomL;
+      if(p.bIzq)totalBand+=p.nomW; if(p.bDer)totalBand+=p.nomW;}));
+    rendered.push({g,best});
+  });
+
+  // métricas
+  const util=totalArea?Math.round(totalUsed/totalArea*100):0;
+  document.getElementById('mBoards').textContent=totalBoards;
+  document.getElementById('mUtil').innerHTML=util+'<small>%</small>';
+  document.getElementById('mWaste').innerHTML=(totalBoards?100-util:0)+'<small>%</small>';
+  document.getElementById('mGroups').textContent=groupKeys.length;
+  document.getElementById('mBand').innerHTML=(totalBand/1000).toFixed(1)+'<small> m</small>';
+
+  // banner validación
+  const vb=document.getElementById('validBar');
+  if(!groupKeys.length){vb.innerHTML='';}
+  else if(anyOverlap||anyUnplaced||errors.length||anyNotCut){
+    vb.innerHTML=`<div class="validbar bad"><span class="dot"></span>⚠️ Revisar: `+
+      [errors.length?errors.length+' pieza(s) no caben':null,
+       anyUnplaced?anyUnplaced+' sin colocar':null,
+       anyOverlap?'solapamiento detectado':null,
+       anyNotCut?'plano no cortable en guillotina':null].filter(Boolean).join(' · ')+
+      (errors.length?'<br><span style="font-weight:400">'+errors.slice(0,4).join('<br>')+'</span>':'')+`</div>`;
+  }else{
+    vb.innerHTML=`<div class="validbar ok"><span class="dot"></span>✓ Validado: cortes guillotina verificados, sin solapamientos, todas las piezas colocadas (${totalBoards} tableros).</div>`;
+  }
+
+  lastResult={rendered,BL,BWv,trim};
+  renderResults(rendered,BL,BWv,trim);
+  applyHighlight(false);
+  if(document.getElementById('wsOverlay').classList.contains('show'))wsRefresh();
+}
+
+/* ---- Modo Taller: ver cortes a pantalla completa ---- */
+let lastResult=null, wsBoards=[], wsIdx=0;
+function buildWsBoards(){
+  wsBoards=[];
+  if(!lastResult)return;
+  lastResult.rendered.forEach(({g,best})=>best.res.boards.forEach((b,bi)=>wsBoards.push({g,best,b,bi})));
+}
+function openWorkshop(){
+  buildWsBoards();
+  if(!wsBoards.length){alert('Captura piezas para ver los cortes en pantalla completa.');return;}
+  wsIdx=0; document.getElementById('wsOverlay').classList.add('show');
+  try{const o=document.getElementById('wsOverlay'); if(o.requestFullscreen)o.requestFullscreen().catch(()=>{});}catch(e){}
+  wsRender();
+}
+function closeWorkshop(){
+  document.getElementById('wsOverlay').classList.remove('show');
+  try{if(document.fullscreenElement)document.exitFullscreen();}catch(e){}
+}
+function wsNav(d){wsIdx=Math.max(0,Math.min(wsBoards.length-1,wsIdx+d));wsRender();}
+function wsRefresh(){ // recálculo en vivo mientras está abierto
+  buildWsBoards(); if(!wsBoards.length){closeWorkshop();return;} wsIdx=Math.min(wsIdx,wsBoards.length-1); wsRender();
+}
+function wsRender(){
+  const it=wsBoards[wsIdx]; if(!it)return; const {g,best,b,bi}=it;
+  document.getElementById('wsTitle').textContent=`${g.material||'—'} · ${g.color||'sin color'} · ${g.esp}mm`;
+  document.getElementById('wsSub').textContent=`Tablero ${bi+1} de ${best.res.boards.length} de este material · ${b.placed.length} piezas`;
+  document.getElementById('wsCounter').textContent=`${wsIdx+1} / ${wsBoards.length}`;
+  document.getElementById('wsBody').innerHTML=`<div class="workshop">${renderBoard(b,bi,best.BW,best.BH,lastResult.trim,lastResult.BL,lastResult.BWv)}</div>`;
+  document.getElementById('wsPrev').disabled=wsIdx===0;
+  document.getElementById('wsNext').disabled=wsIdx===wsBoards.length-1;
+}
+document.addEventListener('keydown',e=>{
+  if(!document.getElementById('wsOverlay').classList.contains('show'))return;
+  if(e.key==='ArrowRight')wsNav(1); else if(e.key==='ArrowLeft')wsNav(-1); else if(e.key==='Escape')closeWorkshop();
+});
+
+function renderResults(rendered,BL,BWv,trim){
+  const cont=document.getElementById('results');
+  if(!rendered.length){
+    cont.innerHTML=`<div class="empty-state"><svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="5" width="18" height="14" rx="1"/><path d="M3 10h18M9 5v14"/></svg><div>Agrega piezas o carga el ejemplo para ver los planos de corte.</div></div>`;
+    return;}
+  cont.innerHTML=rendered.map(({g,best})=>{
+    const {res,BW,BH,strategy}=best;
+    const gUtil=Math.round(utilization(res.boards,BW,BH)*100);
+    let gBand=0;res.boards.forEach(b=>b.placed.forEach(pl=>{const p=pl.piece;
+      if(p.bSup)gBand+=p.nomL;if(p.bInf)gBand+=p.nomL;if(p.bIzq)gBand+=p.nomW;if(p.bDer)gBand+=p.nomW;}));
+    const col=colorFor((g.color||'')+'|',0);
+    const boardsHTML=res.boards.map((b,bi)=>renderBoard(b,bi,BW,BH,trim,BL,BWv)).join('');
+    return `<div class="group">
+      <div class="group-head">
+        <div class="gt"><span style="width:12px;height:12px;border-radius:3px;background:${col};display:inline-block"></span>
+          ${esc(g.material||'—')} · ${esc(g.color||'sin color')} · ${esc(g.esp)}mm</div>
+        <div class="gmeta"><span>${res.boards.length} tableros</span><span>Aprov. ${gUtil}%</span>
+          <span>Canto ${(gBand/1000).toFixed(1)} m</span><span>${res.unplaced.length?'⚠ '+res.unplaced.length+' sin colocar':'✓ completo'}</span></div>
+      </div>
+      <div class="group-body">${boardsHTML}</div></div>`;
+  }).join('');
+}
+
+function renderBoard(b,bi,BW,BH,trim,BL,BWv){
+  const VIEW_W=920,scale=VIEW_W/BL,M=22; // margen para cotas/refilado
+  const innerW=BW*scale,innerH=BH*scale;
+  const VIEW_H=innerH+M*2;
+  const placedArea=b.placed.reduce((s,p)=>s+p.w*p.h,0);
+  const util=Math.round(placedArea/(BW*BH)*100);
+  // mayor retazo
+  let big=null;b.free.forEach(f=>{if(!big||f.w*f.h>big.w*big.h)big=f;});
+  const rest=Math.round((1-placedArea/(BW*BH))*100);
+  const ox=M,oy=M;
+  let s=`<svg class="board-svg" viewBox="0 0 ${VIEW_W} ${VIEW_H}" preserveAspectRatio="xMidYMid meet">`;
+  // zona refilada (tablero crudo)
+  s+=`<rect x="${ox-trim*scale}" y="${oy-trim*scale}" width="${innerW+2*trim*scale}" height="${innerH+2*trim*scale}" fill="#e3d4ba" stroke="${'#bfa87e'}" stroke-width="1.5"/>`;
+  // área útil
+  s+=`<rect x="${ox}" y="${oy}" width="${innerW}" height="${innerH}" fill="var(--board)" stroke="var(--board-edge)" stroke-width="1.2"/>`;
+  for(let gy=oy+13;gy<oy+innerH;gy+=15)s+=`<line class="board-grain" x1="${ox}" y1="${gy}" x2="${ox+innerW}" y2="${gy}"/>`;
+  // retazo grande sombreado
+  if(big&&big.w*big.h>(BW*BH*0.02)){
+    s+=`<rect x="${ox+big.x*scale}" y="${oy+big.y*scale}" width="${big.w*scale}" height="${big.h*scale}" fill="#ffffff" fill-opacity="0.45" stroke="#cbd5e1" stroke-dasharray="4 3"/>`;
+    if(big.w*scale>54&&big.h*scale>20)
+      s+=`<text class="edge-dim" x="${ox+(big.x+big.w/2)*scale}" y="${oy+(big.y+big.h/2)*scale}" text-anchor="middle">retazo ${Math.round(big.w)}×${Math.round(big.h)}</text>`;
+  }
+  // piezas
+  b.placed.forEach((pl,pi)=>{
+    const x=ox+pl.x*scale,y=oy+pl.y*scale,w=pl.w*scale,h=pl.h*scale;
+    const p=pl.piece, c=colorFor((p.color||'')+'|'+(p.codigo||''),p.idx);
+    s+=`<rect class="piece-rect" data-row="${p.rowId}" x="${x}" y="${y}" width="${w}" height="${h}" fill="${c}" fill-opacity="0.82"/>`;
+    const cx=x+w/2,cy=y+h/2,fs=Math.max(8,Math.min(12,w/9));
+    if(w>40&&h>24){
+      s+=`<text class="piece-label" x="${cx}" y="${cy-2}" text-anchor="middle" font-size="${fs}">${esc(p.codigo||p.desc||(pi+1))}</text>`;
+      s+=`<text class="piece-dim" x="${cx}" y="${cy+11}" text-anchor="middle" font-size="${Math.max(8,fs-2)}">${Math.round(p.nomL)}×${Math.round(p.nomW)}${pl.rot?' ↻':''}</text>`;
+    }
+    // veta
+    if(w>30&&h>22){
+      if(!pl.rot){const ay=y+7,x2=x+Math.min(34,w-7);s+=`<path class="grain-arrow" d="M${x+6} ${ay} L${x2} ${ay} M${x2-5} ${ay-3} L${x2} ${ay} L${x2-5} ${ay+3}"/>`;}
+      else{const ax=x+7,y2=y+Math.min(34,h-7);s+=`<path class="grain-arrow" d="M${ax} ${y+6} L${ax} ${y2} M${ax-3} ${y2-5} L${ax} ${y2} L${ax+3} ${y2-5}"/>`;}
+    }
+    // cantos remapeados por rotación
+    let top,right,bottom,left;
+    if(!pl.rot){top=p.bSup;right=p.bDer;bottom=p.bInf;left=p.bIzq;}
+    else{top=p.bIzq;right=p.bSup;bottom=p.bDer;left=p.bInf;}
+    const ins=2.2;
+    if(top)s+=`<line class="band-line" x1="${x+ins}" y1="${y+ins}" x2="${x+w-ins}" y2="${y+ins}"/>`;
+    if(bottom)s+=`<line class="band-line" x1="${x+ins}" y1="${y+h-ins}" x2="${x+w-ins}" y2="${y+h-ins}"/>`;
+    if(left)s+=`<line class="band-line" x1="${x+ins}" y1="${y+ins}" x2="${x+ins}" y2="${y+h-ins}"/>`;
+    if(right)s+=`<line class="band-line" x1="${x+w-ins}" y1="${y+ins}" x2="${x+w-ins}" y2="${y+h-ins}"/>`;
+  });
+  // cotas del tablero
+  s+=`<text class="edge-dim" x="${ox+innerW/2}" y="${oy-7}" text-anchor="middle">${BW} mm útiles</text>`;
+  s+=`<text class="edge-dim" x="${ox-7}" y="${oy+innerH/2}" text-anchor="middle" transform="rotate(-90 ${ox-7} ${oy+innerH/2})">${BH} mm</text>`;
+  s+=`</svg>`;
+  return `<div class="board-card">
+    <div class="board-title"><span>Tablero ${bi+1} · ${BL}×${BWv} mm · ${b.placed.length} piezas</span>
+    <span class="util">Aprovechamiento ${util}% · Resto ${rest}%</span></div>${s}</div>`;
+}
+
+/* ====================== EXPORTAR AL FORMATO EXCEL DEL PROVEEDOR ====================== */
+const EXPORT_HEAD=['CODIGO','DESCRIPCION','CANTIDAD','LARGO','ANCHO','ESPESOR','VETA','BORDE SUP','BORDE DER','BORDE INF','BORDE IZQ'];
+function groupForExport(){
+  const groups={};
+  pieces.forEach(p=>{
+    const L=Number(p.largo),W=Number(p.ancho),c=Number(p.cant)||0;
+    if(!L||!W||c<1)return;
+    const key=`${p.material||'Material'} ${p.color||''} ${p.esp||15}mm`.replace(/\s+/g,' ').trim();
+    (groups[key]=groups[key]||[]).push(p);
+  });
+  return groups;
+}
+function rowForExport(p){
+  return [p.codigo||'', p.desc||'', Number(p.cant)||1, Number(p.largo), Number(p.ancho),
+    Number(p.esp)||15, p.veta?1:'', p.bSup?1:'', p.bDer?1:'', p.bInf?1:'', p.bIzq?1:''];
+}
+function exportExcel(){
+  const groups=groupForExport(); const keys=Object.keys(groups);
+  if(!keys.length){alert('No hay piezas para exportar. Captura o carga una lista primero.');return;}
+  const proj=(document.getElementById('projName').value||'Cortes').trim();
+  const today=new Date().toISOString().slice(0,10);
+  if(typeof XLSX==='undefined'){return exportCSV(groups,proj);} // respaldo offline
+  const wb=XLSX.utils.book_new(); const used={};
+  keys.forEach(k=>{
+    const rows=[EXPORT_HEAD, ...groups[k].map(rowForExport)];
+    const ws=XLSX.utils.aoa_to_sheet(rows);
+    ws['!cols']=EXPORT_HEAD.map((h,i)=>({wch:i===1?18:11}));
+    let base=(k.replace(/[:\\\/?*\[\]]/g,' ').slice(0,31)||'Hoja'); let name=base,n=2;
+    while(used[name.toLowerCase()]){name=base.slice(0,28)+' '+n;n++;} used[name.toLowerCase()]=1;
+    XLSX.utils.book_append_sheet(wb,ws,name);
+  });
+  XLSX.writeFile(wb, `${proj} - ${today}.xlsx`);
+}
+function exportCSV(groups,proj){
+  let csv='﻿'; // BOM para acentos en Excel
+  Object.keys(groups).forEach(k=>{
+    csv+=k+'\n'+EXPORT_HEAD.join(',')+'\n';
+    groups[k].forEach(p=>csv+=rowForExport(p).map(v=>String(v).includes(',')?'"'+v+'"':v).join(',')+'\n');
+    csv+='\n';
+  });
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=(proj||'Cortes')+'.csv';
+  document.body.appendChild(a);a.click();a.remove();
+}
+
+/* ====================== IMPORT EXCEL / CSV / PEGADO ====================== */
+function openImport(){document.getElementById('importModal').classList.add('show');}
+function closeImport(){document.getElementById('importModal').classList.remove('show');}
+const HMAP={codigo:'codigo','código':'codigo',descripcion:'desc','descripción':'desc',material:'material',color:'color',
+  cantidad:'cant',cant:'cant',largo:'largo',ancho:'ancho',espesor:'esp',esp:'esp',veta:'veta',
+  'borde sup':'bSup','b.sup':'bSup',sup:'bSup','borde der':'bDer','b.der':'bDer',der:'bDer',
+  'borde inf':'bInf','b.inf':'bInf',inf:'bInf','borde izq':'bIzq','b.izq':'bIzq',izq:'bIzq'};
+function rowsToPieces(rows){
+  if(!rows.length)return;
+  // detectar fila de encabezado
+  const head=rows[0].map(c=>(c==null?'':String(c)).trim().toLowerCase());
+  const hasHeader=head.some(h=>HMAP[h]);
+  let colmap={};
+  if(hasHeader){head.forEach((h,i)=>{if(HMAP[h])colmap[HMAP[h]]=i;});rows=rows.slice(1);}
+  else{['codigo','desc','cant','largo','ancho','esp','veta','bSup','bDer','bInf','bIzq'].forEach((k,i)=>colmap[k]=i);}
+  const out=[];
+  rows.forEach(r=>{
+    if(!r||r.every(c=>c==null||String(c).trim()===''))return;
+    const g=k=>{const i=colmap[k];return i==null?'':(r[i]==null?'':String(r[i]).trim());};
+    const L=parseFloat(g('largo')),W=parseFloat(g('ancho'));
+    if(!L||!W)return;
+    const truthy=v=>v&&v!=='0'&&v.toLowerCase()!=='no'&&v.toLowerCase()!=='false';
+    out.push({id:uid++,codigo:g('codigo'),desc:g('desc'),material:g('material')||'Melamina',color:g('color'),
+      cant:parseInt(g('cant'))||1,largo:L,ancho:W,esp:parseFloat(g('esp'))||15,
+      veta:truthy(g('veta')),bSup:truthy(g('bSup')),bDer:truthy(g('bDer')),bInf:truthy(g('bInf')),bIzq:truthy(g('bIzq'))});
+  });
+  if(out.length){pieces=out;renderRows();ensureTrailingBlank();recompute();closeImport();}
+  else alert('No se detectaron filas válidas. Revisa que haya columnas Largo y Ancho.');
+}
+function importPaste(){
+  const txt=document.getElementById('pasteArea').value.trim();if(!txt)return;
+  const rows=txt.split(/\r?\n/).map(l=>l.split(/\t|;|,/));rowsToPieces(rows);
+}
+document.getElementById('fileInput').addEventListener('change',e=>{
+  const f=e.target.files[0];if(!f)return;
+  const rd=new FileReader();
+  rd.onload=ev=>{try{
+    const wb=XLSX.read(ev.target.result,{type:'array'});
+    const ws=wb.Sheets[wb.SheetNames[0]];
+    const rows=XLSX.utils.sheet_to_json(ws,{header:1,raw:true});
+    rowsToPieces(rows);
+  }catch(err){alert('No se pudo leer el archivo: '+err.message+'\\nPrueba copiando y pegando las filas.');}};
+  rd.readAsArrayBuffer(f);
+});
+
+/* ====================== EJEMPLO (Cocina LAURA) ====================== */
+function lauraPieces(){
+  const G=[
+    ['Blanco',[[3,713,500,0,1,0,1,1],[2,560,450,0,1,0,1,0],[2,513,450,0,1,0,0,0],[2,713,245,0,1,0,1,0],
+      [6,500,260,0,1,1,0,0],[4,350,115,0,1,0,1,0],[3,413,350,0,1,0,0,0],[2,543,500,0,1,1,1,0],
+      [1,500,500,0,1,1,1,1],[3,713,100,0,1,0,0,0],[1,313,500,0,1,0,1,1]]],
+    ['Avella',[[2,716,560,1,1,1,1,1],[2,716,300,1,1,0,1,1],[4,396,716,1,1,1,1,1],[2,596,360,1,1,1,1,1],
+      [3,446,716,1,1,1,1,1],[2,300,716,1,1,1,1,1],[1,896,360,1,1,1,1,1]]],
+    ['Visón',[[2,716,360,1,1,1,1,1],[1,896,716,1,1,1,1,1],[2,446,360,1,1,1,1,1],[1,596,716,1,1,1,1,1]]],
+    ['Triplay',[[6,900,2100,0,0,0,0,0],[4,560,2100,0,0,0,0,0]]],
+  ];
+  const out=[];
+  G.forEach(([color,arr])=>arr.forEach(r=>{const mat=color==='Triplay'?'Triplay':'Melamina';
+    out.push({codigo:'',desc:'',material:mat,color:color==='Triplay'?'Natural':color,
+      cant:r[0],largo:r[1],ancho:r[2],esp:color==='Triplay'?6:15,veta:!!r[3],
+      bSup:!!r[4],bDer:!!r[5],bInf:!!r[6],bIzq:!!r[7]});}));
+  return out;
+}
+function loadDemo(){pieces=lauraPieces().map(p=>({id:uid++,...p}));document.getElementById('projName').value='Cocina LAURA';renderRows();ensureTrailingBlank();recompute();}
+
+/* ====================== GESTIÓN DE PROYECTOS (historial) ====================== */
+const PKEY='zh_cortes_proyectos_v1', LBKEY='zh_cortes_lastbackup_v1', SCHEMA=1;
+let currentProjectId=null;
+function lsOK(){try{const k='__zh_t';localStorage.setItem(k,'1');localStorage.removeItem(k);return true;}catch(e){return false;}}
+function loadProjects(){try{const raw=JSON.parse(localStorage.getItem(PKEY));if(!raw)return [];return Array.isArray(raw)?raw:(raw.projects||[]);}catch(e){return [];}}
+function saveProjects(a){try{localStorage.setItem(PKEY,JSON.stringify({schemaVersion:SCHEMA,projects:a,updatedAt:Date.now()}));schedulePush();return true;}catch(e){return false;}}
+// ---- Respaldo / Restauración confiable a archivo ----
+function backupHistory(){
+  const a=loadProjects();
+  const blob=new Blob([JSON.stringify({app:'zenhome-cortes',schemaVersion:SCHEMA,exportedAt:Date.now(),projects:a},null,1)],{type:'application/json'});
+  const name='historial-cortes-'+new Date().toISOString().slice(0,10)+'.json';
+  const url=URL.createObjectURL(blob);const link=document.createElement('a');link.href=url;link.download=name;
+  document.body.appendChild(link);link.click();link.remove();
+  try{localStorage.setItem(LBKEY,String(Date.now()));}catch(e){}
+  updateBackupInfo();toast('Respaldo descargado: '+name);
+}
+function restoreHistory(ev){
+  const f=ev.target.files[0];if(!f)return;const rd=new FileReader();
+  rd.onload=e=>{try{
+    const data=JSON.parse(e.target.result);
+    const incoming=Array.isArray(data)?data:(data.projects||[]);
+    if(!incoming.length){alert('El archivo no contiene proyectos.');return;}
+    const cur=loadProjects();const map={};cur.forEach(p=>map[p.id]=p);
+    incoming.forEach(p=>{if(p&&p.id&&(!map[p.id]||(p.updatedAt||0)>=(map[p.id].updatedAt||0)))map[p.id]=p;});
+    saveProjects(Object.values(map));renderProjects();toast('Historial restaurado: '+incoming.length+' proyecto(s)');
+  }catch(err){alert('Archivo inválido: '+err.message);}finally{ev.target.value='';}};
+  rd.readAsText(f);
+}
+// ---- Sincronización con Google Drive (Apps Script Web App) ----
+const DURL='zh_drive_url', DTOK='zh_drive_token';
+let driveConnected=false, lastSync=0, pushTimer=null;
+function driveUrl(){try{return localStorage.getItem(DURL)||'';}catch(e){return '';}}
+function driveToken(){try{return localStorage.getItem(DTOK)||'';}catch(e){return '';}}
+function mergeIntoLocal(incoming){const cur=loadProjects();const map={};cur.forEach(p=>map[p.id]=p);
+  (incoming||[]).forEach(p=>{if(p&&p.id&&(!map[p.id]||(p.updatedAt||0)>=(map[p.id].updatedAt||0)))map[p.id]=p;});
+  try{localStorage.setItem(PKEY,JSON.stringify({schemaVersion:SCHEMA,projects:Object.values(map),updatedAt:Date.now()}));}catch(e){}}
+async function pullFromDrive(silent){const url=driveUrl();if(!url)return false;
+  try{const sep=url.includes('?')?'&':'?';
+    const r=await fetch(url+sep+'action=load'+(driveToken()?'&token='+encodeURIComponent(driveToken()):''),{method:'GET'});
+    const data=await r.json();
+    mergeIntoLocal(data.projects||(Array.isArray(data)?data:[]));
+    driveConnected=true;lastSync=Date.now();renderProjects();
+    if(!silent)toast('Historial actualizado desde Drive ✓');
+    return true;
+  }catch(e){if(!silent)toast('No se pudo leer de Drive (revisa la URL o tu conexión)');return false;}}
+async function pushToDrive(){const url=driveUrl();if(!url||!driveConnected)return;
+  try{await fetch(url,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},
+    body:JSON.stringify({token:driveToken(),schemaVersion:SCHEMA,projects:loadProjects()})});
+    lastSync=Date.now();updateBackupInfo();
+  }catch(e){}}
+function schedulePush(){if(!driveConnected)return;clearTimeout(pushTimer);pushTimer=setTimeout(pushToDrive,600);}
+async function connectDrive(){
+  const url=prompt('Pega la URL del Web App de Google Drive (termina en /exec):',driveUrl()||'https://script.google.com/macros/s/XXXX/exec');
+  if(url===null)return;const u=url.trim();
+  if(u&&!/\/exec$/.test(u)&&!confirm('La URL no termina en /exec. ¿Usarla de todos modos?'))return;
+  try{localStorage.setItem(DURL,u);}catch(e){}
+  const tk=prompt('Token de acceso (opcional — debe coincidir con el del script). Deja vacío si no usas:',driveToken()||'');
+  if(tk!==null){try{localStorage.setItem(DTOK,tk.trim());}catch(e){}}
+  driveConnected=true;
+  const ok=await pullFromDrive(true);
+  if(ok){await pushToDrive();toast('Conectado a Google Drive ✓');}
+  else{toast('Guardé la URL, pero no pude leer. Revisa el despliegue del script.');}
+  renderProjects();
+}
+function disconnectDrive(){try{localStorage.removeItem(DURL);}catch(e){}driveConnected=false;renderProjects();toast('Desconectado de Drive');}
+function updateBackupInfo(){
+  const info=document.getElementById('pvBackupInfo'),warn=document.getElementById('pvWarn'),bc=document.getElementById('btnConnect');
+  if(bc){bc.textContent=driveConnected?'☁️ Drive · Sincronizar':'☁️ Conectar Google Drive'; bc.onclick=driveConnected?(()=>pullFromDrive(false)):connectDrive;}
+  if(info){
+    if(driveConnected){info.innerHTML='☁️ <b>Conectado a Google Drive</b>'+(lastSync?(' · sincronizado '+new Date(lastSync).toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'})):'')+' · <a href="#" onclick="disconnectDrive();return false" style="color:var(--medium-gray)">desconectar</a>';}
+    else{let lb=0;try{lb=+localStorage.getItem(LBKEY)||0;}catch(e){}
+      info.innerHTML=loadProjects().length?((lb?('Último respaldo: <b>'+fmtDate(lb)+'</b> · '):'')+'Conecta Google Drive para no perder el historial si se daña un equipo.'):'';}
+  }
+  if(warn){let m='';
+    if(!driveConnected&&!lsOK())m='Este navegador no guarda el historial localmente y no estás conectado a Drive. Conecta Google Drive o usa Respaldar/Restaurar.';
+    warn.innerHTML=m?('<div class="validbar bad" style="margin-bottom:1rem"><span class="dot"></span>'+m+'</div>'):'';}
+}
+function showView(v){document.getElementById('projectsView').style.display=(v==='projects')?'block':'none';
+  document.getElementById('appView').style.display=(v==='app')?'block':'none';}
+function toast(m){let t=document.getElementById('zhToast');if(!t){t=document.createElement('div');t.id='zhToast';t.className='toast';document.body.appendChild(t);}
+  t.textContent=m;t.classList.add('show');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('show'),1800);}
+function fmtDate(ts){try{return new Date(ts).toLocaleDateString('es-MX',{day:'2-digit',month:'short',year:'numeric'});}catch(e){return '';}}
+function renderProjects(){
+  const arr=loadProjects().sort((a,b)=>b.updatedAt-a.updatedAt);
+  updateBackupInfo();
+  const el=document.getElementById('pvList');
+  if(!arr.length){el.innerHTML=`<div class="pv-empty"><svg width="54" height="54" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="5" width="18" height="14" rx="1"/><path d="M3 10h18M9 5v14"/></svg><div>Aún no hay proyectos. Crea el primero con <b>＋ Nuevo proyecto</b>.</div></div>`;return;}
+  el.innerHTML=arr.map(p=>{const s=p.summary||{};return `<div class="pv-card">
+    <div class="pv-card-top" onclick="openProject('${p.id}')">
+      <div class="pv-name">${esc(p.name)}</div>
+      <div class="pv-date">Actualizado ${fmtDate(p.updatedAt)}</div>
+      <div class="pv-stats"><span><b>${s.boards||'—'}</b> tableros</span><span><b>${s.pieces||0}</b> piezas</span><span><b>${s.groups||'—'}</b> materiales</span><span><b>${s.util||'—'}</b> aprov.</span></div>
+    </div>
+    <div class="pv-actions">
+      <button class="btn-primary" onclick="openProject('${p.id}')">Abrir</button>
+      <button class="btn-secondary" onclick="duplicateProject('${p.id}')">Duplicar</button>
+      <button class="btn-ghost" onclick="deleteProject('${p.id}')">🗑</button>
+    </div></div>`;}).join('');
+}
+function stripPieces(){return pieces.filter(p=>Number(p.largo)&&Number(p.ancho)&&Number(p.cant)>0)
+  .map(p=>({codigo:p.codigo,desc:p.desc,material:p.material,color:p.color,cant:p.cant,largo:p.largo,ancho:p.ancho,esp:p.esp,veta:p.veta,bSup:p.bSup,bDer:p.bDer,bInf:p.bInf,bIzq:p.bIzq}));}
+function currentParams(){return {boardL:+document.getElementById('boardL').value,boardW:+document.getElementById('boardW').value,kerf:+document.getElementById('kerf').value,trim:+document.getElementById('trim').value,cantoMM:+document.getElementById('cantoMM').value,compCanto:document.getElementById('compCanto').checked};}
+function applyParams(p){if(!p)return;const set=(id,v)=>{if(v!=null&&document.getElementById(id))document.getElementById(id).value=v;};
+  set('boardL',p.boardL);set('boardW',p.boardW);set('kerf',p.kerf);set('trim',p.trim);set('cantoMM',p.cantoMM);
+  document.getElementById('compCanto').checked=!!p.compCanto;}
+function currentSummary(){return {boards:+document.getElementById('mBoards').textContent||0,
+  pieces:stripPieces().reduce((s,p)=>s+(Number(p.cant)||0),0),
+  groups:+document.getElementById('mGroups').textContent||0,
+  util:document.getElementById('mUtil').textContent,band:document.getElementById('mBand').textContent};}
+function newProject(){currentProjectId=null;pieces=[];document.getElementById('projName').value='';
+  applyParams({boardL:2440,boardW:1220,kerf:4,trim:5,cantoMM:0.45,compCanto:false});
+  renderRows();ensureTrailingBlank();recompute();showView('app');}
+function openProject(id){const p=loadProjects().find(x=>x.id===id);if(!p)return;
+  currentProjectId=p.id;document.getElementById('projName').value=p.name;applyParams(p.params);
+  pieces=(p.pieces||[]).map(x=>({id:uid++,...x}));renderRows();ensureTrailingBlank();recompute();showView('app');}
+function saveCurrentProject(){
+  const data=stripPieces();
+  if(!data.length){alert('No hay piezas para guardar.');return false;}
+  let name=document.getElementById('projName').value.trim();
+  if(!name){name=prompt('Nombre del proyecto:','Cocina '+fmtDate(Date.now()));if(!name)return false;document.getElementById('projName').value=name;}
+  const arr=loadProjects();const now=Date.now();
+  let rec=arr.find(x=>x.id===currentProjectId);
+  if(rec){rec.name=name;rec.pieces=data;rec.params=currentParams();rec.summary=currentSummary();rec.updatedAt=now;}
+  else{rec={id:'p'+now,name,pieces:data,params:currentParams(),summary:currentSummary(),createdAt:now,updatedAt:now};arr.push(rec);currentProjectId=rec.id;}
+  if(!saveProjects(arr)){alert('No se pudo guardar en el navegador (¿modo privado?).');return false;}
+  renderProjects();toast('Proyecto guardado ✓');return true;}
+function duplicateProject(id){const arr=loadProjects();const p=arr.find(x=>x.id===id);if(!p)return;
+  const now=Date.now();arr.push({...JSON.parse(JSON.stringify(p)),id:'p'+now,name:p.name+' (copia)',createdAt:now,updatedAt:now});
+  saveProjects(arr);renderProjects();toast('Proyecto duplicado');}
+function deleteProject(id){if(!confirm('¿Eliminar este proyecto del historial? No se puede deshacer.'))return;
+  saveProjects(loadProjects().filter(x=>x.id!==id));renderProjects();toast('Proyecto eliminado');}
+function backToProjects(){
+  if(stripPieces().length){if(!saveCurrentProject()){if(!confirm('No se guardó el proyecto. ¿Salir de todos modos?'))return;}}
+  showView('projects');renderProjects();}
+
+/* ====================== INIT ====================== */
+['boardL','boardW','kerf','trim','cantoMM'].forEach(id=>document.getElementById(id).addEventListener('input',sched));
+document.getElementById('compCanto').addEventListener('change',recompute);
+document.getElementById('rows').addEventListener('focusin',e=>{const tr=e.target.closest('tr');if(tr&&tr.dataset.id)focusRow(+tr.dataset.id);});
+// sembrar el ejemplo LAURA la primera vez que se abre
+(function seed(){const arr=loadProjects();if(!arr.length){const lp=lauraPieces();const now=Date.now();
+  arr.push({id:'p'+now,name:'Cocina LAURA (ejemplo)',pieces:lp,
+    params:{boardL:2440,boardW:1220,kerf:4,trim:5,cantoMM:0.45,compCanto:false},
+    summary:{boards:'—',pieces:lp.reduce((s,p)=>s+p.cant,0),groups:4,util:'—',band:'—'},createdAt:now,updatedAt:now});
+  saveProjects(arr);}})();
+pieces=[];renderRows();ensureTrailingBlank();
+renderProjects();showView('projects');
+// reconectar a Google Drive si ya había una URL guardada
+if(driveUrl()){driveConnected=true;pullFromDrive(true);}
+// mantener el historial fresco entre equipos
+window.addEventListener('focus',()=>{if(driveConnected)pullFromDrive(true);});
+setInterval(()=>{if(driveConnected&&!document.hidden)pullFromDrive(true);},30000);
+</script>
+</body>
+</html>
