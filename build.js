@@ -782,12 +782,22 @@ async function build() {
 
   // Deduplicate by slug — prevents duplicate cards if Sanity has
   // multiple documents with the same slug (e.g. after duplicating)
+  // Also validate slug format: only lowercase letters, numbers and hyphens.
+  // Prevents malformed URLs (e.g. a Facebook link pasted into the slug field)
+  // from generating live pages and contaminating the sitemap.
+  const SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
   const slugSet = new Set()
   const dedupedProjects = []
   for (const p of projects) {
     const s = p.slug?.current
     if (!s || slugSet.has(s)) {
       if (s) console.log(`⚠️  Skipping duplicate slug "${s}" (_id: ${p._id})`)
+      continue
+    }
+    if (!SLUG_RE.test(s)) {
+      console.log(`🚫 INVALID SLUG — skipping "${p.title}" (_id: ${p._id})`)
+      console.log(`   slug: "${s}"`)
+      console.log(`   → Corrige el campo slug en Sanity Studio (solo minúsculas, números y guiones)`)
       continue
     }
     slugSet.add(s)
@@ -846,7 +856,9 @@ async function build() {
     { loc: 'https://zenhome.com.mx/cocinas-integrales-monterrey/', changefreq: 'monthly', priority: '0.9' },
     { loc: 'https://zenhome.com.mx/closets-monterrey/', changefreq: 'monthly', priority: '0.9' },
     { loc: 'https://zenhome.com.mx/diseno-interiores-monterrey/', changefreq: 'monthly', priority: '0.9' },
-    // /servicios/ removed — it 301s to /contacto/, shouldn't be in sitemap
+    { loc: 'https://zenhome.com.mx/cocinas-integrales-apodaca/', changefreq: 'monthly', priority: '0.9' },
+    { loc: 'https://zenhome.com.mx/cocinas-integrales-guadalupe/', changefreq: 'monthly', priority: '0.9' },
+    { loc: 'https://zenhome.com.mx/servicios/', changefreq: 'monthly', priority: '0.7' },
     { loc: 'https://zenhome.com.mx/contacto/', changefreq: 'monthly', priority: '0.7' },
     { loc: 'https://zenhome.com.mx/proyectos/', changefreq: 'weekly', priority: '0.8' },
     { loc: 'https://zenhome.com.mx/cuanto-cuesta-cocina-integral-monterrey/', changefreq: 'monthly', priority: '0.8' },
