@@ -292,9 +292,9 @@ function projectPageHtml(p, relatedProjects) {
     }
   }
 
-  // Testimonial
+  // Testimonial (visible en la página; NO va al JSON-LD: Google no acepta
+  // "review" dentro de Article — causaba error de Review snippets en GSC)
   let testimonialSection = ''
-  let reviewSchema = ''
   if (p.testimonial?.quote) {
     const rating = p.testimonial.rating || 5
     const stars = '\u2605'.repeat(rating) + '\u2606'.repeat(5 - rating)
@@ -306,13 +306,6 @@ function projectPageHtml(p, relatedProjects) {
       <cite>\u2014 ${escapeHtml(p.testimonial.author || 'Cliente ZenHome')}</cite>
     </div>
   </section>`
-    reviewSchema = `,
-  "review": {
-    "@type": "Review",
-    "reviewRating": {"@type": "Rating", "ratingValue": "${rating}", "bestRating": "5"},
-    "author": {"@type": "Person", "name": "${escapeHtml(p.testimonial.author || 'Cliente ZenHome')}"},
-    "reviewBody": "${escapeHtml(p.testimonial.quote)}"
-  }`
   }
 
   // Solution
@@ -406,7 +399,7 @@ function projectPageHtml(p, relatedProjects) {
       {"@type": "ListItem", "position": 2, "name": "Proyectos", "item": "https://zenhome.com.mx/proyectos/"},
       {"@type": "ListItem", "position": 3, "name": "${escapeHtml(p.title)}"}
     ]
-  }${reviewSchema}
+  }
 }
 </script>
 
