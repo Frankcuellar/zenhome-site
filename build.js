@@ -758,8 +758,11 @@ async function build() {
     return map[cat.toLowerCase()] || cat.toLowerCase()
   }
 
-  // Fetch all published projects
-  const query = `*[_type == "project" && published == true] | order(featured desc, deliveryDate desc) {
+  // Fetch all published projects.
+  // IMPORTANTE: !(_id in path("drafts.**")) excluye los borradores de Sanity.
+  // Sin esto, un draft a medias (con published==true) se filtra al build y
+  // genera un slug "duplicado" del documento publicado.
+  const query = `*[_type == "project" && published == true && !(_id in path("drafts.**"))] | order(featured desc, deliveryDate desc) {
     _id, title, slug, category, location, deliveryDate, duration,
     heroImage, description, challenge, solution, specs, gallery,
     videoUrl, testimonial, published, featured,
@@ -773,39 +776,69 @@ async function build() {
   // Normalize categories
   projects.forEach((p) => { p.category = normalizeCategory(p.category) })
 
-  // Deduplicate by slug — prevents duplicate cards if Sanity has
-  // multiple documents with the same slug (e.g. after duplicating)
-  // Also validate slug format: only lowercase letters, numbers and hyphens.
-  // Prevents malformed URLs (e.g. a Facebook link pasted into the slug field)
-  // from generating live pages and contaminating the sitemap.
+  // ──────────────────────────────────────────────────────────────────────
+  //  VALIDACIÓN DE CALIDAD — HARD-FAIL (bloqueo total)
+  //  Si CUALQUIER proyecto publicado tiene un dato inválido, el build se
+  //  DETIENE y NO se despliega nada (process.exit 1 vía throw). Así, datos
+  //  malos (slug de Facebook, título duplicado, campo faltante, imagen
+  //  faltante) NO contaminan el sitio ni el sitemap en silencio. Se reportan
+  //  TODOS los errores juntos para corregirlos de una sola pasada en Sanity.
+  // ──────────────────────────────────────────────────────────────────────
   const SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
-  const slugSet = new Set()
-  const dedupedProjects = []
+  const errors = []
+  const warnings = []
+  const slugSeen = new Map()    // slug -> _id
+  const titleSeen = new Map()   // título SEO final -> slug
   for (const p of projects) {
+    const id = p._id || '(sin _id)'
+    const label = p.title || id
     const s = p.slug?.current
-    if (!s || slugSet.has(s)) {
-      if (s) console.log(`⚠️  Skipping duplicate slug "${s}" (_id: ${p._id})`)
-      continue
-    }
+
+    if (!s) { errors.push(`"${label}": falta el campo SLUG (_id: ${id})`); continue }
     if (!SLUG_RE.test(s)) {
-      console.log(`🚫 INVALID SLUG — skipping "${p.title}" (_id: ${p._id})`)
-      console.log(`   slug: "${s}"`)
-      console.log(`   → Corrige el campo slug en Sanity Studio (solo minúsculas, números y guiones)`)
-      continue
+      errors.push(`"${label}": SLUG inválido "${s}" — solo minúsculas, números y guiones (¿se pegó un link?) (_id: ${id})`)
     }
-    slugSet.add(s)
-    dedupedProjects.push(p)
+    if (slugSeen.has(s)) {
+      errors.push(`SLUG duplicado "${s}" en 2 proyectos publicados (_id: ${id} y ${slugSeen.get(s)})`)
+    } else {
+      slugSeen.set(s, id)
+    }
+    if (!p.title || !String(p.title).trim()) {
+      errors.push(`Proyecto sin TÍTULO (_id: ${id})`)
+    }
+    if (!p.heroImage) {
+      errors.push(`"${label}": falta HEROIMAGE — la página y las cards quedarían rotas (_id: ${id})`)
+    }
+    // Título SEO único — evita que Google colapse páginas como duplicadas
+    const finalTitle = (p.seoTitle && p.seoTitle.trim()) || generateSeoTitle(p)
+    if (titleSeen.has(finalTitle)) {
+      errors.push(`TÍTULO SEO duplicado "${finalTitle}" — lo comparten "${s}" y "${titleSeen.get(finalTitle)}". Ponle un seoTitle único en Sanity.`)
+    } else {
+      titleSeen.set(finalTitle, s)
+    }
+    if (finalTitle.length > 65) {
+      warnings.push(`Título largo (${finalTitle.length} car., Google lo trunca): ${s}`)
+    }
   }
-  if (dedupedProjects.length < projects.length) {
-    console.log(`   Deduped: ${projects.length} → ${dedupedProjects.length} unique slugs\n`)
+
+  if (warnings.length) {
+    console.warn('\n⚠️  AVISOS (no bloquean el deploy):')
+    warnings.forEach((w) => console.warn('   • ' + w))
   }
-  projects.length = 0
-  projects.push(...dedupedProjects)
+
+  if (errors.length) {
+    console.error('\n🚫 BUILD DETENIDO — datos inválidos en proyectos publicados.')
+    console.error('   No se desplegó nada. Corrige en Sanity Studio y vuelve a publicar:\n')
+    errors.forEach((e) => console.error('   • ' + e))
+    console.error(`\n   Total: ${errors.length} error(es). Al corregirlos, el deploy corre solo.\n`)
+    throw new Error(`Validación de contenido falló: ${errors.length} error(es) en proyectos.`)
+  }
 
   if (projects.length === 0) {
     console.log('⚠️  No hay proyectos publicados. Nada que generar.')
     return
   }
+  console.log(`   ✅ Validación OK: ${projects.length} proyectos con slugs y títulos únicos.\n`)
 
   // Generate individual project pages
   let generated = 0

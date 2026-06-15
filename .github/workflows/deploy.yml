@@ -37,3 +37,13 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: pages deploy . --project-name=seozenhome
+
+      # Verificación post-deploy: crawlea el sitemap en vivo y confirma que cada
+      # URL es indexable (200, self-canonical, sin noindex). Si una URL del sitemap
+      # redirige/cae, el job falla y GitHub avisa por correo — los problemas de
+      # indexación se detectan en minutos, no semanas después en Search Console.
+      - name: Verify indexability (post-deploy smoke test)
+        run: |
+          echo "Esperando propagación del deploy..."
+          sleep 25
+          node verify-site.mjs
