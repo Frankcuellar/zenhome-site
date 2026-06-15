@@ -55,18 +55,38 @@ async function fetchSitemapUrls() {
   return [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1].trim())
 }
 
+// Extrae rutas internas de los <a href> de una página (para detectar el defecto
+// "enlace interno que rebota en 3xx" — la causa raíz encontrada en otros sitios
+// del portafolio: href sin diagonal final apuntando a una URL que canoniza con
+// diagonal, generando un 308 en cada rastreo de Google).
+function internalLinks(html, baseUrl) {
+  const out = new Set()
+  for (const m of html.matchAll(/<a\b[^>]*\bhref\s*=\s*["']([^"']+)["']/gi)) {
+    let h = m[1].trim()
+    if (/^(#|mailto:|tel:|javascript:)/i.test(h)) continue
+    try {
+      const u = new URL(h, baseUrl)
+      if (u.host !== new URL(baseUrl).host) continue       // solo enlaces internos
+      if (u.pathname.startsWith('/cdn-cgi/')) continue      // infra Cloudflare
+      out.add(u.pathname)
+    } catch { /* href inválido, ignorar */ }
+  }
+  return out
+}
+
 async function checkOrigin(url) {
   const probe = `${url}${url.includes('?') ? '&' : '?'}_v=${Date.now()}`
   const errs = [], warns = []
   let res
   try { res = await fetch(probe, { redirect: 'manual', headers: { 'User-Agent': UA } }) }
-  catch (e) { return { url, errs: [`fetch falló: ${e.message}`], warns } }
+  catch (e) { return { url, errs: [`fetch falló: ${e.message}`], warns, links: new Set() } }
 
   if (res.status >= 300 && res.status < 400)
     errs.push(`origen redirige (${res.status} → ${res.headers.get('location') || '?'})`)
   else if (res.status !== 200)
     errs.push(`status ${res.status} (se esperaba 200)`)
 
+  let links = new Set()
   if (res.status === 200) {
     const html = await res.text()
     const robots = findRobots(html)
@@ -77,8 +97,24 @@ async function checkOrigin(url) {
     if (!/application\/ld\+json/i.test(html)) warns.push('sin JSON-LD (schema)')
     const title = pick(html, /<title>([^<]*)<\/title>/i)
     if (!title || title.length < 10) warns.push('title vacío o muy corto')
+    links = internalLinks(html, url)
   }
-  return { url, errs, warns }
+  return { url, errs, warns, links }
+}
+
+// Verifica que ningún enlace interno del sitio rebote en 3xx (defecto de
+// href sin/con diagonal incorrecta). Devuelve la lista de targets que redirigen.
+async function checkInternalLinks(results) {
+  const targets = new Set()
+  for (const r of results) for (const p of r.links) targets.add(p)
+  const redirecting = []
+  for (const t of targets) {
+    try {
+      const r = await fetch(`${BASE}${t}`, { redirect: 'manual', headers: { 'User-Agent': UA } })
+      if (r.status >= 300 && r.status < 400) redirecting.push(`${t} (${r.status})`)
+    } catch { /* ignorar errores de red puntuales */ }
+  }
+  return redirecting
 }
 
 async function checkPublic(url) {
@@ -102,6 +138,9 @@ async function main() {
   const failed = results.filter((r) => r.errs.length)
   const warned = results.filter((r) => r.warns.length)
 
+  // Enlaces internos que rebotan en 3xx (defecto tipo Vivens)
+  const redirectingLinks = await checkInternalLinks(results)
+
   // Pasada pública (lo que Google ve) sobre las URLs cuyo origen está OK
   const publicNotes = []
   for (const r of results) {
@@ -121,20 +160,27 @@ async function main() {
     console.log('')
   }
 
+  let hardFail = false
   if (failed.length) {
     console.error('🚫 FALLOS DE INDEXACIÓN (origen):')
     failed.forEach((r) => r.errs.forEach((e) => console.error(`   • ${r.url} — ${e}`)))
-    console.error(`\n   ${failed.length}/${urls.length} URLs con problema. Revisa el build/deploy.\n`)
-    process.exit(1)
+    console.error(`\n   ${failed.length}/${urls.length} URLs del sitemap con problema.\n`)
+    hardFail = true
   }
+  if (redirectingLinks.length) {
+    console.error('🚫 ENLACES INTERNOS QUE REBOTAN EN 3xx (cada rastreo de Google los penaliza):')
+    redirectingLinks.forEach((l) => console.error(`   • ${l}`))
+    console.error('   → corrige los href en el HTML para que apunten a la forma canónica.\n')
+    hardFail = true
+  }
+  if (hardFail) process.exit(1)
 
-  const publicFail = STRICT_PUBLIC && publicNotes.length
-  if (publicFail) {
+  if (STRICT_PUBLIC && publicNotes.length) {
     console.error('🚫 STRICT_PUBLIC: hay URLs que Google ve mal (caché/redirección).')
     process.exit(1)
   }
 
-  console.log(`✅ OK: las ${urls.length} URLs del sitemap son indexables en origen (200, self-canonical, sin noindex).`)
+  console.log(`✅ OK: ${urls.length} URLs del sitemap indexables (200, self-canonical, sin noindex) y 0 enlaces internos que rebotan.`)
   if (publicNotes.length) console.log(`   (con ${publicNotes.length} aviso(s) de caché — ver arriba)`)
 }
 
