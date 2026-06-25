@@ -840,29 +840,60 @@ async function build() {
   }
   console.log(`   ✅ Validación OK: ${projects.length} proyectos con slugs y títulos únicos.\n`)
 
-  // Generate individual project pages
-  let generated = 0
-  for (const project of projects) {
-    const slug = project.slug?.current
-    if (!slug) {
-      console.log(`⚠️  Skipping "${project.title}" - no slug`)
-      continue
-    }
+  // ── Build the related-projects graph ──
+  // Goal: every project must receive at least one inbound internal link. A project
+  // with no internal links is discovered by Google via the sitemap only, which
+  // delays or skips indexing ("Descubierta: actualmente sin indexar").
+  const buildable = projects.filter((p) => p.slug?.current)
+  const relatedMap = new Map() // _id -> array of related project objects
 
-    // Get 3 related projects (same category first, then featured as fallback)
-    // Exclude projects without heroImage to avoid broken cards
-    const sameCategory = projects
+  // Phase 1 — relevance-based picks. Rotate the same-category window by index so
+  // inbound links spread evenly instead of always landing on the first 3 projects.
+  for (let i = 0; i < buildable.length; i++) {
+    const project = buildable[i]
+    const sameCategory = buildable
       .filter((p) => p._id !== project._id && p.category === project.category && p.heroImage)
-    const others = projects
+    const start = sameCategory.length ? i % sameCategory.length : 0
+    const rotatedSameCategory = [...sameCategory.slice(start), ...sameCategory.slice(0, start)]
+    const othersFeatured = buildable
       .filter((p) => p._id !== project._id && p.category !== project.category && p.featured && p.heroImage)
-    const related = [...sameCategory, ...others].slice(0, 3)
+    const othersRest = buildable
+      .filter((p) => p._id !== project._id && p.category !== project.category && !p.featured && p.heroImage)
+    relatedMap.set(project._id, [...rotatedSameCategory, ...othersFeatured, ...othersRest].slice(0, 3))
+  }
 
-    const html = projectPageHtml(project, related)
+  // Phase 2 — coverage pass. Any project with zero inbound links gets injected into
+  // the most relevant host's related list (same category > same city > neighbor),
+  // replacing its 3rd slot. Guarantees no orphans regardless of category size.
+  const inbound = new Map(buildable.map((p) => [p._id, 0]))
+  for (const list of relatedMap.values()) for (const r of list) inbound.set(r._id, (inbound.get(r._id) || 0) + 1)
+  for (let i = 0; i < buildable.length; i++) {
+    const orphan = buildable[i]
+    if (inbound.get(orphan._id) > 0 || !orphan.heroImage) continue // skip no-hero (broken card)
+    const host =
+      buildable.find((p) => p._id !== orphan._id && p.category === orphan.category && !relatedMap.get(p._id).some((r) => r._id === orphan._id)) ||
+      buildable.find((p) => p._id !== orphan._id && extractCity(p.location) === extractCity(orphan.location) && !relatedMap.get(p._id).some((r) => r._id === orphan._id)) ||
+      buildable[(i + 1) % buildable.length]
+    if (!host || host._id === orphan._id) continue
+    const hostList = relatedMap.get(host._id)
+    if (hostList.length >= 3) hostList[2] = orphan
+    else hostList.push(orphan)
+    inbound.set(orphan._id, 1)
+  }
+
+  // ── Generate individual project pages ──
+  let generated = 0
+  for (const project of buildable) {
+    const slug = project.slug.current
+    const html = projectPageHtml(project, relatedMap.get(project._id) || [])
     const dir = path.join(OUTPUT_DIR, slug)
     fs.mkdirSync(dir, { recursive: true })
     fs.writeFileSync(path.join(dir, 'index.html'), html, 'utf-8')
     generated++
     console.log(`   ✅ /proyectos/${slug}/`)
+  }
+  for (const project of projects) {
+    if (!project.slug?.current) console.log(`⚠️  Skipping "${project.title}" - no slug`)
   }
 
   // Update portfolio index
