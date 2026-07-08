@@ -246,34 +246,58 @@ function projectPageHtml(p, relatedProjects) {
     .map((s) => `      <div class="spec-card"><span class="spec-label">${escapeHtml(s.label)}</span><span class="spec-value">${escapeHtml(s.value)}</span></div>`)
     .join('\n')
 
-  // Gallery — sort into narrative order: resultado/final first, then antes/proceso, then experiencia
-  const GALLERY_ORDER = [
-    { phase: 'resultado', keywords: /resultado|final|terminad|listo|acabado|entrega/i, weight: 0 },
-    { phase: 'detalle', keywords: /detalle|close.?up|acercamiento|material|acabado|textura/i, weight: 1 },
-    { phase: 'antes', keywords: /antes|recibimos|recibi|previo|original|comenzar|inicio/i, weight: 2 },
-    { phase: 'proceso', keywords: /proceso|instalaci|construcci|avance|progreso|durante/i, weight: 3 },
-    { phase: 'experiencia', keywords: /familia|cliente|feliz|disfrutando|cocinar|vivir|experiencia/i, weight: 4 },
-  ]
-  function galleryWeight(caption) {
-    if (!caption) return 1.5 // no caption → after resultado, before antes
-    for (const rule of GALLERY_ORDER) {
-      if (rule.keywords.test(caption)) return rule.weight
-    }
-    return 1.5 // unknown → neutral position
+  // ── Galería v2: principal (hero) + "El resultado" (después) + "Antes y proceso" ──
+  // La fase se infiere del caption. Si el Studio agrega el campo `phase` ('antes'|'proceso'|'despues'), se respeta.
+  function classifyPhase(img) {
+    const explicit = (img.phase || '').toString().toLowerCase()
+    if (explicit === 'antes' || explicit === 'proceso' || explicit === 'despues') return explicit
+    const c = img.caption || ''
+    if (/proceso|instalaci|construcci|carpinter|estructura|montaje|demolici|obra negra|avance|durante|integramos/i.test(c)) return 'proceso'
+    if (/antes|recibimos|recibi|encontramos|nos encontr|espacio libre|retirad|previo|original|as[ií] estaba|como estaba|rectificaci|primera visita|toma de medidas/i.test(c)) return 'antes'
+    return 'despues'
   }
-  const sortedGallery = [...(p.gallery || [])].sort((a, b) => galleryWeight(a.caption) - galleryWeight(b.caption))
+  const heroRef = p.heroImage && p.heroImage.asset && p.heroImage.asset._ref
+  const galleryTagged = (p.gallery || []).map((img) => ({ ...img, _phase: classifyPhase(img) }))
+  // Dedupe: si una foto de la galería ES el hero principal, no repetirla
+  const galleryDedup = galleryTagged.filter((img) => !(heroRef && img.asset && img.asset._ref === heroRef))
+  const despuesAll = galleryDedup.filter((img) => img._phase === 'despues')
+  const antesImgs = galleryDedup
+    .filter((img) => img._phase !== 'despues')
+    .sort((a, b) => (a._phase === 'antes' ? 0 : 1) - (b._phase === 'antes' ? 0 : 1))
 
-  const hasGallery = sortedGallery.length > 0
-  const galleryImgs = sortedGallery
-    .map((img, i) => {
-      const alt = escapeHtml(img.caption || `${catLabel} - ${p.title} - foto ${i + 1}`)
-      const cls = i === 0 ? ' class="gallery-featured"' : ''
-      return `      <img src="${imageUrl(img, 800)}" alt="${alt}" loading="lazy"${cls} onclick="openLightbox(${i})"/>`
-    })
-    .join('\n')
+  // Imagen principal: hero del proyecto; si no hay, el primer "después"; si no, la primera disponible
+  const principal = p.heroImage || despuesAll[0] || galleryDedup[0] || null
+  const despuesGrid = despuesAll.filter((x) => x !== principal)
+  const antesGrid = antesImgs.filter((x) => x !== principal)
 
-  // Gallery full-size URLs for lightbox (same sorted order)
-  const galleryFull = sortedGallery.map((img) => imageUrl(img, 1400))
+  const hasGallery = !!principal
+  // Orden del lightbox: principal → después → antes/proceso
+  const lightboxImgs = [principal].concat(despuesGrid, antesGrid).filter(Boolean)
+  const galleryFull = lightboxImgs.map((img) => imageUrl(img, 1400))
+
+  const PHASE_BADGE = { antes: 'Antes', proceso: 'Proceso' }
+  function gridFigure(img, lbIndex) {
+    const alt = escapeHtml(img.caption || `${catLabel} - ${p.title}`)
+    const badge = PHASE_BADGE[img._phase] ? `<span class="g-badge">${PHASE_BADGE[img._phase]}</span>` : ''
+    return `        <figure class="g-cell">${badge}<img src="${imageUrl(img, 800)}" alt="${alt}" loading="lazy" onclick="openLightbox(${lbIndex})"/></figure>`
+  }
+  let _lbi = 1 // índice 0 = principal
+  const despuesHtml = despuesGrid.map((img) => gridFigure(img, _lbi++)).join('\n')
+  const antesHtml = antesGrid.map((img) => gridFigure(img, _lbi++)).join('\n')
+  const nFotoTxt = (n) => `· ${n} ${n === 1 ? 'foto' : 'fotos'}`
+  const principalAlt = escapeHtml((principal && principal.caption) || `${catLabel} terminada - ${p.title}`)
+  const galleryHtml = hasGallery ? `
+  <figure class="g-hero"><img src="${imageUrl(principal, 1200)}" alt="${principalAlt}" loading="lazy" onclick="openLightbox(0)"/></figure>
+  ${despuesHtml ? `<div class="g-block-label">El resultado <span class="g-count">${nFotoTxt(despuesGrid.length)}</span></div>
+  <div class="g-grid">
+${despuesHtml}
+  </div>` : ''}
+  ${antesHtml ? `<div class="g-divider"></div>
+  <div class="g-block-label">Antes y proceso <span class="g-count">${nFotoTxt(antesGrid.length)}</span></div>
+  <p class="g-antes-note">Así recibimos el espacio y cómo lo fuimos transformando.</p>
+  <div class="g-grid">
+${antesHtml}
+  </div>` : ''}` : ''
 
   // Video
   let videoSection = ''
@@ -471,15 +495,23 @@ function projectPageHtml(p, relatedProjects) {
   .spec-label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); }
   .spec-value { font-size: 16px; font-weight: 600; color: var(--blue-dark); }
 
-  /* ── Gallery ── */
-  .gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 24px 0 36px; }
-  .gallery img { width: 100%; height: 220px; object-fit: cover; border-radius: var(--radius-sm); cursor: pointer; transition: transform 0.2s; box-shadow: var(--shadow); }
-  .gallery img:hover { transform: scale(1.02); }
-  .gallery img.gallery-featured { grid-column: span 2; height: 320px; }
+  /* ── Gallery v2 (principal + resultado + antes/proceso) ── */
+  .gallery-v2 { margin: 20px 0 36px; }
+  .g-hero { margin: 0 0 8px; }
+  .g-hero img { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; border-radius: var(--radius); box-shadow: var(--shadow-md); display: block; cursor: pointer; }
+  .g-block-label { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text); margin: 30px 0 14px; }
+  .g-block-label::before { content: ""; width: 26px; height: 3px; background: var(--gold); border-radius: 2px; }
+  .g-block-label .g-count { color: var(--text-muted); font-weight: 500; letter-spacing: 0; }
+  .g-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .g-cell { margin: 0; position: relative; }
+  .g-cell img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: var(--radius-sm); box-shadow: var(--shadow); cursor: pointer; transition: transform 0.2s; display: block; }
+  .g-cell img:hover { transform: scale(1.02); }
+  .g-badge { position: absolute; top: 8px; left: 8px; background: rgba(14,24,44,0.72); color: #fff; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; padding: 3px 9px; border-radius: 6px; }
+  .g-divider { height: 1px; background: var(--border); margin: 38px 0 0; }
+  .g-antes-note { font-size: 13px; color: var(--text-muted); margin: 0 0 14px; }
   @media (max-width: 600px) {
-    .gallery { grid-template-columns: repeat(2, 1fr); }
-    .gallery img.gallery-featured { grid-column: span 2; height: 200px; }
-    .gallery img { height: 150px; }
+    .g-grid { grid-template-columns: repeat(2, 1fr); }
+    .g-hero img { aspect-ratio: 4 / 3; }
   }
 
   /* ── Lightbox ── */
@@ -603,7 +635,7 @@ function projectPageHtml(p, relatedProjects) {
     </a>
   </div>
   <div class="split-hero__image">
-    <img src="${heroImg}" alt="${escapeHtml(p.title)} - ${escapeHtml(catLabel)} en ${escapeHtml(p.location || 'Monterrey')}" width="900" height="600"/>
+    <img src="${heroImg}" alt="${escapeHtml(p.title)} - ${escapeHtml(catLabel)} en ${escapeHtml(p.location || 'Monterrey')}" width="900" height="600" fetchpriority="high"/>
   </div>
 </section>
 
@@ -632,8 +664,7 @@ ${specsCards}
 
   ${hasGallery ? `<!-- ── 7. Galería Visual ── -->
   <h2>Galería del Proyecto</h2>
-  <div class="gallery">
-${galleryImgs}
+  <div class="gallery-v2">${galleryHtml}
   </div>` : ''}
 
   ${videoSection}
