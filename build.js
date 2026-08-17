@@ -188,6 +188,37 @@ function generateSeoTitle(p) {
   return `${cat}${style}${matText} en ${city} | ZenHome Monterrey`
 }
 
+// Inserta un calificativo antes del sufijo de marca: "X | ZenHome" → "X — Colonia | ZenHome"
+function insertTitleQualifier(title, qualifier) {
+  const i = title.lastIndexOf(' | ')
+  return i === -1 ? `${title} — ${qualifier}` : `${title.slice(0, i)} — ${qualifier}${title.slice(i)}`
+}
+
+// Un título AUTOGENERADO que choca con otro no debe detener la línea (paro 03→17-ago, PM-005):
+// se desambigua solo con la colonia/zona real y se avisa. El hard-fail se reserva para
+// dos `seoTitle` EXPLÍCITOS iguales, que sí son un error editorial que nadie más puede resolver.
+function disambiguateSeoTitle(base, p, taken) {
+  const parts = String(p.location || '').split(',').map((s) => s.trim()).filter(Boolean)
+  for (const part of parts) {
+    if (!base.toLowerCase().includes(part.toLowerCase())) {
+      const candidate = insertTitleQualifier(base, part)
+      if (!taken.has(candidate)) return candidate
+    }
+  }
+  const slugWords = String(p.slug?.current || '')
+    .split('-')
+    .filter((w) => w.length > 3 && !base.toLowerCase().includes(w))
+    .slice(0, 2)
+    .join(' ')
+  if (slugWords) {
+    const candidate = insertTitleQualifier(base, slugWords)
+    if (!taken.has(candidate)) return candidate
+  }
+  let n = 2
+  while (taken.has(insertTitleQualifier(base, String(n)))) n++
+  return insertTitleQualifier(base, String(n))
+}
+
 function generateSeoDescription(p) {
   const cat = CATEGORY_LABELS[p.category] || 'Proyecto'
   const materials = (p.materials || []).slice(0, 3).map(m => prettyTag(m)).join(', ')
@@ -841,12 +872,25 @@ async function build() {
       errors.push(`"${label}": falta HEROIMAGE — la página y las cards quedarían rotas (_id: ${id})`)
     }
     // Título SEO único — evita que Google colapse páginas como duplicadas
-    const finalTitle = (p.seoTitle && p.seoTitle.trim()) || generateSeoTitle(p)
+    const explicitTitle = !!(p.seoTitle && p.seoTitle.trim())
+    let finalTitle = explicitTitle ? p.seoTitle.trim() : generateSeoTitle(p)
     if (titleSeen.has(finalTitle)) {
-      errors.push(`TÍTULO SEO duplicado "${finalTitle}" — lo comparten "${s}" y "${titleSeen.get(finalTitle)}". Ponle un seoTitle único en Sanity.`)
+      const prev = titleSeen.get(finalTitle)
+      if (explicitTitle && prev.explicit) {
+        // Dos títulos escritos a mano e idénticos: error editorial real, se detiene el build.
+        errors.push(`TÍTULO SEO duplicado "${finalTitle}" — lo comparten "${s}" y "${prev.slug}". Ponle un seoTitle único en Sanity.`)
+      } else {
+        // Al menos uno es autogenerado: se desambigua y sigue. Nunca paramos el sitio por esto.
+        const fixed = disambiguateSeoTitle(finalTitle, p, titleSeen)
+        warnings.push(`Título SEO autogenerado duplicado con "${prev.slug}" — se desambiguó a "${fixed}". Ponle un seoTitle propio en Sanity a "${s}".`)
+        finalTitle = fixed
+        titleSeen.set(finalTitle, { slug: s, explicit: false })
+      }
     } else {
-      titleSeen.set(finalTitle, s)
+      titleSeen.set(finalTitle, { slug: s, explicit: explicitTitle })
     }
+    // La página y el sitemap usan este título ya resuelto (evita divergencia con la validación)
+    p.seoTitle = finalTitle
     if (finalTitle.length > 65) {
       warnings.push(`Título largo (${finalTitle.length} car., Google lo trunca): ${s}`)
     }
