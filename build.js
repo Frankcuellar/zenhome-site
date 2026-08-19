@@ -366,13 +366,16 @@ ${antesHtml}
   // Solution
   const solutionHtml = blocksToHtml(p.solution)
 
-  // Tags (materials, style, zone) — use prettyTag() for proper accents & casing
+  // Tags (materials, style, zone) — use prettyTag() for proper accents & casing.
+  // Non-clickable <span> chips: no existen páginas /materiales/, /estilos/, /zonas/
+  // todavía, así que enlazarlas generaba 404s internos. Mantenemos el texto (keywords)
+  // sin crear enlaces rotos. Si algún día se crean esas landings, volver a <a href>.
   const materialTags = (p.materials || []).map((m) =>
-    `<a href="/materiales/${m}/" class="seo-tag">${escapeHtml(prettyTag(m))}</a>`).join('')
+    `<span class="seo-tag">${escapeHtml(prettyTag(m))}</span>`).join('')
   const styleTags = p.style
-    ? `<a href="/estilos/${p.style}/" class="seo-tag">${escapeHtml(prettyTag(p.style))}</a>` : ''
+    ? `<span class="seo-tag">${escapeHtml(prettyTag(p.style))}</span>` : ''
   const zoneTags = p.zone
-    ? `<a href="/zonas/${p.zone}/" class="seo-tag">${escapeHtml(prettyTag(p.zone))}</a>` : ''
+    ? `<span class="seo-tag">${escapeHtml(prettyTag(p.zone))}</span>` : ''
   const hasTags = materialTags || styleTags || zoneTags
 
   // Schema about entities
@@ -404,7 +407,7 @@ ${antesHtml}
   const moneyPageLink = p.category === 'cocina'
     ? '<a href="/cocinas-integrales-monterrey/">Cocinas Integrales en Monterrey</a>'
     : p.category === 'closet'
-    ? '<a href="/closets-vestidores-monterrey/">Clósets y Vestidores</a>'
+    ? '<a href="/closets-monterrey/">Clósets y Vestidores</a>'
     : '<a href="/diseno-interiores-monterrey/">Diseño de Interiores</a>'
 
   return `<!DOCTYPE html>
@@ -565,8 +568,7 @@ ${antesHtml}
   .tags-section { margin: 32px 0; }
   .tags-group { margin-bottom: 12px; }
   .tags-group-label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); margin-bottom: 6px; }
-  .seo-tag { display: inline-block; background: var(--bg-light); color: var(--blue); font-size: 13px; font-weight: 500; padding: 4px 14px; border-radius: 14px; text-decoration: none; margin: 3px 4px 3px 0; transition: background 0.2s; text-transform: capitalize; }
-  .seo-tag:hover { background: var(--blue); color: var(--white); }
+  .seo-tag { display: inline-block; background: var(--bg-light); color: var(--blue); font-size: 13px; font-weight: 500; padding: 4px 14px; border-radius: 14px; margin: 3px 4px 3px 0; text-transform: capitalize; cursor: default; }
 
   /* ── Testimonial ── */
   .testimonial { background: var(--bg-light); border-radius: var(--radius); padding: 28px; margin: 32px 0; border-left: 4px solid var(--blue); }
