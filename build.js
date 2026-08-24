@@ -382,7 +382,10 @@ ${antesHtml}
   const aboutEntities = [
     `{"@type": "Thing", "name": "${escapeHtml(catLabel)}"}`,
     ...(p.materials || []).slice(0, 2).map((m) => `{"@type": "Thing", "name": "${escapeHtml(prettyTag(m))}"}`),
-    p.location ? `{"@type": "Place", "name": "${escapeHtml(p.location)}, Nuevo León"}` : '',
+    // El sufijo del estado solo se agrega si el propio `location` no lo trae ya:
+    // varios documentos guardan "…, Nuevo León" completo y el schema emitía
+    // "Nuevo León, Nuevo León" (detectado por el Custodio, ciclo 24-ago).
+    p.location ? `{"@type": "Place", "name": "${escapeHtml(/nuevo\s*le[oó]n\s*$/i.test(p.location.trim()) ? p.location.trim() : p.location.trim() + ', Nuevo León')}"}` : '',
   ].filter(Boolean)
 
   // Related projects
