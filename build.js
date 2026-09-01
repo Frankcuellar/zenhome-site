@@ -172,7 +172,10 @@ const CATEGORY_SEO = {
 // Extract city name from location string (e.g. "Samara Residencial, Apodaca, Nuevo León" → "Apodaca")
 function extractCity(location) {
   if (!location) return ''
-  const parts = location.split(',').map(s => s.trim())
+  // .filter(Boolean): una coma final ("Guadalupe, Nuevo Leon,") hacia que esto
+  // viera 3 partes y derivara el ESTADO como municipio. El aviso del esquema
+  // (schemaTypes/project.js, campo location) es espejo exacto de esta funcion.
+  const parts = location.split(',').map(s => s.trim()).filter(Boolean)
   // If 3+ parts, second is likely city; if 2 parts, first is city; if 1 part, use it
   if (parts.length >= 3) return parts[1]
   if (parts.length === 2) return parts[0]
