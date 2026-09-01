@@ -1038,6 +1038,16 @@ nav ul {
                 gap: 1.5rem;
             }
         }
+
+        /* Comparativa de precios (Palanca E) */
+        .price-table-title { text-align:center; margin:3rem 0 .5rem; font-size:1.35rem; color:var(--dark); }
+        .price-table-wrap { overflow-x:auto; -webkit-overflow-scrolling:touch; margin:0 auto; max-width:100%; }
+        .price-table { width:100%; min-width:680px; border-collapse:collapse; font-size:.95rem; background:#fff; }
+        .price-table caption { caption-side:bottom; padding-top:.9rem; font-size:.85rem; color:var(--medium-gray); text-align:left; }
+        .price-table th, .price-table td { border:1px solid var(--border-gray); padding:.75rem .9rem; text-align:left; vertical-align:top; }
+        .price-table thead th { background:var(--dark); color:#fff; font-weight:600; }
+        .price-table tbody th { background:var(--light-gray); font-weight:700; color:var(--dark); white-space:nowrap; }
+        .price-table tbody tr:nth-child(even) td { background:#fafafa; }
     </style>
     <link rel="stylesheet" href="/styles/nav-dropdown.css">
 </head>
@@ -1100,7 +1110,7 @@ nav ul {
                 </div>
 
                 <div class="pricing-card popular">
-                    <div class="pricing-badge">MAS POPULAR</div>
+                    <div class="pricing-badge">MÁS POPULAR</div>
                     <div class="pricing-header">
                         <div class="pricing-tier">Cocina Premium</div>
                         <div class="pricing-range">$150,000 - $250,000</div>
@@ -1111,8 +1121,8 @@ nav ul {
                         <li>MDF laqueado en acabado brillante o mate</li>
                         <li>Cubierta de cuarzo Caesarstone</li>
                         <li>Herrajes Blum con push-open</li>
-                        <li>Iluminacion LED integrada</li>
-                        <li>Electrodomesticos empotrados incluidos</li>
+                        <li>Iluminación LED integrada</li>
+                        <li>Electrodomésticos empotrados incluidos</li>
                     </ul>
                     <div class="pricing-ideal">Ideal para: Casas residenciales y familias</div>
                     <a href="https://wa.me/528115269496?text=Hola%20ZenHome%2C%20me%20interesa%20una%20Cocina%20Premium.%20Quisiera%20cotizar." class="pricing-cta">Cotizar</a>
@@ -1127,14 +1137,58 @@ nav ul {
                     <ul class="pricing-features">
                         <li>Cocina completa 5+ metros con isla</li>
                         <li>MDF laqueado alto brillo</li>
-                        <li>Cubierta marmol/Dekton/Neolith</li>
+                        <li>Cubierta mármol/Dekton/Neolith</li>
                         <li>Herrajes premium Blum/Hettich</li>
-                        <li>Iluminacion ambiental y funcional</li>
+                        <li>Iluminación ambiental y funcional</li>
                         <li>Proyecto ejecutivo + renders fotorrealistas</li>
                     </ul>
                     <div class="pricing-ideal">Ideal para: Residencias premium</div>
                     <a href="https://wa.me/528115269496?text=Hola%20ZenHome%2C%20me%20interesa%20una%20Cocina%20de%20Lujo.%20Quisiera%20cotizar." class="pricing-cta">Cotizar</a>
                 </div>
+            </div>
+
+            <!-- COMPARATIVA (activo citable · Palanca E) -->
+            <h3 class="price-table-title">Comparativa rápida: qué incluye cada rango</h3>
+            <div class="price-table-wrap">
+                <table class="price-table">
+                    <caption>Rangos de lista de ZenHome para cocinas integrales a la medida en Monterrey y su zona metropolitana. Precios en pesos mexicanos (MXN).</caption>
+                    <thead>
+                        <tr>
+                            <th scope="col">Nivel</th>
+                            <th scope="col">Rango (MXN)</th>
+                            <th scope="col">Tama&ntilde;o y distribuci&oacute;n</th>
+                            <th scope="col">Gabinetes</th>
+                            <th scope="col">Cubierta</th>
+                            <th scope="col">Herrajes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th scope="row">Cocina Funcional</th>
+                            <td>$85,000 &ndash; $150,000</td>
+                            <td>Lineal o L, 2&ndash;3 metros</td>
+                            <td>Melamina o MDF acabado mate</td>
+                            <td>Granito o cuarzo b&aacute;sico</td>
+                            <td>Est&aacute;ndar con cierre suave</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Cocina Premium</th>
+                            <td>$150,000 &ndash; $250,000</td>
+                            <td>L o U, 3&ndash;5 metros, con isla</td>
+                            <td>MDF laqueado brillante o mate</td>
+                            <td>Cuarzo Caesarstone</td>
+                            <td>Blum con push-open</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Cocina de Lujo</th>
+                            <td>$250,000 &ndash; $350,000+</td>
+                            <td>Completa 5+ metros con isla</td>
+                            <td>MDF laqueado alto brillo</td>
+                            <td>M&aacute;rmol / Dekton / Neolith</td>
+                            <td>Premium Blum / Hettich</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </section>
@@ -1157,7 +1211,7 @@ nav ul {
                 <div class="factor-card">
                     <div class="factor-icon">MC</div>
                     <h3>Tipo de Cubierta</h3>
-                    <p>Granito ($), Cuarzo ($$), Marmol/Dekton ($$$).</p>
+                    <p>Granito ($), Cuarzo ($$), Mármol/Dekton ($$$).</p>
                 </div>
                 <div class="factor-card">
                     <div class="factor-icon">HA</div>
@@ -1166,13 +1220,13 @@ nav ul {
                 </div>
                 <div class="factor-card">
                     <div class="factor-icon">ED</div>
-                    <h3>Electrodomesticos</h3>
+                    <h3>Electrodomésticos</h3>
                     <p>Se pueden cotizar por separado o integrar en el proyecto.</p>
                 </div>
                 <div class="factor-card">
                     <div class="factor-icon">DP</div>
-                    <h3>Nivel de Personalizacion</h3>
-                    <p>Diseño estandar vs proyecto ejecutivo con renders.</p>
+                    <h3>Nivel de Personalización</h3>
+                    <p>Diseño estándar vs proyecto ejecutivo con renders.</p>
                 </div>
             </div>
         </div>
@@ -1185,7 +1239,7 @@ nav ul {
             <div class="steps-container">
                 <div class="step">
                     <div class="step-number">1</div>
-                    <h3>Consulta + Medicion Gratis</h3>
+                    <h3>Consulta + Medición Gratis</h3>
                     <p>Visitamos tu espacio, medimos, entendemos tu presupuesto y estilo de vida.</p>
                 </div>
                 <div class="step">
@@ -1249,7 +1303,7 @@ nav ul {
             <div class="materials-grid">
                 <div class="material-box">
                     <div class="material-name">MDF Laqueado</div>
-                    <p class="material-description">Acabado liso y elegante, facil mantenimiento.</p>
+                    <p class="material-description">Acabado liso y elegante, fácil mantenimiento.</p>
                 </div>
                 <div class="material-box">
                     <div class="material-name">Melamina Premium</div>
@@ -1268,7 +1322,7 @@ nav ul {
                     <p class="material-description">Natural, duradero, cada pieza es unica.</p>
                 </div>
                 <div class="material-box">
-                    <div class="material-name">Marmol / Dekton</div>
+                    <div class="material-name">Mármol / Dekton</div>
                     <p class="material-description">Lujo y sofisticacion para cubiertas premium.</p>
                 </div>
             </div>
@@ -1310,15 +1364,15 @@ nav ul {
                     <p>Materiales, precios y durabilidad: MDF, lacado y melamina explicados para tu presupuesto.</p>
                 </a>
                 <a href="/closets-monterrey/" class="cross-link-card">
-                    <h3>D Closets a la Medida</h3>
+                    <h3>🪥 Closets a la Medida</h3>
                     <p>Diseño y fabricación de clósets personalizados con organización inteligente.</p>
                 </a>
                 <a href="/diseno-interiores-monterrey/" class="cross-link-card">
-                    <h3>V Diseño de Interiores</h3>
+                    <h3>🎨 Diseño de Interiores</h3>
                     <p>Remodelación completa de espacios desde concepto hasta instalación.</p>
                 </a>
                 <a href="/proyectos/" class="cross-link-card">
-                    <h3>G Ver Proyectos</h3>
+                    <h3>📸 Ver Proyectos</h3>
                     <p>Galeria de 300+ proyectos realizados en Monterrey.</p>
                 </a>
             </div>
@@ -1352,14 +1406,14 @@ nav ul {
             </div>
             <div class="faq-item">
                 <button class="faq-question" onclick="toggleFaq(this)">
-                    <span>Diferencia entre melamina y MDF laqueado?</span>
+                    <span>¿Diferencia entre melamina y MDF laqueado?</span>
                     <span class="faq-toggle">v</span>
                 </button>
-                <div class="faq-answer">Melamina: economica, resistente a humedad, gran variedad de texturas. MDF laqueado: acabados elegantes brillantes o mate, aspecto premium. Ambos son duraderos y de facil mantenimiento.</div>
+                <div class="faq-answer">Melamina: económica, resistente a humedad, gran variedad de texturas. MDF laqueado: acabados elegantes brillantes o mate, aspecto premium. Ambos son duraderos y de fácil mantenimiento.</div>
             </div>
             <div class="faq-item">
                 <button class="faq-question" onclick="toggleFaq(this)">
-                    <span>Trabajan con electrodomesticos empotrados?</span>
+                    <span>¿Trabajan con electrodomésticos empotrados?</span>
                     <span class="faq-toggle">v</span>
                 </button>
                 <div class="faq-answer">Si, coordinamos integracion completa en rango premium y lujo.</div>
@@ -1393,12 +1447,12 @@ nav ul {
                 <p><strong>Email:</strong> <a href="mailto:contacto@zenhome.com.mx">contacto@zenhome.com.mx</a></p>
             </div>
             <div class="footer-section">
-                <h3>Direccion</h3>
+                <h3>Dirección</h3>
                 <p><strong>Showroom 1 (Plaza Tauro):</strong><br>C. Tauro 206<br>Linda Vista<br>Guadalupe, NL 67129</p>
                 <p><strong>Showroom 2 (Plaza Alena Sur, cerca del Tec de Monterrey):</strong><br>Pedro Martínez<br>Nuevo Repueblo<br>Monterrey, NL 64700</p>
             </div>
             <div class="footer-section">
-                <h3>Navegacion</h3>
+                <h3>Navegación</h3>
                 <ul>
                     <li><a href="/">Inicio</a></li>
                     <li><a href="/cocinas-integrales-monterrey/">Cocinas</a></li>
