@@ -506,7 +506,7 @@ ${antesHtml}
   .split-hero { display: flex; gap: 40px; max-width: 1100px; margin: 0 auto; padding: 40px; align-items: center; }
   .split-hero__info { flex: 1; min-width: 0; }
   .split-hero__image { flex: 1.2; min-width: 0; }
-  .split-hero__image img { width: 100%; border-radius: var(--radius); box-shadow: var(--shadow-md); display: block; }
+  .split-hero__image img { width: 100%; height: auto; aspect-ratio: 3 / 2; object-fit: cover; border-radius: var(--radius); box-shadow: var(--shadow-md); display: block; }
   .split-hero__tag { display: inline-block; background: var(--bg-light); color: var(--blue); font-size: 12px; font-weight: 600; padding: 4px 14px; border-radius: 14px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; }
   .split-hero h1 { font-size: clamp(24px, 3.5vw, 34px); font-weight: 900; line-height: 1.2; margin-bottom: 16px; color: var(--blue-dark); }
   .split-hero__meta { display: flex; gap: 16px; flex-wrap: wrap; font-size: 14px; color: var(--text-muted); margin-bottom: 20px; }
